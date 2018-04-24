@@ -1,0 +1,1 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/ir_b2a.dir/Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o  -o ir_b2a -llibcomutils 

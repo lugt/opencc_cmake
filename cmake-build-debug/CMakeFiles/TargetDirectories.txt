@@ -1,0 +1,4 @@
+/Users/luyiming/xc5/new_cmake_test/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/luyiming/xc5/new_cmake_test/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/luyiming/xc5/new_cmake_test/cmake-build-debug/CMakeFiles/ir_b2a.dir
+/Users/luyiming/xc5/new_cmake_test/cmake-build-debug/CMakeFiles/libcommon.dir
