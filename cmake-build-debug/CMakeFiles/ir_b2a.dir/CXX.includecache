@@ -462,6 +462,10 @@ profile_com.h
 fb_info.h
 /Users/me/xc5/open64/osprey/ir_tools/fb_info.h
 
+/Users/me/xc5/open64/osprey/libdwarf/libdwarf/dwarf.h
+
+/Users/me/xc5/open64/osprey/libdwarf/libdwarf/libdwarf.h
+
 /Users/me/xc5/open64/osprey/macos/include/bstring.h
 string.h
 -

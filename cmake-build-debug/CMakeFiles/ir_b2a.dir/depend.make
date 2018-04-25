@@ -68,6 +68,8 @@ CMakeFiles/ir_b2a.dir/Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o: /Users/m
 CMakeFiles/ir_b2a.dir/Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o: /Users/me/xc5/open64/osprey/include/dwarf_stuff.h
 CMakeFiles/ir_b2a.dir/Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o: /Users/me/xc5/open64/osprey/ir_tools/erauxdesc.h
 CMakeFiles/ir_b2a.dir/Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o: /Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx
+CMakeFiles/ir_b2a.dir/Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o: /Users/me/xc5/open64/osprey/libdwarf/libdwarf/dwarf.h
+CMakeFiles/ir_b2a.dir/Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o: /Users/me/xc5/open64/osprey/libdwarf/libdwarf/libdwarf.h
 CMakeFiles/ir_b2a.dir/Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o: /Users/me/xc5/open64/osprey/macos/include/bstring.h
 CMakeFiles/ir_b2a.dir/Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o: /usr/local/Cellar/libelf/0.8.13_1/include/libelf/elf_repl.h
 CMakeFiles/ir_b2a.dir/Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o: /usr/local/Cellar/libelf/0.8.13_1/include/libelf/libelf.h

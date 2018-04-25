@@ -57,77 +57,7 @@ include CMakeFiles/libcommon.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/libcommon.dir/flags.make
 
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o: CMakeFiles/libcommon.dir/flags.make
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o: /Users/me/xc5/open64/osprey/common/com/x8664/config_host.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/luyiming/xc5/new_cmake_test/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o   -c /Users/me/xc5/open64/osprey/common/com/x8664/config_host.c
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/me/xc5/open64/osprey/common/com/x8664/config_host.c > CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.i
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/me/xc5/open64/osprey/common/com/x8664/config_host.c -o CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.s
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o.requires:
-
-.PHONY : CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o.requires
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o.provides: CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o.requires
-	$(MAKE) -f CMakeFiles/libcommon.dir/build.make CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o.provides.build
-.PHONY : CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o.provides
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o.provides.build: CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o
-
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o: CMakeFiles/libcommon.dir/flags.make
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o: /Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/luyiming/xc5/new_cmake_test/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o   -c /Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c > CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.i
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c -o CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.s
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o.requires:
-
-.PHONY : CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o.requires
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o.provides: CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o.requires
-	$(MAKE) -f CMakeFiles/libcommon.dir/build.make CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o.provides.build
-.PHONY : CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o.provides
-
-CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o.provides.build: CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o
-
-
-# Object files for target libcommon
-libcommon_OBJECTS = \
-"CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o" \
-"CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o"
-
-# External object files for target libcommon
-libcommon_EXTERNAL_OBJECTS =
-
-liblibcommon.a: CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o
-liblibcommon.a: CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o
-liblibcommon.a: CMakeFiles/libcommon.dir/build.make
-liblibcommon.a: CMakeFiles/libcommon.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/luyiming/xc5/new_cmake_test/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C static library liblibcommon.a"
-	$(CMAKE_COMMAND) -P CMakeFiles/libcommon.dir/cmake_clean_target.cmake
-	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/libcommon.dir/link.txt --verbose=$(VERBOSE)
-
-# Rule to build all files generated by this target.
-CMakeFiles/libcommon.dir/build: liblibcommon.a
-
-.PHONY : CMakeFiles/libcommon.dir/build
-
-CMakeFiles/libcommon.dir/requires: CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o.requires
-CMakeFiles/libcommon.dir/requires: CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o.requires
+CMakeFiles/libcommon.dir/requires:
 
 .PHONY : CMakeFiles/libcommon.dir/requires
 

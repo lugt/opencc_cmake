@@ -123,73 +123,6 @@ ir_b2a/fast:
 	$(MAKE) -f CMakeFiles/ir_b2a.dir/build.make CMakeFiles/ir_b2a.dir/build
 .PHONY : ir_b2a/fast
 
-#=============================================================================
-# Target rules for targets named libcommon
-
-# Build rule for target.
-libcommon: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 libcommon
-.PHONY : libcommon
-
-# fast build rule for target.
-libcommon/fast:
-	$(MAKE) -f CMakeFiles/libcommon.dir/build.make CMakeFiles/libcommon.dir/build
-.PHONY : libcommon/fast
-
-Users/me/xc5/open64/osprey/common/com/x8664/config_host.o: Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o
-
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_host.o
-
-# target to build an object file
-Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o:
-	$(MAKE) -f CMakeFiles/libcommon.dir/build.make CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.o
-
-Users/me/xc5/open64/osprey/common/com/x8664/config_host.i: Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.i
-
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_host.i
-
-# target to preprocess a source file
-Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.i:
-	$(MAKE) -f CMakeFiles/libcommon.dir/build.make CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.i
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.i
-
-Users/me/xc5/open64/osprey/common/com/x8664/config_host.s: Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.s
-
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_host.s
-
-# target to generate assembly for a file
-Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.s:
-	$(MAKE) -f CMakeFiles/libcommon.dir/build.make CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.s
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_host.c.s
-
-Users/me/xc5/open64/osprey/common/com/x8664/config_platform.o: Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o
-
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_platform.o
-
-# target to build an object file
-Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o:
-	$(MAKE) -f CMakeFiles/libcommon.dir/build.make CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.o
-
-Users/me/xc5/open64/osprey/common/com/x8664/config_platform.i: Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.i
-
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_platform.i
-
-# target to preprocess a source file
-Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.i:
-	$(MAKE) -f CMakeFiles/libcommon.dir/build.make CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.i
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.i
-
-Users/me/xc5/open64/osprey/common/com/x8664/config_platform.s: Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.s
-
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_platform.s
-
-# target to generate assembly for a file
-Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.s:
-	$(MAKE) -f CMakeFiles/libcommon.dir/build.make CMakeFiles/libcommon.dir/Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.s
-.PHONY : Users/me/xc5/open64/osprey/common/com/x8664/config_platform.c.s
-
 Users/me/xc5/open64/osprey/ir_tools/ir_a2b.o: Users/me/xc5/open64/osprey/ir_tools/ir_a2b.cxx.o
 
 .PHONY : Users/me/xc5/open64/osprey/ir_tools/ir_a2b.o
@@ -226,13 +159,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... ir_b2a"
-	@echo "... libcommon"
-	@echo "... Users/me/xc5/open64/osprey/common/com/x8664/config_host.o"
-	@echo "... Users/me/xc5/open64/osprey/common/com/x8664/config_host.i"
-	@echo "... Users/me/xc5/open64/osprey/common/com/x8664/config_host.s"
-	@echo "... Users/me/xc5/open64/osprey/common/com/x8664/config_platform.o"
-	@echo "... Users/me/xc5/open64/osprey/common/com/x8664/config_platform.i"
-	@echo "... Users/me/xc5/open64/osprey/common/com/x8664/config_platform.s"
 	@echo "... Users/me/xc5/open64/osprey/ir_tools/ir_a2b.o"
 	@echo "... Users/me/xc5/open64/osprey/ir_tools/ir_a2b.i"
 	@echo "... Users/me/xc5/open64/osprey/ir_tools/ir_a2b.s"

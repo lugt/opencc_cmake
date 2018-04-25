@@ -8,34 +8,6 @@ set(CMAKE_DEPENDS_CHECK_CXX
   )
 set(CMAKE_CXX_COMPILER_ID "AppleClang")
 
-# Preprocessor definitions for this target.
-set(CMAKE_TARGET_DEFINITIONS_CXX
-  "DEBUG_IR"
-  "IR_TOOLS"
-  "Insist_On"
-  "KEY"
-  "OSP_OPT"
-  "PATHSCALE_MERGE"
-  "PSC_TO_OPEN64"
-  "SHARED_BUILD"
-  "TARG_X8664"
-  "VENDOR_OSP"
-  "_GNU_SOURCE"
-  "_LANGUAGE_C_PLUS_PLUS"
-  "_LONGLONG"
-  "_LP64"
-  "_MIPSEL"
-  "_MIPS_SZINT=32"
-  "_MIPS_SZLONG=64"
-  "_MIPS_SZPTR=64"
-  "_NEW_SYMTAB"
-  "_NOTHREADS"
-  "_SGI_SOURCE"
-  "__GNU_BUG_WORKAROUND"
-  "__MIPS_AND_IA64_ELF_H"
-  "__STDC_LIMIT_MACROS"
-  )
-
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/Users/me/xc5/open64/osprey/ir_tools"
@@ -47,9 +19,10 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/Users/me/xc5/open64/osprey/include"
   "/Users/me/xc5/open64/osprey/macos/include"
   "/Users/me/xc5/open64/osprey/targets"
-  "/Users/me/xc5/open64/osprey/targets/include/libelf"
   "/Users/me/xc5/open64/osprey/targets/include"
+  "/Users/me/xc5/open64/osprey/libdwarf/libdwarf"
   "/usr/local/Cellar/libelf/0.8.13_1/include/libelf"
+  "/include"
   )
 
 # Targets to which this target links.
