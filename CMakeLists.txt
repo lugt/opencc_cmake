@@ -1,17 +1,16 @@
-cmake_minimum_required(VERSION 3.4)
+Acmake_minimum_required(VERSION 3.4)
 project(osprey)
 
 set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_C_STANDARD 99)
 
-# Global DIR
+##### Global DIR
 
 set(OSPREY_SRC_DIR /Users/me/xc5/open64/osprey)
-set(BUILD_DIR /Users/me/xc5/cmake-builder)
+# set(BUILD_DIR /Users/me/xc5/cmake-builder)
 
 
-
-# LOCAL Source Directories
+#### LOCAL Source Directories
 
 set(IR_TOOLS_SRC_DIR ${OSPREY_SRC_DIR}/ir_tools)
 
@@ -23,19 +22,19 @@ set(BE_COM_DIR ${OSPREY_SRC_DIR}/be/com)
 set(BE_OPT_DIR ${OSPREY_SRC_DIR}/be/opt)
 set(COMMON_UTIL_DIR ${OSPREY_SRC_DIR}/common/util)
 set(COMMON_COM_DIR ${OSPREY_SRC_DIR}/common/com)
-# set(COMMON_COM_TARG_DIR ${OSPREY_SRC_DIR}/common/com/${BUI})
-set(BUILD_BASE ${OSPREY_SRC_DIR}/com/com})
+set(BUILD_BASE ${OSPREY_SRC_DIR})
 
 
 
-# Global Variables
+##### Global Variables
 
 option(BUILD_TARGET_X8664 "Is Target X8664 " ON)
 if(BUILD_TARGET_X8664)
-    set(TARGET_DEF ${TARGET_DEF} __MIPS_AND_IA64_ELF_H)
+    set(TARGET_DEF ${TARGET_DEF} -D__MIPS_AND_IA64_ELF_H)
     set(BUILD_TARGET_PREFIX x8664)
 endif()
 
+set(COMMON_COM_TARG_DIR ${OSPREY_SRC_DIR}/common/com/${BUILD_TARGET_PREFIX})
 set(COMMON_BUILD_SRC ${TARGET_DIR})
 
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -55,7 +54,8 @@ set(HOST_INC_DIR
         ${TARGET_DIR}
         ${TARGET_DIR}/include
 	${OSPREY_SRC_DIR}/libdwarf/libdwarf
-        /usr/local/Cellar/libelf/0.8.13_1/include/libelf
+	${OSPREY_SRC_DIR}/libelf/lib
+#        /usr/local/Cellar/libelf/0.8.13_1/include/libelf
         /usr/include
 	/include)
 
@@ -65,6 +65,7 @@ set(HOST_CXX_FLAG -D_LANGUAGE_C_PLUS_PLUS -fpermissive)
 set(HOST_COMPILER_OPT  -shared-libgcc -m64 -mtune=generic -march=x86-64
   -funsigned-char -fPIC -fstack-protector-strong -Wformat -Wformat-security -Wno-constant-conversion
   -Wno-c++11-compat-deprecated-writable-strings -Wno-dangling-else -Wno-array-bounds -Wno-return-type)
+
 set(HOST_DEF
 	-D_GNU_SOURCE
         #-DBUILD_OS_DARWIN
@@ -86,8 +87,8 @@ set(HOST_DEF
         -DPATHSCALE_MERGE
         -DPSC_TO_OPEN64
         -DSHARED_BUILD
-        -D__GNU_BUG_WORKAROUND
-        -D__MIPS_AND_IA64_ELF_H
+	-D__GNU_BUG_WORKAROUND
+	${TARGET_DEF}
         -D_MIPSEL
         -D_LONGLONG
         -D_MIPS_SZINT=32
@@ -100,11 +101,13 @@ if(DEBUG)
 endif()
 
       
-#Source File Locating
+##### Shared Source File
+
+
+set(COMMON_COM_TARG_SRC )
 
 set(COMMON_COM_CXX_SRC
 config.cxx
-config_elf_targ.cxx
 const.cxx
 dwarf_DST.cxx
 dwarf_DST_dump.cxx
@@ -131,7 +134,7 @@ wutil.cxx
 xstats.cxx
 intrn_info.cxx)
 
-set(BE_COM_SRCS
+set(BE_COM_SRC
 wssa_defs.cxx
 wssa_sym.cxx
 wssa_mgr.cxx
@@ -139,35 +142,108 @@ wssa_wn.cxx
 wssa_io.cxx
 wssa_utils.cxx )
 
-set(COMMON_COM_TARG_CXX_SRCS
+set(COMMON_COM_TARG_CXX_SRC
 config_targ.cxx
+config_elf_targ.cxx
 targ_const.cxx
 targ_sim.cxx)
 
 set(COMMON_COM_TARG_SRC
-#${COMMON_COM_DIR}/${BUILD_TARGET_PREFIX}/config_host.c
-#${COMMON_COM_DIR}/${BUILD_TARGET_PREFIX}/config_platform.c
+  config_host.c
+  config_platform.c
 )
 
-# In total
 
-set(CFILES
-${COMMON_COM_SRC}
-${COMMON_COM_TARG_SRC} )
+####  Local Source Files
 
-set(CXXFILES
-${COMMON_COM_CXX_SRC}
-${COMMON_COM_TARG_CXX_SRCS}
-${BE_COM_SRCS})
+aux_source_directory(${IR_TOOLS_SRC_DIR} IR_TOOLS_SRC_FOUND)
 
       
-#Exec, Library Definition
+####Exec, Library Definition
 
 set(LOCAL_INC_DIR )
 set(LOCAL_DEF )
 set(LOCAL_COMPILER_OPT )
 set(LOCAL_C_OPT )
 set(LOCAL_CPP_OPT )
+
+
+foreach(ONE_C_FILE IN LISTS COMMON_COM_SRC)
+  list(APPEND COMMON_SRC ${COMON_COM_DIR}/${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_SRC)
+  list(APPEND COMMON_SRC ${COMMON_COM_DIR}/x8664/${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS COMMON_COM_CXX_SRC)
+  list(APPEND COMMON_SRC ${COMMON_COM_DIR}/${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_CXX_SRC)
+  list(APPEND COMMON_SRC ${COMMON_COM_DIR}/x8664/${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS BE_COM_SRC)
+  list(APPEND COMMON_SRC ${BE_COM_DIR}/${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS IR_TOOLS_SRC_FOUND)
+  list(APPEND IR_TOOLS_SRC ${ONE_C_FILE})
+endforeach()
+
+#set(IR_TOOLS_SRC
+#  ${IR_TOOLS_SRC_DIR}/ir_a2b.cxx)
+#message(WARNING This is IR_TOOLS_SRC : ${IR_TOOLS_SRC})
+
+
+
+
+
+#### Library - CommonUtils
+
+add_library(libcomutils
+  ${SHARED_BUILD}
+#  ${COMMON_LIB_SOURCE}
+#  ${CFILES}
+#  ${CXXFILES}
+  ${COMMON_SRC}
+)
+target_compile_options(libcomutils PUBLIC ${TEMP_C_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMPLER_OPT} ${HOST_C_OPT} ${LOCAL_C_OPT})
+target_include_directories(libcomutils PUBLIC ${HOST_INC_DIR} ${LOCAL_INC_DIR})
+target_compile_definitions(libcomutils PUBLIC ${IR_TOOLS_DEF} ${HOST_DEF} ${LOCAL_DEF})
+
+
+
+
+
+
+#### Saving the environment
+
+#set(TEMP_C_OPT ${CMAKE_C_FLAGS})
+#set(TEMP_CXX_OPT ${CMAKE_CXX_FLAGS})
+#set(CMAKE_C_FLAGS ${TEMP_C_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMPLER_OPT} ${HOST_C_OPT} ${LOCAL_C_OPT})
+#set(CMAKE_CXX_FLAGS ${TEMP_CXX_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMPLER_OPT} ${HOST_CXX_OPT} ${LOCAL_CXX_OPT})
+
+add_executable(ir ${IR_TOOLS_SRC})
+target_compile_options(ir PUBLIC ${TEMP_C_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMPLER_OPT} ${HOST_C_OPT} ${LOCAL_C_OPT})
+target_include_directories(ir PUBLIC ${HOST_INC_DIR} ${LOCAL_INC_DIR})
+target_compile_definitions(ir PUBLIC ${IR_TOOLS_DEF} ${HOST_DEF} ${LOCAL_DEF})
+
+#target_link_libraries(ir_b2a libcomutils)
+# -- backup --
+#add_headers_and_sources(ir_b2a $)
+
+# In total
+
+#set(CFILES
+#${COMMON_COM_SRC}
+#${COMMON_COM_TARG_SRC} )
+
+#set(CXXFILES
+#${COMMON_COM_CXX_SRC}
+#${COMMON_COM_TARG_CXX_SRC}
+#${BE_COM_SRC})
 
 
 # Targets
@@ -177,40 +253,4 @@ set(LOCAL_CPP_OPT )
 #  ${COMMON_COM_TARG_SRC}
 #)
 
-set(IR_TOOLS_SRC ${IR_TOOLS_SRC_DIR}/ir_a2b.cxx)
-
-
-# 1. libcomutil
-# -- >include
-# 2. ir_tools
-
-
-#add_library(libcomutils
-#  ${SHARED_BUILD}
-#  ${COMMON_LIB_SOURCE}
-#  ${CFILES}
-#  ${CXXFILES})
-
-
-# Saving the environment
-
-#set(TEMP_C_OPT ${CMAKE_C_FLAGS})
-#set(TEMP_CXX_OPT ${CMAKE_CXX_FLAGS})
-#set(CMAKE_C_FLAGS ${TEMP_C_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMPLER_OPT} ${HOST_C_OPT} ${LOCAL_C_OPT})
-#set(CMAKE_CXX_FLAGS ${TEMP_CXX_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMPLER_OPT} ${HOST_CXX_OPT} ${LOCAL_CXX_OPT})
-
-add_executable(ir_b2a ${IR_TOOLS_SRC})
-target_compile_options(ir_b2a PUBLIC ${TEMP_C_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMPLER_OPT} ${HOST_C_OPT} ${LOCAL_C_OPT})
-target_include_directories(ir_b2a PUBLIC ${HOST_INC_DIR} ${LOCAL_INC_DIR})
-target_compile_definitions(ir_b2a PUBLIC ${IR_TOOLS_DEF} ${HOST_DEF} ${LOCAL_DEF})
-
-#target_link_libraries(ir_b2a libcomutils)
-
-
-
-
-# -- backup --
-
-
-
-#add_headers_and_sources(ir_b2a $)
+#set(IR_TOOLS_SRC )
