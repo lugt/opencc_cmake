@@ -63,7 +63,8 @@ set(HOST_INC_DIR
 set(HOST_C_FLAG -D_LANGUAGE_C)
 set(HOST_CXX_FLAG -D_LANGUAGE_C_PLUS_PLUS -fpermissive)
 set(HOST_COMPILER_OPT  -shared-libgcc -m64 -mtune=generic -march=x86-64
-  -funsigned-char -fPIC -fstack-protector-strong -Wformat -Wformat-security)
+  -funsigned-char -fPIC -fstack-protector-strong -Wformat -Wformat-security -Wno-constant-conversion
+  -Wno-c++11-compat-deprecated-writable-strings -Wno-dangling-else -Wno-array-bounds -Wno-return-type)
 set(HOST_DEF
 	-D_GNU_SOURCE
         #-DBUILD_OS_DARWIN
@@ -201,7 +202,7 @@ set(IR_TOOLS_SRC ${IR_TOOLS_SRC_DIR}/ir_a2b.cxx)
 add_executable(ir_b2a ${IR_TOOLS_SRC})
 target_compile_options(ir_b2a PUBLIC ${TEMP_C_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMPLER_OPT} ${HOST_C_OPT} ${LOCAL_C_OPT})
 target_include_directories(ir_b2a PUBLIC ${HOST_INC_DIR} ${LOCAL_INC_DIR})
-target_compile_definitions(ir_b2a PUBLIC ${IR_TOOLS_DEF} ${LOCAL_DEF})
+target_compile_definitions(ir_b2a PUBLIC ${IR_TOOLS_DEF} ${HOST_DEF} ${LOCAL_DEF})
 
 #target_link_libraries(ir_b2a libcomutils)
 
