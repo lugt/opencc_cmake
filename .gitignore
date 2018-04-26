@@ -1,3 +1,7 @@
 CMakeFiles
+**/CMakeFiles
 cmake-build-debug
+**/cmake-build-debug
 *~
+**/*~
+global/dir.cmake
