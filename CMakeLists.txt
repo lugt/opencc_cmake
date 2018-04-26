@@ -5,22 +5,22 @@ set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_C_STANDARD 99)
 
 #Global DIR
-include(varib/dir.cmake)
+include(global/dir.cmake)
 
 #Global VAR
-include(varib/global.cmake)
+include(global/global.cmake)
 
 #Global SRC
-include(varib/sharedsf.cmake)
+include(global/sharedsf.cmake)
 
 #Local VAR
-include(varib/ela.cmake)
+include(irtools/ela.cmake)
 
 #Local DIR
-include(varib/local.cmake)
+include(irtools/local.cmake)
 
 #Local Source
-include(varib/localsf.cmake)
+include(irtools/localsf.cmake)
 
 #Making Progess
-include(varib/saveenv.cmake)
+include(irtools/saveenv.cmake)
