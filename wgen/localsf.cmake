@@ -1,5 +1,111 @@
-aux_source_directory(${WGEN_DIR} WGEN_SRC_FOUND)
+#aux_source_directory(${WGEN_DIR} WGEN_SRC_FOUND)
 
-foreach(ONE_C_FILE IN LISTS WGEN_SRC_FOUND)
+
+SET(FE_C_SRCS              
+    main.c         	
+    varasm.c		
+    c_int_model.c       
+)
+SET(FE_CXX_SRCS            
+    wgen_misc.cxx       
+    wgen_expr.cxx       
+    wgen_stmt.cxx       
+    wgen_decl.cxx       
+    wgen_dst.cxx        
+    wgen_spin_symbol.cxx 
+    wgen_tracing.cxx
+)
+SET(OPENMP_SRCS            
+    omp_directive.cxx   
+    wgen_omp_check_stack.cxx 
+    wgen_omp_directives.cxx
+)
+SET(COMMON_COM_CXX_SRCS    
+   config.cxx           
+   const.cxx            
+   controls.cxx         
+   dwarf_DST.cxx                
+   dwarf_DST_dump.cxx   
+   dwarf_DST_mem.cxx    
+   dwarf_DST_producer.cxx 
+   err_host.cxx         
+   glob.cxx             
+   intrn_info.cxx       
+   ir_bcom.cxx          
+   ir_bwrite.cxx                
+   ir_reader.cxx                
+   irbdata.cxx          
+   mtypes.cxx           
+   opcode.cxx           
+   opcode_core.cxx      
+   pu_info.cxx          
+   strtab.cxx           
+   symtab.cxx           
+   symtab_verify.cxx    
+   ttype.cxx            
+   wn.cxx               
+   wn_map.cxx           
+   wn_pragmas.cxx       
+   wn_simp.cxx          
+   wn_util.cxx          
+   wutil.cxx            
+   xstats.cxx
+)
+SET(COMMON_COM_TARG_SRCS   
+   config_host.c                
+   config_platform.c
+)
+SET(COMMON_COM_TARG_CXX_SRCS  
+   config_targ.cxx      
+   config_elf_targ.cxx  
+   targ_const.cxx       
+   targ_sim.cxx
+)
+SET(FRONT_END_C_SRCS               
+   ${COMMON_UTIL_SRCS}          
+   ${COMMON_COM_SRCS}           
+   ${COMMON_COM_TARG_SRCS}      
+   ${FE_C_SRCS}
+)
+SET(FRONT_END_CXX_SRCS             
+   ${COMMON_COM_CXX_SRCS}       
+   ${COMMON_COM_TARG_CXX_SRCS}  
+   ${FE_CXX_SRCS}
+)
+
+
+
+
+
+foreach(ONE_C_FILE IN LISTS FE_C_SRCS )
   list(APPEND WGEN_SRC ${ONE_C_FILE})
 endforeach()
+
+foreach(ONE_C_FILE IN LISTS FE_CXX_SRCS )
+  list(APPEND WGEN_SRC ${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS OPENMP_SRCS )
+  list(APPEND WGEN_SRC ${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS COMMON_COM_CXX_SRCS )
+  list(APPEND WGEN_SRC ${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_SRCS )
+  list(APPEND WGEN_SRC ${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_CXX_SRCS )
+  list(APPEND WGEN_SRC ${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS FRONT_END_C_SRCS )
+  list(APPEND WGEN_SRC ${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS FRONT_END_CXX_SRCS )
+  list(APPEND WGEN_SRC ${ONE_C_FILE})
+endforeach()
+
