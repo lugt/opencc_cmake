@@ -36,7 +36,7 @@ set(HOST_COMPILER_OPT  -shared-libgcc -m64 -mtune=generic -march=x86-64
 
 set(HOST_DEF
 	-D_GNU_SOURCE
-        #-DBUILD_OS_DARWIN
+        -DBUILD_OS_DARWIN
         -D_SGI_SOURCE
         -D__GNU_BUG_WORKAROUND
         -D_NOTHREADS
@@ -55,7 +55,6 @@ set(HOST_DEF
         -DPATHSCALE_MERGE
         -DPSC_TO_OPEN64
         -DSHARED_BUILD
-	-D__GNU_BUG_WORKAROUND
 	${TARGET_DEF}
         -D_MIPSEL
         -D_LONGLONG
