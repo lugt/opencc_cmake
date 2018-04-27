@@ -61,51 +61,51 @@ SET(COMMON_COM_TARG_CXX_SRCS
    targ_const.cxx       
    targ_sim.cxx
 )
-SET(FRONT_END_C_SRCS               
-   ${COMMON_UTIL_SRCS}          
-   ${COMMON_COM_SRCS}           
-   ${COMMON_COM_TARG_SRCS}      
-   ${FE_C_SRCS}
-)
-SET(FRONT_END_CXX_SRCS             
-   ${COMMON_COM_CXX_SRCS}       
-   ${COMMON_COM_TARG_CXX_SRCS}  
-   ${FE_CXX_SRCS}
-)
+#SET(FRONT_END_C_SRCS               
+#   ${COMMON_UTIL_SRCS}          
+#   ${COMMON_COM_SRCS}           
+#   ${COMMON_COM_TARG_SRCS}      
+#   ${FE_C_SRCS}
+#)
+#SET(FRONT_END_CXX_SRCS             
+#   ${COMMON_COM_CXX_SRCS}       
+#   ${COMMON_COM_TARG_CXX_SRCS}  
+#   ${FE_CXX_SRCS}
+#)
 
 
 
 
 
 foreach(ONE_C_FILE IN LISTS FE_C_SRCS )
-  list(APPEND WGEN_SRC ${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${Wgen_Dir}/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS FE_CXX_SRCS )
-  list(APPEND WGEN_SRC ${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${Wgen_Dir}/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS OPENMP_SRCS )
-  list(APPEND WGEN_SRC ${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${COMMON_COM_DIR}${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS COMMON_COM_CXX_SRCS )
-  list(APPEND WGEN_SRC ${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${COMMON_COM_DIR}${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_SRCS )
-  list(APPEND WGEN_SRC ${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${COMMON_COM_DIR}${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_CXX_SRCS )
-  list(APPEND WGEN_SRC ${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${COMMON_COM_DIR}${ONE_C_FILE})
 endforeach()
 
-foreach(ONE_C_FILE IN LISTS FRONT_END_C_SRCS )
-  list(APPEND WGEN_SRC ${ONE_C_FILE})
-endforeach()
+#foreach(ONE_C_FILE IN LISTS FRONT_END_C_SRCS )
+#  list(APPEND WGEN_SRC ${ONE_C_FILE})
+#endforeach()
 
-foreach(ONE_C_FILE IN LISTS FRONT_END_CXX_SRCS )
-  list(APPEND WGEN_SRC ${ONE_C_FILE})
-endforeach()
+#foreach(ONE_C_FILE IN LISTS FRONT_END_CXX_SRCS )
+#  list(APPEND WGEN_SRC ${ONE_C_FILE})
+#endforeach()
 
