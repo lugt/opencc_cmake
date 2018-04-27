@@ -30,7 +30,7 @@ set(HOST_INC_DIR
 
 set(HOST_C_FLAG -D_LANGUAGE_C)
 set(HOST_CXX_FLAG -D_LANGUAGE_C_PLUS_PLUS -fpermissive)
-set(HOST_COMPILER_OPT  -shared-libgcc -m64 -mtune=generic -march=x86-64
+set(HOST_COMPILER_OPT -m64 -mtune=generic -march=x86-64
   -funsigned-char -fPIC -fstack-protector-strong -Wformat -Wformat-security -Wno-constant-conversion
   -Wno-c++11-compat-deprecated-writable-strings -Wno-dangling-else -Wno-array-bounds -Wno-return-type)
 
@@ -41,7 +41,8 @@ set(HOST_DEF
         -D__GNU_BUG_WORKAROUND
         -D_NOTHREADS
         -DVENDOR_OSP
-        -DInsist_On
+	-DNO_VALGRIND
+	-DInsist_On
         -DDEBUG_IR
         -DPSC_TO_OPEN64
         -DSHARED_BUILD
