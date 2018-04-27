@@ -23,8 +23,6 @@ set(HOST_INC_DIR
         ${OSPREY_SRC_DIR}/macos/include
         ${TARGET_DIR}
         ${TARGET_DIR}/include
-	${OSPREY_SRC_DIR}/libdwarf/libdwarf
-	${OSPREY_SRC_DIR}/libelf/lib
 #        /usr/local/Cellar/libelf/0.8.13_1/include/libelf
         /usr/include
 	/include)
