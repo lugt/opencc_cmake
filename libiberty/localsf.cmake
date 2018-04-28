@@ -1,7 +1,4 @@
-#aux_source_directory(${WGEN_DIR} WGEN_SRC_FOUND)
-
-
-SET(CFILES
+SET(IBERTY_C_SRC
     alloca.c
     argv.c
     choose-temp.c
@@ -40,64 +37,27 @@ SET(CFILES
     xstrerror.c
 )
 
-SET(INSTALLED_HEADERS
-    $(INCDIR)/ansidecl.h
-    $(INCDIR)/demangle.h
-    $(INCDIR)/dyn-string.h
-    $(INCDIR)/fibheap.h
-    $(INCDIR)/floatformat.h
-    $(INCDIR)/hashtab.h
-        $(INCDIR)/libiberty.h
-        $(INCDIR)/objalloc.h
-$(INCDIR)/partition.h
-$(INCDIR)/safe-ctype.h
-$(INCDIR)/sort.h
-$(INCDIR)/splay-tree.h
-$(INCDIR)/ternary.h
+SET(IBERTY_INC_SRC
+    ansidecl.h
+    demangle.h
+    dyn-string.h
+    fibheap.h
+    floatformat.h
+    hashtab.h
+    libiberty.h
+    objalloc.h
+    partition.h
+    safe-ctype.h
+    sort.h
+    splay-tree.h
+    ternary.h
 )
 
-
-
-#SET(FE_CXX_SRCS            
-#    )
-#SET(OPENMP_SRCS            
-#    )
-#  
-#SET(COMMON_COM_CXX_SRCS    
-#)
-#SET(COMMON_COM_TARG_SRCS   
-#)
-#SET(COMMON_COM_TARG_CXX_SRCS  
-#   config_targ.cxx      
-#   targ_const.cxx       
-#   targ_sim.cxx
-#)
-#SET(FRONT_END_C_SRCS               
-#   ${COMMON_UTIL_SRCS}          
-#   ${COMMON_COM_SRCS}           
-#   ${COMMON_COM_TARG_SRCS}      
-#   ${FE_C_SRCS}
-#)
-#SET(FRONT_END_CXX_SRCS             
-#   ${COMMON_COM_CXX_SRCS}       
-#   ${COMMON_COM_TARG_CXX_SRCS}  
-#   ${FE_CXX_SRCS}
-#)
-
-
-
-
-
-foreach(ONE_C_FILE IN LISTS CFILES )
-  list(APPEND LIBIBERTY_DIR/${ONE_C_FILE})
+foreach(ONE_C_FILE IN LISTS IBERTY_C_SRC)
+  list(APPEND IBERTY_SRC ${LIBIBERTY_DIR}/${ONE_C_FILE})
 endforeach()
 
 
-foreach(ONE_C_FILE IN LISTS INSTALLED_HEADERS )
-  list(APPEND LIBIBERTY_H_DIR/${ONE_C_FILE})
+foreach(ONE_C_FILE IN LISTS IBERTY_INC_SRC)
+  list(APPEND IBERTY_SRC ${IBERTY_INC_DIR}/${ONE_C_FILE})
 endforeach()
-
-#foreach(ONE_C_FILE IN LISTS FRONT_END_CXX_SRCS )
-#  list(APPEND WGEN_SRC ${ONE_C_FILE})
-#endforeach()
-

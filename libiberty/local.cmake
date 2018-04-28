@@ -6,7 +6,7 @@ set(LIB_BUILD_DIR2 ${BUILD_DIR}/target_lib2)
 
 set(LIBIBERTY_DIR ${OSPREY_SRC_DIR}/libiberty)
 set(INCDIR ${OSPREY_SRC_DIR}/include/gnu)
-set(LIBIBERTY_H_DIR ${OSPREY_SRC_DIR}/include/gnu)
+set(LIBIBERTY_INC_DIR ${OSPREY_SRC_DIR}/include/gnu)
 
 set(BE_COM_DIR ${OSPREY_SRC_DIR}/be/com)
 set(BE_OPT_DIR ${OSPREY_SRC_DIR}/be/opt)
