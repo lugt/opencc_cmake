@@ -21,7 +21,7 @@ mtypes.cxx
 opcode.cxx
 opcode_core.cxx
 pu_info.cxx
-strtab.cxx
+#strtab.cxx
 symtab.cxx
 symtab_verify.cxx
 wn.cxx
@@ -45,7 +45,8 @@ set(COMMON_COM_TARG_CXX_SRC
 config_targ.cxx
 config_elf_targ.cxx
 targ_const.cxx
-targ_sim.cxx)
+#targ_sim.cxx
+)
 
 set(COMMON_COM_TARG_SRC
   config_host.c

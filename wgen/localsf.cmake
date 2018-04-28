@@ -20,7 +20,7 @@ SET(OPENMP_SRCS
     omp_directive.cxx   
     wgen_omp_check_stack.cxx 
     wgen_omp_directives.cxx
-    )
+)
   
 SET(COMMON_COM_CXX_SRCS    
    config.cxx           
