@@ -1,11 +1,9 @@
-#aux_source_directory(${WGEN_DIR} WGEN_SRC_FOUND)
-
-
 SET(FE_C_SRCS              
     main.c         	
     varasm.c		
     c_int_model.c       
 )
+
 SET(FE_CXX_SRCS            
     wgen_misc.cxx       
     wgen_expr.cxx       
@@ -41,7 +39,7 @@ SET(COMMON_COM_CXX_SRCS
    opcode.cxx           
    opcode_core.cxx      
    pu_info.cxx          
-   strtab.cxx           
+ #  strtab.cxx           
    symtab.cxx           
    symtab_verify.cxx    
    ttype.cxx            
@@ -53,30 +51,18 @@ SET(COMMON_COM_CXX_SRCS
    wutil.cxx            
    xstats.cxx
 )
+
 SET(COMMON_COM_TARG_SRCS   
    config_host.c                
    config_platform.c
 )
+
 SET(COMMON_COM_TARG_CXX_SRCS  
    config_targ.cxx      
    config_elf_targ.cxx  
    targ_const.cxx       
-   targ_sim.cxx
+ #  targ_sim.cxx
 )
-#SET(FRONT_END_C_SRCS               
-#   ${COMMON_UTIL_SRCS}          
-#   ${COMMON_COM_SRCS}           
-#   ${COMMON_COM_TARG_SRCS}      
-#   ${FE_C_SRCS}
-#)
-#SET(FRONT_END_CXX_SRCS             
-#   ${COMMON_COM_CXX_SRCS}       
-#   ${COMMON_COM_TARG_CXX_SRCS}  
-#   ${FE_CXX_SRCS}
-#)
-
-
-
 
 
 foreach(ONE_C_FILE IN LISTS FE_C_SRCS )
@@ -102,12 +88,3 @@ endforeach()
 foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_CXX_SRCS )
   list(APPEND WGEN_SRC ${COMMON_COM_DIR}/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
 endforeach()
-
-#foreach(ONE_C_FILE IN LISTS FRONT_END_C_SRCS )
-#  list(APPEND WGEN_SRC ${ONE_C_FILE})
-#endforeach()
-
-#foreach(ONE_C_FILE IN LISTS FRONT_END_CXX_SRCS )
-#  list(APPEND WGEN_SRC ${ONE_C_FILE})
-#endforeach()
-

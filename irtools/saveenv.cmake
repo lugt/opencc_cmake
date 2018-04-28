@@ -10,6 +10,13 @@ target_compile_options(ir PUBLIC ${TEMP_C_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMP
 target_include_directories(ir PUBLIC ${HOST_INC_DIR} ${LOCAL_INC_DIR})
 target_compile_definitions(ir PUBLIC ${IR_TOOLS_DEF} ${HOST_DEF} ${LOCAL_DEF})
 
+
+add_executable(ir_size )
+add_executable(ir_a2b )
+add_executable(ir_walker )
+add_executable( )
+
+
 #target_link_libraries(ir_b2a libcomutils)
 # -- backup --
 #add_headers_and_sources(ir_b2a $)
