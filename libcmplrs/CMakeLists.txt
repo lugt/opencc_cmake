@@ -13,14 +13,7 @@ include(../global/global.cmake)
 #Global SRC
 include(../global/sharedsf.cmake)
 
-#Local VAR
-include(ela.cmake)
-
-#Local DIR
-include(local.cmake)
-
-#Local Source
-include(localsf.cmake)
+#Local include(localsf.cmake)
 
 #Making Progess
 include(saveenv.cmake)
