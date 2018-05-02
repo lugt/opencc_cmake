@@ -32,7 +32,8 @@ set(HOST_C_FLAG -D_LANGUAGE_C)
 set(HOST_CXX_FLAG -D_LANGUAGE_C_PLUS_PLUS -fpermissive)
 set(HOST_COMPILER_OPT -m64 -mtune=generic -march=x86-64
   -funsigned-char -fPIC -fstack-protector-strong -Wformat -Wformat-security -Wno-constant-conversion
-  -Wno-c++11-compat-deprecated-writable-strings -Wno-dangling-else -Wno-array-bounds -Wno-return-type)
+  -Wno-c++11-compat-deprecated-writable-strings -Wno-dangling-else -Wno-array-bounds -Wno-return-type
+  -Wno-c++11-narrowing)
 
 set(HOST_DEF
 	-D_GNU_SOURCE

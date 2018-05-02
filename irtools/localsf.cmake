@@ -1,10 +1,3 @@
-#aux_source_directory(${IR_TOOLS_SRC_DIR} IR_TOOLS_SRC_FOUND)
-
-#foreach(ONE_C_FILE IN LISTS IR_TOOLS_SRC_FOUND)
-#  list(APPEND IR_TOOLS_SRC ${ONE_C_FILE})
-#endforeach()
-
-
 set(COMMON_COM_CXX_SRC
 config.cxx
 const.cxx
@@ -21,7 +14,7 @@ mtypes.cxx
 opcode.cxx
 opcode_core.cxx
 pu_info.cxx
-#strtab.cxx
+strtab.cxx
 symtab.cxx
 symtab_verify.cxx
 wn.cxx
@@ -72,3 +65,16 @@ endforeach()
 foreach(ONE_C_FILE IN LISTS BE_COM_SRC)
   list(APPEND IR_TOOLS_SRC ${BE_COM_DIR}/${ONE_C_FILE})
 endforeach()
+
+set(IR_A2B_SRC
+  ${IR_TOOLS_SRC_DIR}/ir_a2b.cxx
+)
+
+set(IR_SIZE_SRC
+  ${IR_TOOLS_SRC_DIR}/ir_size.cxx
+)
+
+set(IR_WALKER_SRC
+  ${IR_TOOLS_SRC_DIR}/ir_walker.cxx
+)
+

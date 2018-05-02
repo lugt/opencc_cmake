@@ -39,7 +39,7 @@ SET(COMMON_COM_CXX_SRCS
    opcode.cxx           
    opcode_core.cxx      
    pu_info.cxx          
- #  strtab.cxx           
+   strtab.cxx           
    symtab.cxx           
    symtab_verify.cxx    
    ttype.cxx            
@@ -61,7 +61,7 @@ SET(COMMON_COM_TARG_CXX_SRCS
    config_targ.cxx      
    config_elf_targ.cxx  
    targ_const.cxx       
- #  targ_sim.cxx
+   targ_sim.cxx
 )
 
 
