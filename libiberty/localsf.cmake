@@ -59,5 +59,5 @@ endforeach()
 
 
 foreach(ONE_C_FILE IN LISTS IBERTY_INC_SRC)
-  list(APPEND IBERTY_SRC ${IBERTY_INC_DIR}/${ONE_C_FILE})
+#  list(APPEND IBERTY_SRC ${LIBIBERTY_INC_DIR}/${ONE_C_FILE})
 endforeach()
