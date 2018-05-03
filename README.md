@@ -6,9 +6,9 @@
 - Extract the files from utils/changed.tar.gz into the open64 dir. (outside osprey dir)
 - Cheers!
 
-## 1. 
+## 1. Set your open64 dir path into global/dir.cmake
 
-
+You may copy the `dir.cmake.example` to `dir.cmake` and then edit the file
 
 
 ## 2. In the opencc_cmake dir,
