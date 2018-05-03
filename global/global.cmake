@@ -13,19 +13,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 set(HOST_INC_DIR
-        ${OSPREY_SRC_DIR}/ir_tools
-        ${OSPREY_SRC_DIR}/common/com
-        ${OSPREY_SRC_DIR}/common/com/x8664
-        ${OSPREY_SRC_DIR}/common/util
-        ${OSPREY_SRC_DIR}/be/com
-        ${OSPREY_SRC_DIR}/be/opt
-        ${OSPREY_SRC_DIR}/include
-        ${OSPREY_SRC_DIR}/macos/include
-        ${TARGET_DIR}
-        ${TARGET_DIR}/include
 #        /usr/local/Cellar/libelf/0.8.13_1/include/libelf
-        /usr/include
-	/include)
+/usr/include
+/include
+)
 
 
 set(HOST_C_FLAG -D_LANGUAGE_C)

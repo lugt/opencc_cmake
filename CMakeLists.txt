@@ -1,9 +1,28 @@
 cmake_minimum_required(VERSION 3.4)
 project(osprey)
 
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_STANDARD 99)
 
-add_subdirectory(libcomutils)
-add_subdirectory(irtools)
-add_subdirectory(wgen)
+
+set(GLOBAL_OSPREY_LIB
+  libcomutils
+  libcmplrs
+  libiberty
+  libspin
+)
+
+set(GLOBAL_OSPREY_TARG
+  irtools
+  wgen
+)
+
+
+
+foreach(ONE_TARG IN LISTS GLOBAL_OSPREY_LIB)
+  add_subdirectory(${ONE_TARG})
+endforeach()
+
+foreach(ONE_TARG IN LISTS GLOBAL_OSPREY_TARG)
+  add_subdirectory(${ONE_TARG})
+endforeach()

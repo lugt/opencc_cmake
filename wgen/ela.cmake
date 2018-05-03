@@ -1,35 +1,48 @@
 set(LOCAL_INC_DIR
+  ${OSPREY_SRC_DIR}/common/util
+  ${OSPREY_SRC_DIR}/common/com
+  ${OSPREY_SRC_DIR}/ir_tools
+  ${OSPREY_SRC_DIR}/be/com
+  ${OSPREY_SRC_DIR}/be/opt
+  ${OSPREY_SRC_DIR}/be/region
+  ${OSPREY_SRC_DIR}/include
+  ${OSPREY_SRC_DIR}/macos/include
+  ${OSPREY_SRC_DIR}/ipa/main/analyze
   ${OSPREY_SRC_DIR}/../libspin
   ${OSPREY_SRC_DIR}/libdwarf/libdwarf
+  ${OSPREY_SRC_DIR}/common/com/${GLOBAL_TARGET_PREFIX}
 #  ${OSPREY_SRC_DIR}/gnu/include
   ${BUILD_DIR}
   )
 set(LOCAL_DEF
 #  -DIN_GCC
 #  -DHAVE_CONFIG_H
-#  -DFRONT_END
+#  -DMONGOOSE_BE
+  -DFRONT_END
+  -DIR_TOOLS
 #  -DUSE_DECL_SRCPOS
   -DFE_GNU_4_2_0
 #  -DNEW_SYMTAB
-
-#  -DFRONT_END_C
-#  -DCFE -DCIL
+  -DFRONT_END_C
+#  -DCFE
+#  -DCIL
 #  -DDO_IL_LOWERING=0
 #  -DNO_USR_INCLUDE=TRUE
 #  -DAUTOMATIC_TEMPLATE_INSTANTIATION=0
 #  -DINSTANTIATION_BY_IMPLICIT_INCLUSION=0
 #  -DBACK_END_IS_C_GEN_BE=0
 #  -DMONGOOSE_CIF
+#  -DBACK_END
 
-#  -DSGI_RAG_BACKEND
+ # -DSGI_RAG_BACKEND
  # -DSGI_MONGOOSE
  # -DHANDLE_PRAGMA_WEAK
  # -DMIPSEL
  # -DNEW_INITIALIZER
- # -DIs_True_On
- # -DInsist_On
- # -DDEBUG=1
- # -DCHECKING=1
+  -DIs_True_On
+  -DInsist_On
+  -DDEBUG=1
+  -DCHECKING=1
   -DGPLUSPLUS_FE
 )
 
