@@ -12,7 +12,10 @@ set(LOCAL_INC_DIR
   ${TARGET_DIR}
   ${TARGET_DIR}/include
 )
-set(LOCAL_DEF -DMONGOOSE_BE)
+set(LOCAL_DEF
+  -DMONGOOSE_BE
+  -DIR_TOOLS
+  )
 set(LOCAL_COMPILER_OPT -Wno-c++11-narrowing
   -Wno-parentheses)
 set(LOCAL_C_OPT )

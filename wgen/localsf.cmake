@@ -8,11 +8,11 @@ SET(FE_CXX_SRCS
     wgen_misc.cxx       
     wgen_expr.cxx       
     wgen_stmt.cxx       
-    wgen_decl.cxx       
+    wgen_decl.cxx
     wgen_dst.cxx        
     wgen_spin_symbol.cxx 
     wgen_tracing.cxx
-    )
+)
   
 SET(OPENMP_SRCS            
     omp_directive.cxx   
@@ -47,10 +47,13 @@ SET(COMMON_COM_CXX_SRCS
    wn_map.cxx           
    wn_pragmas.cxx       
    wn_simp.cxx          
-   wn_util.cxx          
+#   wn_util.cxx          
    wutil.cxx            
    xstats.cxx
 )
+
+set(WGENUTIL_O_CXX_SRC
+  wn_util.cxx)
 
 SET(COMMON_COM_TARG_SRCS   
    config_host.c                
@@ -62,7 +65,12 @@ SET(COMMON_COM_TARG_CXX_SRCS
    config_elf_targ.cxx  
    targ_const.cxx       
    targ_sim.cxx
-)
+ )
+
+set(BE_COM_SRC
+  wssa_mgr.cxx
+  )
+ 
 
 
 foreach(ONE_C_FILE IN LISTS FE_C_SRCS )
@@ -88,3 +96,8 @@ endforeach()
 foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_CXX_SRCS )
   list(APPEND WGEN_SRC ${COMMON_COM_DIR}/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
 endforeach()
+
+
+foreach(ONE_C_FILE IN LISTS WGENUTIL_O_CXX_SRC)
+  list(APPEND WGENUTILO_SRC ${COMMON_COM_DIR}/${ONE_C_FILE})
+endforeach()  

@@ -39,7 +39,7 @@ set(HOST_DEF
         -DPSC_TO_OPEN64
         -DSHARED_BUILD
         -D_GNU_SOURCE
-        -DIR_TOOLS
+      #  -DIR_TOOLS
         -D_NEW_SYMTAB
         -D__STDC_LIMIT_MACROS
         -DTARG_X8664
