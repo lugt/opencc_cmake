@@ -14,7 +14,7 @@ add_executable(ir_a2b ${IR_A2B_SRC})
 
 set(IR_TARGETS
   ir_size
-  ir_a2b
+  ir_b2a
   #  ir_walker
 )
 
