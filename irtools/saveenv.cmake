@@ -9,7 +9,7 @@ target_compile_definitions(${IR_TOOL_MIDDLEWARE_NAME} PUBLIC ${IR_TOOLS_DEF} ${H
 
 
 add_executable(ir_size ${IR_SIZE_SRC})
-add_executable(ir_a2b ${IR_A2B_SRC})
+add_executable(ir_b2a ${IR_A2B_SRC})
 # add_executable(ir_walker ${IR_WALKER_SRC})
 
 set(IR_TARGETS
