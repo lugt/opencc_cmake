@@ -12,4 +12,4 @@ set(COMMON_UTIL_DIR ${OSPREY_SRC_DIR}/common/util)
 set(COMMON_COM_DIR ${OSPREY_SRC_DIR}/common/com)
 set(BUILD_BASE ${OSPREY_SRC_DIR})
 
-set(LIBSPIN_DIR ${OSPREY_SRC_DIR}/libspin)
+set(LIBSPIN_DIR ${OSPREY_SRC_DIR}/../libspin)
