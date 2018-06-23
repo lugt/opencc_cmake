@@ -62,26 +62,8 @@ endif()
 
 
 # Host(Building) Platform
-
-
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
 MESSAGE(STATUS "###################################")
-
 MESSAGE(STATUS "operation system is ${CMAKE_SYSTEM}")
-
 IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
   MESSAGE(STATUS "current platform: Linux ")
   set(BUILD_LINUX 1)

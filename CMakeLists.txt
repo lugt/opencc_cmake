@@ -15,6 +15,7 @@ set(GLOBAL_OSPREY_LIB
 set(GLOBAL_OSPREY_TARG
   irtools
   wgen
+  whirl2c
 )
 
 
