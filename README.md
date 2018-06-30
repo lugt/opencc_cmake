@@ -1,12 +1,22 @@
 # OPENCC - CMAKE Builder
 
 
-## Please do the following change to the original OPEN64 files
+## 0. Please do the following change to the original OPEN64 files
 
+### Recommended:
+
+- Using changed version - `n1` (new one)
+
+```
+    git clone https://github.com/lugt/open64 open64
+    git checkout -b n1
+```    
+
+### Alternative: you may use my changed files (Not Recommended)
 - Extract the files from utils/changed.tar.gz into the open64 dir. (outside osprey dir)
 - Cheers!
 
-## 1. Set your open64 dir path into global/dir.cmake
+## 1. Set your open64/osprey dir path into global/dir.cmake
 
 You may copy the `dir.cmake.example` to `dir.cmake` and then edit the file
 
@@ -51,12 +61,20 @@ inside cmake-build-debug, run `rm -r *`
 Run `git pull` in opencc_cmake directory.
 
 
-- Current Modules Available 
+# Current Modules Available 
 libcomutils
 libspin
 libcmplrs
 libiberty
 irtools
 
-- On the Edge
-wgen
+# On the Edge
+whirl2c be be/com be/be be/ipa be/
+
+# A bit later
+gcc8.1/fe
+
+
+# Wiki
+
+Please do checkout wiki to know more
