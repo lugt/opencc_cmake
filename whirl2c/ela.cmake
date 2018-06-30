@@ -27,6 +27,8 @@ set(LOCAL_DEF
   -DInsist_On
 )
 
+list(REMOVE_ITEM HOST_DEF -DTARG_64_DEF)
+
 set(LOCAL_COMPILER_OPT )
 set(LOCAL_C_OPT )
 set(LOCAL_CPP_OPT )

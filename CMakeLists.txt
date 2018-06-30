@@ -4,6 +4,7 @@ project(osprey)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_STANDARD 11)
 
+set(OPENCC_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(GLOBAL_OSPREY_LIB
   libcomutils
@@ -16,6 +17,7 @@ set(GLOBAL_OSPREY_TARG
   irtools
   wgen
   whirl2c
+  j2wgen
 )
 
 
