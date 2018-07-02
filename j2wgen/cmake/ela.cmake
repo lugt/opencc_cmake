@@ -1,5 +1,6 @@
 set(LOCAL_INC_DIR
   ${J2WGEN_SRC_DIR}
+  ${JSON_SRC_DIR}
   ${OSPREY_SRC_DIR}/../libspin
   ${OSPREY_SRC_DIR}/common/com/${BUILD_TARGET_PREFIX}
   ${OSPREY_SRC_DIR}/common/util/${BUILD_TARGET_PREFIX}

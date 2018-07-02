@@ -1,9 +1,12 @@
 option(BUILD_TARGET_X8664 "Is Target X8664 " ON)
 if(BUILD_TARGET_X8664)
+  message(STATUS "Target Platform: Building for x8664 ...")
   set(TARGET_DEF ${TARGET_DEF}
     -D__MIPS_AND_IA64_ELF_H
-    -DTARG_64_DEF)
+    -DTARG_64_DEF
+    -DTARG_X8664)
   set(BUILD_TARGET_PREFIX x8664)
+  set(TARGET_INC_DIR ${OPENCC_CMAKE_DIR}/x8664)
 endif()
 
 set(COMMON_COM_TARG_DIR ${OSPREY_SRC_DIR}/common/com/${BUILD_TARGET_PREFIX})
@@ -11,11 +14,12 @@ set(COMMON_BUILD_SRC ${TARGET_DIR})
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     #add_compile_options(-std=c++11)
-    message(STATUS "using GNU CXX")   
+    message(STATUS "GNU CXX: OK, using GNU CXX ...")   
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 set(HOST_INC_DIR
-#        /usr/local/Cellar/libelf/0.8.13_1/include/libelf
+  #        /usr/local/Cellar/libelf/0.8.13_1/include/libelf
+${TARGET_INC_DIR}
 /usr/include
 /include
 )

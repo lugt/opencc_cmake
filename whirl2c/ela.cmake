@@ -3,6 +3,7 @@ set(LOCAL_INC_DIR
   ${OSPREY_SRC_DIR}/common/util/${BUILD_TARGET_PREFIX}
   ${OSPREY_SRC_DIR}/common/util
   ${OSPREY_SRC_DIR}/common/com
+  ${OSPREY_SRC_DIR}/common/targ_info
   ${OSPREY_SRC_DIR}/common/targ_info/access
   ${OSPREY_SRC_DIR}/be/whirl2c
   ${OSPREY_SRC_DIR}/be
@@ -15,6 +16,7 @@ set(LOCAL_INC_DIR
   ${OSPREY_SRC_DIR}/include
   ${OSPREY_SRC_DIR}/macos/include
   ${OSPREY_SRC_DIR}/ipa/main/analyze
+  ${OSPREY_SRC_DIR}/ipa/common
   ${BUILD_DIR}
 )
 

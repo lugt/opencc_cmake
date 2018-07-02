@@ -1,7 +1,7 @@
-SET(JGEN_SRC_FILES
-  json2whirl.cxx
-  json2whirl.h
-)
+SET(JGEN_SRCS json2whirl.cxx)
+
+SET(JSON_SRCS
+  jsoncpp.cpp)
 
 SET(FE_C_SRCS              
     main.c         	
@@ -75,8 +75,11 @@ SET(COMMON_COM_TARG_CXX_SRCS
 set(BE_COM_SRC
   wssa_mgr.cxx
   )
- 
 
+
+foreach(ONE_C_FILE IN LISTS JSON_SRCS)
+  list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
+endforeach()
 
 foreach(ONE_C_FILE IN LISTS FE_C_SRCS )
   list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
@@ -107,6 +110,6 @@ foreach(ONE_C_FILE IN LISTS WGENUTIL_O_CXX_SRC)
   list(APPEND WGENUTILO_SRC ${COMMON_COM_DIR}/${ONE_C_FILE})
 endforeach()  
 
-foreach(ONE_C_FILE IN LISTS JGEN_SRC_FILES)
+foreach(ONE_C_FILE IN LISTS JGEN_SRCS)
   list(APPEND J2WGEN_SRC ${J2WGEN_SRC_DIR}/${ONE_C_FILE})
 endforeach()  
