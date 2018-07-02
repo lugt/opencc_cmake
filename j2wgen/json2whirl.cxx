@@ -149,6 +149,9 @@ void output_help(){
   std::cout << "       Jgen : Json to Whirl Generator      \n"<<
               " Further description please go to wiki/docs  " << std::endl;
   std::cout << " -  https://github.com/lugt/opencc_cmake   -" << std::endl;
+  std::cout << " -  Base:2018.07.1   WH:5.0     JS:18.06   -" << std::endl;
+  std::cout << "--------------------------------------------" << std::endl;
+  std::cout << "    Author : Jason Lu    -  lu.gt@163.com   " << std::endl;
   std::cout << "--------------------------------------------" << std::endl;
   std::cout << "Usage : jgen <INPUT_JSON_FILE> <OUTPUT_B_FILE>" << std::endl;
   std::cout << "Usage : jgen <INPUT_JSON_FILE> <OUTPUT_B_FILE> [... PARAMS]" << std::endl;

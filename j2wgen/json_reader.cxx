@@ -1,0 +1,4 @@
+
+class jgen_json{
+  
+}
