@@ -39,12 +39,13 @@ namespace JGEN{
     // 1. Get All Data Stored In 
     try{
     unsigned int count = root.size() - 1;
+    cout << "Root : Count : " << count << endl;
     for (unsigned int i = 0; i < count; ++i)
-      {
+    {
         string name = root[i]["name"].asString();
         int salary = root[i]["salary"].asInt();
         cout << "name: " << name << " salary: " << salary << endl;
-      }
+    }
     cout << "last msg: " << root[count].asString() << endl;
     cout << endl << endl;
     }catch(exception e){
