@@ -20,6 +20,8 @@ set(LOCAL_INC_DIR
   ${BUILD_DIR}
 )
 
+message(STATUS " JGEN Inc Dir : " ${LOCAL_INC_DIR})
+
 set(LOCAL_DEF
 #  -DIN_GCC
 #  -DHAVE_CONFIG_H

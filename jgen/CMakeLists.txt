@@ -13,11 +13,11 @@ include(../global/global.cmake)
 #Global SRC
 include(../global/sharedsf.cmake)
 
-#Local VAR
-include(cmake/ela.cmake)
-
 #Local DIR
 include(cmake/local.cmake)
+
+#Local VAR
+include(cmake/ela.cmake)
 
 #Local Source
 include(cmake/localsf.cmake)

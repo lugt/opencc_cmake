@@ -12,4 +12,11 @@ add_executable(jgen ${J2WGEN_SRC})
 target_compile_options(jgen PUBLIC ${TEMP_C_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMPLER_OPT} ${HOST_C_OPT} ${LOCAL_C_OPT})
 target_include_directories(jgen PUBLIC ${LOCAL_INC_DIR} ${HOST_INC_DIR})
 target_compile_definitions(jgen PUBLIC ${HOST_DEF} ${LOCAL_DEF})
-target_link_libraries(jgen comutils)
+target_link_libraries(jgen comutils jgen_util_o)
+
+
+add_executable(jwtest ${JREAD_SRC})
+target_compile_options(jwtest PUBLIC ${TEMP_C_OPT} ${HOST_COMPILER_OPT} ${LOCAL_COMPLER_OPT} ${HOST_C_OPT} ${LOCAL_C_OPT})
+target_include_directories(jwtest PUBLIC ${LOCAL_INC_DIR} ${HOST_INC_DIR})
+target_compile_definitions(jwtest PUBLIC ${HOST_DEF} ${LOCAL_DEF})
+target_link_libraries(jwtest comutils jgen_util_o)

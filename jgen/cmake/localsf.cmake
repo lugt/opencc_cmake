@@ -1,4 +1,11 @@
-SET(JGEN_SRCS json2whirl.cxx)
+SET(JGEN_SRCS 
+json2whirl.cxx 
+json_reader.cxx)
+
+SET(JREAD_SRCS 
+json_reader.cxx
+test.cxx
+)
 
 SET(JSON_SRCS
   jsoncpp.cpp)
@@ -77,10 +84,6 @@ set(BE_COM_SRC
   )
 
 
-foreach(ONE_C_FILE IN LISTS JSON_SRCS)
-  list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
-endforeach()
-
 foreach(ONE_C_FILE IN LISTS FE_C_SRCS )
   list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
 endforeach()
@@ -113,3 +116,13 @@ endforeach()
 foreach(ONE_C_FILE IN LISTS JGEN_SRCS)
   list(APPEND J2WGEN_SRC ${J2WGEN_SRC_DIR}/${ONE_C_FILE})
 endforeach()  
+
+foreach(ONE_C_FILE IN LISTS JREAD_SRCS)
+  list(APPEND JREAD_SRC ${J2WGEN_SRC_DIR}/${ONE_C_FILE})
+endforeach()  
+
+foreach(ONE_C_FILE IN LISTS JSON_SRCS)
+  list(APPEND JREAD_SRC ${JSON_SRC_DIR}/${ONE_C_FILE})
+  list(APPEND J2WGEN_SRC ${JSON_SRC_DIR}/${ONE_C_FILE})
+endforeach()
+
