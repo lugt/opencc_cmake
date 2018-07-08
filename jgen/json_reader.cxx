@@ -79,4 +79,16 @@ namespace JGEN{
     return 0;
   }
 
+  Json::Value Json_IR::get_defs(){
+    
+  }
+
+  Json::Value Json_IR::get_sym_tree(){
+    
+  }
+  
+  Json::Value Json_IR::get_type_tree(){
+    
+  }
+  
 }

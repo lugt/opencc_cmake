@@ -11,7 +11,7 @@ SET(JSON_SRCS
   jsoncpp.cpp)
 
 SET(FE_C_SRCS              
-    main.c         	
+#    main.c         	
     varasm.c		
     c_int_model.c       
 )
@@ -20,7 +20,7 @@ SET(FE_CXX_SRCS
     wgen_misc.cxx       
     wgen_expr.cxx       
     wgen_stmt.cxx       
-    wgen_decl.cxx
+#    wgen_decl.cxx
     wgen_dst.cxx        
     wgen_spin_symbol.cxx 
     wgen_tracing.cxx

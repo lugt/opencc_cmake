@@ -27,7 +27,9 @@ public:
   int read();
   int read_string(const char *str);
   int open(const char * fn);
-
+  Json::Value get_defs();
+  Json::Value get_type_tree();
+  Json::Value get_sym_tree();
 };
 
 }

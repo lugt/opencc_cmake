@@ -2,18 +2,20 @@
 #include <string>
 #include <iostream>
 #include "jgen_node.h"
+
 using namespace std;
 using namespace JGEN;
 
 void parse_class_def(Json_IR ir){
-  Json::Value defs = ir["defs"];
+  Json::Value defs = ir.get_defs();
 }
 
-void parse_one_function(Json_IR ir){  
+void parse_one_function(JGEN::Json_IR ir){  
   
 }
 
-
+string infn;
+string outfn;
 
 int main(int argc, char ** argv){
   JGEN_Root root;
@@ -25,10 +27,14 @@ int main(int argc, char ** argv){
     ir.open(argv[1]);
     cout << "--------- IR Reading --------" << endl;
     ir.read();
-    root.init("out.B");
-    parse_class_info(ir.getClass());
-    parse_def_info(ir);
-    cout << "-----------------------------" << endl;
+    cout << "-------- Init JGEN Root  ----- " << endl;
+    outfn = "out.B";
+    root.init(outfn);
+    cout << "-------- Root Init finished -------" << endl;
+    parse_class_def(ir);
+    cout << "-------- def finished --------" << endl;
+    root.finish();
+    cout << "-------- root finished --------" << endl;
   }else{
     cout << "----------   Usage -------------" << endl;
     cout << " -  jwtest <json_file_path> [...arguments] " << endl;
