@@ -20,14 +20,14 @@ string outfn;
 int main(int argc, char ** argv){
   JGEN_Root root;
   if(argc >= 2){
-    cout << "---------  Reading  ---------"<< endl
+    cout << "---------  File:  ---------"<< endl
 	 << argv[1] << endl;
     JGEN::Json_IR ir;
-    cout << "--------- IR Opening --------" << endl;
+    cout << "-------  Json_IR Opening --------" << endl;
     ir.open(argv[1]);
-    cout << "--------- IR Reading --------" << endl;
+    cout << "------- Json_IR Reading --------" << endl;
     ir.read();
-    cout << "-------- Init JGEN Root  ----- " << endl;
+    cout << "------- Jgen_Root :: Init  ----- " << endl;
     outfn = "out.B";
     root.init(outfn);
     cout << "-------- Root Init finished -------" << endl;

@@ -1,5 +1,5 @@
 /***
- * Json AST Reading Base Class Declaration
+1;95;0c * Json AST Reading Base Class Declaration
  * Author: Jason Lu : lu.gt@163.com
  * Version : V0.1 
  * Usage:
@@ -35,22 +35,44 @@ namespace JGEN{
         return -2;
     }
 
+    
     // root 
     // 1. Get All Data Stored In 
-    try{
-    unsigned int count = root.size() - 1;
-    cout << "Root : Count : " << count << endl;
-    for (unsigned int i = 0; i < count; ++i)
-    {
-        string name = root[i]["name"].asString();
-        int salary = root[i]["salary"].asInt();
-        cout << "name: " << name << " salary: " << salary << endl;
-    }
-    cout << "last msg: " << root[count].asString() << endl;
-    cout << endl << endl;
-    }catch(exception e){
-      cout << "------ Exception Encountered -------" << endl;
-      std::cout << e.what() << endl;
+    try {
+        Json::Value::Members roots = root.getMemberNames();
+        if (roots.size() <= 0) {
+            // Error
+            cerr << " No Class Object Found in json" << endl;
+            return -3;
+        }else{
+            cout << " selecting to read the class of " << roots[0] << endl;
+        }
+
+        // only get the first;
+        string corename = roots[0];
+        if (root[corename].isNull()) {
+            cerr << " Class Object is Null " << endl;
+            return -4;
+        }
+
+        root = root[corename];
+        if (root["defs"].isNull()){
+            cerr << " Cannot find defs in the class object" << endl;
+            return -5;
+        }
+
+        if(root["symbol_table"].isNull()){
+            cerr << " Cannot find symbol_table in the class object" << endl;
+            return -6;
+        }
+
+        if(root["type_table"].isNull()) {
+            cerr << " Cannot find type_table in the class object" << endl;
+            return -7;
+        }
+    }catch(std::exception e){
+        cerr << "Exception" << endl;
+        cerr << e.what();
     }
   }
 
@@ -65,11 +87,11 @@ namespace JGEN{
     }
   }
 
-  int Json_IR::open(const char * fn){
-    if(fn == NULL){
+  int Json_IR::open(const char * string1){
+    if(string1 == NULL){
       return -2;
     }
-    this->fn = fn;
+    fn = string1;
     std::ifstream ifs;
     ifs.open(fn);
     if(!ifs.is_open()){
@@ -80,15 +102,15 @@ namespace JGEN{
   }
 
   Json::Value Json_IR::get_defs(){
-    
+    Json::Value val = root["defs"];
+    return val;
   }
 
   Json::Value Json_IR::get_sym_tree(){
-    
+      return root["symbol_table"];
   }
   
   Json::Value Json_IR::get_type_tree(){
-    
+    return root["type_table"];
   }
-  
 }

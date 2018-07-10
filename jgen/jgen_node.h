@@ -106,8 +106,8 @@ extern "C" {
 extern BOOL c_omit_external; // for C programs, omit generating functions with
 			     // gs_decl_external = TRUE, which is the default
 
-int flag_openmp;
-gs_t decl_arguments;
+//int flag_openmp;
+//gs_t decl_arguments;
 
 static gs_t WGEN_get_thunk_target (gs_t decl);
 static gs_t WGEN_get_final_thunk_target (gs_t decl);
@@ -118,10 +118,10 @@ static void WGEN_Finish_Function(gs_t fndecl);
 // The initializer for the named return value object.  Expand this in place of
 // the DECL_INITIAL in the object's VAR_DECL.
 // IMPORTANT:  Doesn't work for nested functions.
-gs_t named_ret_obj_initializer;
+//gs_t named_ret_obj_initializer;
 
 /* ST to represent EXC_PTR_EXPR if C++ exceptions are disabled */
-ST * Dummy_Exc_Ptr_Expr = NULL;
+//ST * Dummy_Exc_Ptr_Expr = NULL;
 
 static gs_t *deferred_function_stack;
 static INT32 deferred_function_i;
@@ -154,13 +154,14 @@ static INT func_decl_stack_top = -1;
 static std::vector<WN*> curr_entry_wn;
 static void Push_Current_Entry_WN(WN *wn) { curr_entry_wn.push_back(wn); }
 static void Pop_Current_Entry_WN() { curr_entry_wn.pop_back(); }
-WN *Current_Entry_WN(void) {
+
+/* WN *Current_Entry_WN(void) {
     if (curr_entry_wn.size()==0) {
         return NULL;
     } else {
         return curr_entry_wn.back(); 
     }
-}
+}*/
 
 /***
     
