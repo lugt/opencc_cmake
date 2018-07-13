@@ -39,7 +39,7 @@ namespace JGEN{
     // 1. Get All Data Stored In 
     try{
     unsigned int count = root.size() - 1;
-    cout << "Root : Count : " << count << endl;
+    cout << endl << " -----  ROOT level classes count : " << count << endl;
     for (unsigned int i = 0; i < count; ++i)
     {
         string name = root[i]["name"].asString();

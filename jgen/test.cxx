@@ -20,25 +20,25 @@ string outfn;
 int main(int argc, char ** argv){
   JGEN_Root root;
   if(argc >= 2){
-    cout << "---------  Reading  ---------"<< endl
+    cout << "Reading:"
 	 << argv[1] << endl;
     JGEN::Json_IR ir;
-    cout << "--------- IR Opening --------" << endl;
+    cout << endl << "--------- [IR] Opening --------" << endl;
     ir.open(argv[1]);
-    cout << "--------- IR Reading --------" << endl;
+    cout << endl << "--------- [IR] Reading --------" << endl;
     ir.read();
-    cout << "-------- Init JGEN Root  ----- " << endl;
+    cout << endl << "-------- Init JGEN Root  ----- " << endl;
     outfn = "out.B";
     root.init(outfn);
-    cout << "-------- Root Init finished -------" << endl;
+    cout << endl << "-------- Root Init finished -------" << endl;
     parse_class_def(ir);
-    cout << "-------- def finished --------" << endl;
+    cout << endl << "-------- def finished --------" << endl;
     root.finish();
-    cout << "-------- root finished --------" << endl;
+    cout << endl << "-------- root finished --------" << endl;
   }else{
-    cout << "----------   Usage -------------" << endl;
-    cout << " -  jwtest <json_file_path> [...arguments] " << endl;
-    cout << "-------- File Not Given --------" << endl;
+    cout << endl << "----------   Usage -------------" << endl;
+    cout << endl << " -  jwtest <json_file_path> [...arguments] " << endl;
+    cout << endl << "-------- File Not Given --------" << endl;
     return -1;
   }
   return 0;
