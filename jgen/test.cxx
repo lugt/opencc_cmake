@@ -7,6 +7,11 @@ using namespace std;
 using namespace JGEN;
 
 void parse_class_def(Json_IR ir){
+  // Predef
+
+  // Type
+
+  // Defs . Member Fields
   Json::Value defs = ir.get_defs();
 }
 
@@ -19,6 +24,7 @@ string outfn;
 
 int main(int argc, char ** argv){
   JGEN_Root root;
+  outfn = "out.B";
   if(argc >= 2){
     cout << "---------  File:  ---------"<< endl
 	 << argv[1] << endl;
@@ -28,9 +34,8 @@ int main(int argc, char ** argv){
     cout << "------- Json_IR Reading --------" << endl;
     ir.read();
     cout << "------- Jgen_Root :: Init  ----- " << endl;
-    outfn = "out.B";
     root.init(outfn);
-    cout << "-------- Root Init finished -------" << endl;
+    cout << "-------- parse_class_def -------" << endl;
     parse_class_def(ir);
     cout << "-------- def finished --------" << endl;
     root.finish();
