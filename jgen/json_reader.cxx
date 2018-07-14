@@ -1,5 +1,5 @@
 /***
-1;95;0c * Json AST Reading Base Class Declaration
+ * Json AST Reading Base Class Declaration
  * Author: Jason Lu : lu.gt@163.com
  * Version : V0.1 
  * Usage:
@@ -35,8 +35,8 @@ namespace JGEN{
         return -2;
     }
 
-    
-    // root 
+
+    // root
     // 1. Get All Data Stored In 
     try {
         Json::Value::Members roots = root.getMemberNames();
@@ -113,4 +113,5 @@ namespace JGEN{
   Json::Value Json_IR::get_type_tree(){
     return root["type_table"];
   }
+  
 }

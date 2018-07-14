@@ -61,6 +61,7 @@ set(HOST_DEF
         -D_MIPS_SZLONG=64
         -D_LP64)
 
+option(DEBUG "is debug on?")
 if(DEBUG)
   set(HOST_COMPILER_OPT ${HOST_COMPILER_OPT} -g -O0)
 endif()

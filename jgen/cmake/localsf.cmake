@@ -19,19 +19,19 @@ SET(FE_C_SRCS
 )
 
 SET(FE_CXX_SRCS            
-    wgen_misc.cxx       
-    wgen_expr.cxx       
-    wgen_stmt.cxx       
+#    wgen_misc.cxx       
+#    wgen_expr.cxx       
+#    wgen_stmt.cxx       
 #    wgen_decl.cxx
-    wgen_dst.cxx        
-    wgen_spin_symbol.cxx 
-    wgen_tracing.cxx
+#    wgen_dst.cxx        
+#    wgen_spin_symbol.cxx 
+#    wgen_tracing.cxx
 )
   
 SET(OPENMP_SRCS            
-    omp_directive.cxx   
-    wgen_omp_check_stack.cxx 
-    wgen_omp_directives.cxx
+#    omp_directive.cxx   
+#    wgen_omp_check_stack.cxx 
+#    wgen_omp_directives.cxx
 )
   
 SET(COMMON_COM_CXX_SRCS    
