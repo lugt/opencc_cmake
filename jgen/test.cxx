@@ -5,30 +5,40 @@
 #include "jgen_global.h"
 
 using std::string;
-using namespace JGEN;
-
-void parse_class_def(Json_IR ir){
-  // Predef
-
-  // Type
-
-  // Defs . Member Fields
-  Json::Value defs = ir.get_defs();
-}
-
-void parse_one_function(JGEN::Json_IR ir){  
-  
-}
-
-std::string infn;
-std::string outfn;
-
 using std::cout;
 using std::endl;
+using namespace JGEN;
+
+
+namespace JGEN {
+
+
+    void parse_class_def(Json_IR &ir, JGEN_Root & root) {
+      // Predef
+      // Type
+      Json::Value types = ir.get_type_tree();
+
+      Json_Typetree_Simple tptr;
+      tptr.init(types);
+      root.write_types(tptr);
+
+      // Defs . Member Fields
+      Json::Value defs = ir.get_defs();
+    }
+
+    void parse_one_function(JGEN::Json_IR ir) {
+
+    }
+
+    std::string infn;
+    std::string outfn;
+
+}
 
 int main(int argc, char ** argv){
-  JGEN_Root root;
   outfn = "out.B";
+  JGEN_Root root;
+
   if(argc >= 2){
     cout << "---------  File:  ---------"<< endl
 	 << argv[1] << endl;
@@ -41,7 +51,7 @@ int main(int argc, char ** argv){
     root.init(outfn);
     cout << endl << "-------- [Gen:Root] init finished ----------" << endl;
     cout << endl << "-------- [Test] parse_class_def ------------" << endl;
-    parse_class_def(ir);
+    parse_class_def(ir, root);
     cout << endl << "-------- [Test] parse_class_def finished ---" << endl;
     root.finish();
     cout << endl << "-------- [Gen:root] finished --------" << endl;

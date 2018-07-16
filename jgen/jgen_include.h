@@ -17,28 +17,22 @@
 #include "defs.h"
 #include "glob.h"
 #include "erglob.h"
-#include "err_host.tab"
+
+//#include "err_host.tab"
+
 #include "errors.h"
 #include "symtab.h"
 #include "const.h"
 #include "pu_info.h"
 #include "config.h"
 #include "file_util.h" // for Last_Pathname_Component
-#include "wgen_misc.h"
 #include "wn.h"
 #include "wn_util.h"
 #include "wn_simp.h"
 #include "ir_reader.h"
 #include "ir_bwrite.h"
 //#include "wgen_decl.h"
-#include "jgen_decl.h"
-#include "wgen_expr.h"
-#include "wgen_dst.h"
-#include "wgen_misc.h"
-#include "wgen_stmt.h"
 #include "c_int_model.h"
-#include "wgen_spin_symbol.h"
-#include "wgen_tracing.h"
 #include "dwarf_DST_dump.h"
 #include "targ_sim.h" // PUSH_RETURN_ADDRESS_ON_STACK
 #include "wgen_omp_directives.h"
@@ -68,13 +62,8 @@
 #include "pu_info.h"
 #include "ir_reader.h"
 #include "ir_bwrite.h"
-#include "wgen_decl.h"
-#include "wgen_expr.h"
-#include "wgen_dst.h"
-#include "wgen_misc.h"
-#include "wgen_stmt.h"
 #include "c_int_model.h"
-#include <ext/hash_map>
+#include <unordered_map>
 
 
 extern "C" {
@@ -97,6 +86,7 @@ extern "C" {
 extern BOOL List_Enabled;
 extern INT Opt_Level;
 extern BOOL Enable_WFE_DFE;
+extern BOOL Disable_Simplification_For_FE;
 
 extern BOOL TARGET_64BIT;
 extern BOOL wgen_invoke_inliner;
@@ -133,10 +123,12 @@ extern void WGEN_Omp_Init (void);
 
 
 /* Specify how much debugging info to generate.  */
-extern enum debug_info_level debug_info_level;
+//extern enum debug_info_level;
 // End gnu/flags.h data decl
 
 extern BOOL gv_cond_expr;
+
+extern BOOL JGEN_expanding_function_definition;
 
 
 /* ====================================================================

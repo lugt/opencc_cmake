@@ -9,6 +9,9 @@
 #include "jgen_st.h"
 #include "jgen_global.h"
 
+using JGEN::Json_IR;
+using JGEN::Json_Typetree;
+
 void Cleanup_Files(BOOL a, BOOL dotofile){
 
 }
@@ -129,6 +132,7 @@ class JGEN_NODE{
  public:
   WN * whirl;
   string name;
+  void * json_value;
   JGEN_NODE * root;
   JGEN_NODE(){
     whirl = NULL;
@@ -157,9 +161,11 @@ public:
   };
   
   string output_file;
+
   void init();
   void init(string & fn);
   void finish();
+  void write_types(JGEN::Json_Typetree type_tree);
 
 };
 
@@ -201,8 +207,8 @@ JGEN_Init (char *fn)
   Preconfigure (); /// what to configure
 
   if (TARGET_64BIT)
-    ABI_Name = "n64"; // TARGET_64BIT should be defined somewhere
-  else ABI_Name = "n32";
+    ABI_Name = (char *) "n64"; // TARGET_64BIT should be defined somewhere
+  else ABI_Name = (char *) "n32";
 
   if (lang_cplus)
     pstatic_as_global = TRUE;
@@ -295,16 +301,12 @@ void JGEN_Entry(string fn){
   INT error_count, sorry_count;
   BOOL need_inliner;
   struct stat sbuf;
-  int st;	
-  Disable_Simplification_For_FE = TRUE;
-  Set_Error_Tables ( Phases, host_errlist );
+  int st;
+  get_err_tables();
   //  Process_Cc1_Command_Line(gs_cc1_command_line_args(program));
   JGEN_Init(buf);
   JGEN_File_Init(buf);
 }
-
-
-
 
 
 void JGEN_Root::finish(){
@@ -319,6 +321,13 @@ void JGEN_Root::init(string & fn){
   this->output_file = fn;
   JGEN_Entry(this->output_file);
 };
+
+void JGEN_Root::write_types(JGEN::Json_Typetree type_tree){
+  // call the type_tree -> to Type Functionality
+  while(type_tree.next() > 0){
+    //type_tree.get
+  }
+}
 
 
 #endif

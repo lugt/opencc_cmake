@@ -9,6 +9,7 @@ using std::cerr;
 using std::endl;
 
 BOOL JGEN_processing_function_prototype = FALSE;
+BOOL JGEN_Keep_Zero_Length_Structs = FALSE;
 
 class JGEN_ST {
 
@@ -318,7 +319,7 @@ class JGEN_ST {
         Set_ST_is_thread_private(st);
 
         if (kind == JGEN_VAR && sclass == SCLASS_AUTO)
-            WGEN_add_pragma_to_enclosing_regions(WN_PRAGMA_LOCAL, st);
+            JGEN_add_pragma_to_location(WN_PRAGMA_LOCAL, st);
 
         /*
          * Variable Length Stuff
@@ -353,6 +354,10 @@ class JGEN_ST {
         if (kind == JGEN_PARM) {
             Set_ST_is_value_parm(st);
         }
+    }
+
+    static void JGEN_add_pragma_to_location(WN_PRAGMA_ID id, ST * st){
+
     }
 
     static int getCurrentSymtab(){
@@ -452,7 +457,7 @@ public:
 
         // if return type is pointer to a zero length struct
         // convert it to void
-        if (!WGEN_Keep_Zero_Length_Structs &&
+        if (!JGEN_Keep_Zero_Length_Structs &&
             TY_mtype(ret_ty_idx) == MTYPE_M &&
             TY_size(ret_ty_idx) == 0) {
             // zero length struct being returned
@@ -475,7 +480,7 @@ public:
                     Is_True (!TY_is_incomplete(arg_ty_idx) ||
                              TY_is_incomplete(idx),
                              ("Create_TY_For_Tree: unexpected TY flag"));
-            if (!WGEN_Keep_Zero_Length_Structs &&
+            if (!JGEN_Keep_Zero_Length_Structs &&
                 TY_mtype(arg_ty_idx) == MTYPE_M &&
                 TY_size(arg_ty_idx) == 0) {
                 // zero length struct passed as parameter
@@ -675,7 +680,7 @@ public:
         if (!isVariableSize()) {
             Set_ARB_const_stride(arb);
             Set_ARB_stride_val(arb,get_element_size_unit()/*gs_get_integer_value(gs_type_size_unit(gs_tree_type(type_tree)))*/);
-        } else if (!expanding_function_definition &&
+        } else if (!JGEN_expanding_function_definition &&
                    JGEN_processing_function_prototype) {
             Set_ARB_const_stride(arb);
             // dummy stride val 4
@@ -730,7 +735,7 @@ public:
             } else if (isSizeMaxValueConstant()) {
                 Set_ARB_const_ubnd(arb);
                 Set_ARB_ubnd_val(arb, get_max_value(get_element_type()));
-            } else if (!expanding_function_definition &&
+            } else if (!JGEN_expanding_function_definition &&
                        JGEN_processing_function_prototype) {
                 Set_ARB_const_ubnd(arb);
                 // dummy upper bound 8

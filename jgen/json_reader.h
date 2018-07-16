@@ -9,28 +9,160 @@
  ***/
 
 #ifndef JSON_READER_H_
-#define JSON_READER_H_ 
+#define JSON_READER_H_
 
 #include <json/json.h>
 
 extern int JSON_READING_STATE;
 
-namespace JGEN{
+namespace JGEN {
 
-class Json_IR{
-private:
-  Json::Reader reader;
-  Json::Value root;
-  const char * fn;
 
-public:
-  int read();
-  int read_string(const char *str);
-  int open(const char * fn);
-  Json::Value get_defs();
-  Json::Value get_type_tree();
-  Json::Value get_sym_tree();
-};
+    class Json_MemberFields {
+        void init(Json::Value &val);
+
+        int next();
+
+        std::string getName();
+
+        int getIdx();
+
+        unsigned long long getKind();
+
+        unsigned long long getFlag();
+    };
+
+    class Json_Global_ST {
+        void init(Json::Value &val);
+
+        int next();
+
+        std::string getName();
+
+        int getIdx();
+
+        unsigned long long getKind();
+
+        unsigned long long getFlag();
+    };
+
+    class Json_Method_Stmt_Tree {
+        void init(Json::Value &val);
+    };
+
+    class Json_Global_Method {
+        void init(Json::Value &val);
+
+        int next();
+
+        std::string getName();
+
+        int getIdx();
+
+        unsigned long long getKind();
+
+        unsigned long long getFlag();
+
+        Json_Method_Stmt_Tree getStmt();
+    };
+
+
+
+    class Json_IR {
+    private:
+        Json::Reader reader;
+        Json::Value root;
+        const char *fn;
+
+    public:
+        int read();
+
+        int read_string(const char *str);
+
+        int open(const char *fn);
+
+        Json::Value get_defs();
+
+        Json::Value get_type_tree();
+
+        Json::Value get_sym_tree();
+    };
+
+    class Json_Typetree {
+
+    public:
+        virtual void init(Json::Value &tree);
+
+        // Reading another node (next) (traverse)
+        // @return whether there is one to be read(1), or none (0)
+        virtual int next();
+
+        // read Kind from Node
+        virtual unsigned long long getKind();
+
+        // read Name from Node
+        virtual std::string &getKindName();
+
+        // read Kind from Node
+        virtual unsigned long long getFlag();
+
+        // get DefId form Node
+        virtual int getJsonRefId();
+
+        // get (Symbol) Name from Node
+        virtual std::string &getJsonName();
+
+        // retrieve the previously bound Idx
+        virtual int getIdx();
+
+        // bind Idx to the tree node
+        virtual void setTypeIdx(int idx);
+
+        // bind Idx to the tree node
+        virtual Json_MemberFields &getMemberFields(int idx);
+    };
+
+    class Json_Typetree_Simple : public Json_Typetree {
+
+    public:
+
+        Json::Value val;
+        int flag;
+        int statics;
+
+/*
+        void init(Json::Value &tree);
+
+// Reading another node (next) (traverse)
+// @return whether there is one to be read(1), or none (0)
+        int next();
+
+// read Kind from Node
+        unsigned long long getKind();
+
+// read Name from Node
+        std::string &getKindName();
+
+// read Kind from Node
+        unsigned long long getFlag();
+
+// get DefId form Node
+        int getJsonRefId();
+
+// get (Symbol) Name from Node
+        std::string &getJsonName();
+
+// retrieve the previously bound Idx
+        int getIdx();
+
+// bind Idx to the tree node
+        void setTypeIdx(int idx);
+
+// bind Idx to the tree node
+        Json_MemberFields &getMemberFields(int idx);
+*/
+    };
+
 
 }
 

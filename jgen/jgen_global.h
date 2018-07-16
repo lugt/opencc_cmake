@@ -55,5 +55,7 @@ extern PU_Info *PU_Tree_Root ;
 extern int Reg_Parm_Count ;
 extern BOOL SSE_Reg_Parm ;
 
+extern void get_err_tables();
+
 
 #endif //OSPREY_JGEN_GLOBAL_H

@@ -76,6 +76,7 @@ BOOL c_omit_external = TRUE;
 BOOL keep_inline_functions=FALSE;
 BOOL gen_pic_code = FALSE;
 BOOL tls_stress_test = FALSE;
+BOOL JGEN_expanding_function_definition = FALSE;
 
 // The following taken from gnu/flags.h
 enum debug_info_level
@@ -85,6 +86,13 @@ enum debug_info_level
     DINFO_LEVEL_NORMAL,   /* Write info for all declarations (and line table). */
     DINFO_LEVEL_VERBOSE   /* Write normal info plus #define/#undef info.  */
 };
+
+#include "err_host.tab"
+
+void get_err_tables(){
+ Set_Error_Tables ( Phases, host_errlist );
+}
+
 
 static std::vector<WN*> curr_entry_wn;
 static void Push_Current_Entry_WN(WN *wn) { curr_entry_wn.push_back(wn); }
