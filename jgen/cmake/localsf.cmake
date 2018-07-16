@@ -1,12 +1,14 @@
 SET(JGEN_SRCS 
-json2whirl.cxx 
-json_reader.cxx
+  json2whirl.cxx
+  json_reader.cxx
+  jgen_global.cpp
 #wgen_decl.cxx
 )
 
 SET(JREAD_SRCS 
-json_reader.cxx
-test.cxx
+  json_reader.cxx
+  test.cxx
+  jgen_global.cpp
 #wgen_decl.cxx
 )
 

@@ -189,22 +189,6 @@ void jgen_act_accord(){
   g->startProcess();
 }
 
-
-BOOL wgen_invoke_inliner = FALSE;
-int lineno = 0;
-char *Spin_File_Name = NULL;
-FILE *Spin_File = NULL;
-BOOL flag_no_common = FALSE;
-int pstatic_as_global = 0;
-int emit_exceptions = -1;
-BOOL opt_regions = 0;
-BOOL lang_cplus = FALSE;
-BOOL c_omit_external = TRUE;
-BOOL keep_inline_functions=FALSE;
-BOOL gen_pic_code = FALSE;
-BOOL tls_stress_test = FALSE;
-
-
 }
 
 int main(int argc, char **argv){
