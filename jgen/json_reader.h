@@ -130,7 +130,7 @@ namespace JGEN {
         int flag;
         int statics;
 
-/*
+
         void init(Json::Value &tree);
 
 // Reading another node (next) (traverse)
@@ -160,7 +160,7 @@ namespace JGEN {
 
 // bind Idx to the tree node
         Json_MemberFields &getMemberFields(int idx);
-*/
+
     };
 
 
