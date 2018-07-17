@@ -75,6 +75,9 @@ namespace JGEN {
         const char *fn;
 
     public:
+
+        Json_IR(){};
+
         int read();
 
         int read_string(const char *str);
@@ -91,35 +94,44 @@ namespace JGEN {
     class Json_Typetree {
 
     public:
-        virtual void init(Json::Value &tree);
+
+        Json_Typetree(){};
+
+        Json_Typetree(Json::Value & val){
+            init(val);
+        }
+
+        virtual ~Json_Typetree(){}
+
+        virtual void init(Json::Value &tree) {};
 
         // Reading another node (next) (traverse)
         // @return whether there is one to be read(1), or none (0)
-        virtual int next();
+        virtual int next() {};
 
         // read Kind from Node
-        virtual unsigned long long getKind();
+        virtual unsigned long long getKind(){};
 
         // read Name from Node
-        virtual std::string &getKindName();
+        virtual std::string &getKindName(){};
 
         // read Kind from Node
-        virtual unsigned long long getFlag();
+        virtual unsigned long long getFlag(){};
 
         // get DefId form Node
-        virtual int getJsonRefId();
+        virtual int getJsonRefId(){};
 
         // get (Symbol) Name from Node
-        virtual std::string &getJsonName();
+        virtual std::string &getJsonName(){};
 
         // retrieve the previously bound Idx
-        virtual int getIdx();
+        virtual int getIdx(){};
 
         // bind Idx to the tree node
-        virtual void setTypeIdx(int idx);
+        virtual void setTypeIdx(int idx){};
 
         // bind Idx to the tree node
-        virtual Json_MemberFields &getMemberFields(int idx);
+        virtual Json_MemberFields &getMemberFields(int idx){};
     };
 
     class Json_Typetree_Simple : public Json_Typetree {
@@ -131,35 +143,41 @@ namespace JGEN {
         int statics;
 
 
-        void init(Json::Value &tree);
+        Json_Typetree_Simple() {}
+
+        Json_Typetree_Simple(Json::Value & val) {
+            init(val);
+        }
+
+        void init(Json::Value &tree) override ;
 
 // Reading another node (next) (traverse)
 // @return whether there is one to be read(1), or none (0)
-        int next();
+        int next() override;
 
 // read Kind from Node
-        unsigned long long getKind();
+        unsigned long long getKind() override;
 
 // read Name from Node
-        std::string &getKindName();
+        std::string &getKindName() override;
 
 // read Kind from Node
-        unsigned long long getFlag();
+        unsigned long long getFlag() override;
 
 // get DefId form Node
-        int getJsonRefId();
+        int getJsonRefId() override ;
 
 // get (Symbol) Name from Node
-        std::string &getJsonName();
+        std::string &getJsonName() override;
 
 // retrieve the previously bound Idx
-        int getIdx();
+        int getIdx() override;
 
 // bind Idx to the tree node
-        void setTypeIdx(int idx);
+        void setTypeIdx(int idx) override ;
 
 // bind Idx to the tree node
-        Json_MemberFields &getMemberFields(int idx);
+        Json_MemberFields &getMemberFields(int idx) override ;
 
     };
 

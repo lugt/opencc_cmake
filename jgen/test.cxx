@@ -18,8 +18,7 @@ namespace JGEN {
       // Type
       Json::Value types = ir.get_type_tree();
 
-      Json_Typetree_Simple tptr;
-      tptr.init(types);
+      Json_Typetree_Simple tptr(types);
       root.write_types(tptr);
 
       // Defs . Member Fields
