@@ -138,7 +138,7 @@ namespace JGEN {
 
     public:
 
-        Json::Value val;
+        Json::Value _tree;
         int flag;
         int statics;
 

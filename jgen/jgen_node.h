@@ -322,10 +322,11 @@ void JGEN_Root::init(string & fn){
   JGEN_Entry(this->output_file);
 };
 
-void JGEN_Root::write_types(JGEN::Json_Typetree type_tree){
-  // call the type_tree -> to Type Functionality
+void JGEN_Root::write_types(JGEN::Json_Typetree type_tree){\
   while(type_tree.next() > 0){
-    //type_tree.get
+    JGEN_TY ty;
+    ty.init();
+    ty.get_TY();
   }
 }
 

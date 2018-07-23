@@ -428,6 +428,12 @@ public:
     static vector<JGEN_TY> args;
 
 
+
+    void init(std::string & name, long long kind, long long flag, INT64 tsize,
+              BOOL isLengthVariable, string kname, JGEN_TY retval){
+
+    }
+
     static void createFunction() {
 
         TY &ty = (idx == TY_IDX_ZERO) ? New_TY(idx) : Ty_Table[idx];

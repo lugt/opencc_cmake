@@ -9,6 +9,7 @@ SET(JREAD_SRCS
   json_reader.cxx
   test.cxx
   jgen_global.cpp
+  jgen_node.h
 #wgen_decl.cxx
 )
 

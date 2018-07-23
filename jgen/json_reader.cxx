@@ -115,6 +115,7 @@ namespace JGEN {
     void Json_Typetree_Simple::init(Json::Value &tree) {
         // Take whatever needed form tree
         // Mark the length, and current cursot to zero.
+        _tree = tree;
     };
 
     // Reading another node (next) (traverse)
