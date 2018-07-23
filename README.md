@@ -9,7 +9,9 @@
 
 ```
     git clone https://github.com/lugt/open64 open64
-    git checkout -b n1
+    cd open64
+    git fetch
+    git checkout n1
 ```    
 
 ### Alternative: you may use my changed files (Not Recommended)
