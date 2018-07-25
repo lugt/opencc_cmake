@@ -124,6 +124,9 @@ extern "C" {
 #if HOST_WORD_SIZE == 8
 # define EIGHT_BYTE_WORDS
 #endif
+#if defined(BUILD_OS_DARWIN)
+# define BITSPERBYTE	CHAR_BIT
+#endif /* defined(BUILD_OS_DARWIN) */
 
 /* Map low indices to low-order bits in the bit vector package: */
 #define BV_LITTLE_ENDIAN_BIT_NUMBERING	1

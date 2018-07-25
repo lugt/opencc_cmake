@@ -101,7 +101,7 @@ public:
   friend inline PREG_NUM RETURN_INFO_preg (const RETURN_INFO&, INT32);
   friend RETURN_INFO Get_Return_Info (TY_IDX rtype, Mtype_Return_Level level
 #ifdef TARG_X8664
-  				      , BOOL ff2c_abi = FALSE
+  				      , BOOL ff2c_abi
 #endif
 				     );
 };

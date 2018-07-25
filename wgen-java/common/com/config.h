@@ -546,7 +546,7 @@ extern BOOL Simp_Unsafe_Relops;         /* Allow foldings which might cause erro
 extern BOOL Enable_NaryExpr;		/* Allow nary expr in the lowerer */
 extern BOOL Enable_NaryExpr_Set;	/* ... option seen? */
 
-#ifdef __linux__
+#if defined(__linux__) || defined(BUILD_OS_DARWIN)
 extern BOOL Enable_WFE_DFE;		/* frontend dead function elimination? */
 #endif /* __linux __ */
 
