@@ -49,11 +49,20 @@ extern "C" {
 #include "gspin-wgen-interface.h"
 }
 
+#if defined(BUILD_OS_DARWIN)
+#include <limits.h>
+#else /* defined(BUILD_OS_DARWIN) */
 #include <values.h>
+#endif /* defined(BUILD_OS_DARWIN) */
 #include <sys/types.h>
 #include <errno.h>
+#if defined(BUILD_OS_DARWIN)
+#include <darwin_elf.h>
+#else /* defined(BUILD_OS_DARWIN) */
 #include <elf.h>
+#endif /* defined(BUILD_OS_DARWIN) */
 #include "defs.h"
+
 #include "config.h"
 #include "config_opt.h" // for Div_Split_Allowed
 #include "config_debug.h"
@@ -339,7 +348,7 @@ void WGEN_Init(INT argc, char **argv, char **envp) {
   Set_Error_Line(ERROR_LINE_UNKNOWN);
   Set_Error_Phase("Front End Driver"); // say WGEN front end driver
   Preconfigure();                      /// what to configure
-
+  /*
 #ifdef TARG_MIPS
   ABI_Name = "n64";
 #endif
@@ -354,7 +363,7 @@ void WGEN_Init(INT argc, char **argv, char **envp) {
   else
     ABI_Name = "n32";
 #endif
-
+  */
 #ifdef KEY
   if (lang_cplus)
     pstatic_as_global = TRUE;

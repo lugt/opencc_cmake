@@ -45,7 +45,7 @@
 // This file should contain only inlined functions for accessing various
 // fields in the symbol table classes.
 
-#include <ext/slist>
+//#include <ext/slist>
 
 #ifndef segmented_array_INCLUDED
 #include "segmented_array.h"

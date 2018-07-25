@@ -89,8 +89,8 @@ if(BUILD_MACOS)
 
   set(HOST_DEF
     ${HOST_DEF}
-    -DBUILD_OS_DARWIN)
-  
+    -DBUILD_OS_DARWIN=1)
+  message(STATUS "Added BUILD_OS_DARWIN")
   set(BUILD_PLATFORM_INC_DIR ${OSPREY_SRC_DIR}/macos/include)
 
 endif()

@@ -29,7 +29,11 @@
 extern "C" {
 #include "gspin-wgen-interface.h"
 }
+#if defined(BUILD_OS_DARWIN)
+#include <limits.h>
+#else /* defined(BUILD_OS_DARWIN) */
 #include <values.h>
+#endif /* defined(BUILD_OS_DARWIN) */
 #include "defs.h"
 #include "glob.h"
 #include "config.h"
