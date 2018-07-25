@@ -261,10 +261,14 @@ static char *config_rcs_id = "$Source: common/com/SCCS/s.config.h $ $Revision: 1
 
 #include "config_host.h"	/* in TARGET/com */
 #include "config_targ.h"	/* in TARGET/com */
-#ifndef linux
-#include <sys/endian.h>		/* for BIG_ENDIAN, LITTLE_ENDIAN */
+#ifdef BUILD_OS_DARWIN
+  #include <machine/endian.h>
 #else
-#include <endian.h>		/* for BIG_ENDIAN, LITTLE_ENDIAN */
+  #ifndef linux
+    #include <sys/endian.h>		/* for BIG_ENDIAN, LITTLE_ENDIAN */
+  #else
+    #include <endian.h>		/* for BIG_ENDIAN, LITTLE_ENDIAN */
+  #endif
 #endif
 #include "mempool.h"	/* Include the "fundamental" routines */
 #include "flags.h"

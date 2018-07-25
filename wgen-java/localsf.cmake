@@ -11,13 +11,13 @@ SET(FE_CXX_SRCS
     wgen_decl.cxx
     wgen_dst.cxx        
     wgen_spin_symbol.cxx 
-    wgen_tracing.cxx
+#    wgen_tracing.cxx
 )
   
 SET(OPENMP_SRCS            
-    omp_directive.cxx   
-    wgen_omp_check_stack.cxx 
-    wgen_omp_directives.cxx
+#    omp_directive.cxx   
+#    wgen_omp_check_stack.cxx 
+#    wgen_omp_directives.cxx
 )
   
 SET(COMMON_COM_CXX_SRCS    
@@ -69,35 +69,35 @@ SET(COMMON_COM_TARG_CXX_SRCS
 
 set(BE_COM_SRC
   wssa_mgr.cxx
-  )
+)
  
 
 
 foreach(ONE_C_FILE IN LISTS FE_C_SRCS )
-  list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${NEW_WGEN_DIR}/wgen/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS FE_CXX_SRCS )
-  list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${NEW_WGEN_DIR}/wgen/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS OPENMP_SRCS )
-  list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${NEW_WGEN_DIR}/wgen/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS COMMON_COM_CXX_SRCS )
-  list(APPEND WGEN_SRC ${COMMON_COM_DIR}/${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${NEW_WGEN_DIR}/common/com/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_SRCS )
-  list(APPEND WGEN_SRC ${COMMON_COM_DIR}/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${NEW_WGEN_DIR}/common/com/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_CXX_SRCS )
-  list(APPEND WGEN_SRC ${COMMON_COM_DIR}/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
+  list(APPEND WGEN_SRC ${NEW_WGEN_DIR}/common/com/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
 endforeach()
 
 
 foreach(ONE_C_FILE IN LISTS WGENUTIL_O_CXX_SRC)
-  list(APPEND WGENUTILO_SRC ${COMMON_COM_DIR}/${ONE_C_FILE})
+  list(APPEND WGENUTILO_SRC ${NEW_WGEN_DIR}/common/com/${ONE_C_FILE})
 endforeach()  
