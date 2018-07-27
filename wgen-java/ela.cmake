@@ -44,12 +44,12 @@ set(LOCAL_DEF
    -DSGI_RAG_BACKEND
    -DSGI_MONGOOSE
    -DHANDLE_PRAGMA_WEAK
-   -DNEW_INITIALIZER
+#   -DNEW_INITIALIZER  # for wgen-java only
    -DDEBUG=1
    -DCHECKING=1
    -DGPLUSPLUS_FE
 )
 
-set(LOCAL_COMPILER_OPT -Wno-writable-strings)
+set(LOCAL_COMPILER_OPT -Wno-writable-strings -fwritable-strings)
 set(LOCAL_C_OPT )
 set(LOCAL_CPP_OPT -Wno-writable-strings)

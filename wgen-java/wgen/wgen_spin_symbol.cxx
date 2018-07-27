@@ -52,7 +52,11 @@
 extern "C" {
 #include "gspin-wgen-interface.h"
 }
+#if defined(BUILD_OS_DARWIN)
+#include <limits.h>
+#else /* defined(BUILD_OS_DARWIN) */
 #include <values.h>
+#endif /* defined(BUILD_OS_DARWIN) */
 #include "defs.h"
 #include "errors.h"
 
@@ -1275,40 +1279,58 @@ void Create_DST_For_Tree(gs_t decl_node, ST *st) {
 #if 1 // wgen
 // if there is a PARM_DECL with the same name (as opposed to same node),
 // use the ST created for it
-ST *Search_decl_arguments(char *name) {
-  gs_t p;
-  if (name) {
-    for (p = decl_arguments; p; p = gs_tree_chain(p)) {
-      if (gs_decl_name(p) ==
-          NULL) // matches with any parm with null name (sanity32.C)
-        return DECL_ST(p);
-      if (strcmp(name, (char *)gs_identifier_pointer(gs_decl_name(p))) == 0)
-        return DECL_ST(p);
+ST *
+Search_decl_arguments(char *name)
+{
+    gs_t p;
+    if (name) {
+        for (p = decl_arguments; p; p = gs_tree_chain(p)) {
+            if (gs_decl_name(p) == NULL) // matches with any parm with null name (sanity32.C)
+                return DECL_ST(p);
+            if (strcmp(name, (char *) gs_identifier_pointer(gs_decl_name(p))) == 0)
+                return DECL_ST(p);
+        }
     }
-  } else { // search for an argument with no name
-    for (p = decl_arguments; p; p = gs_tree_chain(p)) {
-      if (gs_decl_name(p) == NULL)
-        return DECL_ST(p);
+    else { // search for an argument with no name
+        for (p = decl_arguments; p; p = gs_tree_chain(p)) {
+            if (gs_decl_name(p) == NULL)
+                return DECL_ST(p);
+        }
     }
-  }
-  return NULL;
+    return NULL;
 }
 #endif
 
 #ifdef KEY // bug 12668
-static BOOL Has_label_decl(gs_t init) {
-  if (gs_tree_code(init) == GS_LABEL_DECL)
-    return TRUE;
-  if (gs_tree_code(init) == GS_ADDR_EXPR)
-    return Has_label_decl(gs_tree_operand(init, 0));
-  if (gs_tree_code(init) == GS_CONSTRUCTOR) {
-    gs_t nd;
+static BOOL
+Has_label_decl(gs_t init)
+{
+    if (gs_tree_code(init) == GS_LABEL_DECL)
+        return TRUE;
+    if (gs_tree_code(init) == GS_ADDR_EXPR)
+        return Has_label_decl(gs_tree_operand(init,0));
+#ifdef FE_GNU_4_2_0 // bug 12699
+    if (gs_tree_code(init) == GS_NOP_EXPR)
+        return Has_label_decl(gs_tree_operand(init,0));
+#endif
+    if (gs_tree_code(init) == GS_CONSTRUCTOR) {
+#ifdef FE_GNU_4_2_0
+        INT length = gs_constructor_length(init);
+        gs_t element_value;
+        for (INT idx = 0; idx < length; idx++) {
+            element_value = gs_constructor_elts_value(init, idx);
+            if (Has_label_decl(element_value))
+                return TRUE;
+        }
+#else
+        gs_t nd;
     for (nd = gs_constructor_elts(init); nd; nd = gs_tree_chain(nd)) {
       if (Has_label_decl(gs_tree_value(nd)))
-        return TRUE;
+	return TRUE;
     }
-  }
-  return FALSE;
+#endif
+    }
+    return FALSE;
 }
 #endif
 
@@ -1609,7 +1631,7 @@ ST *Create_ST_For_Tree(gs_t decl_node) {
       return st;
     st = New_ST(level);
     if (TY_kind(ty_idx) == KIND_ARRAY && gs_tree_static(decl_node) &&
-        gs_decl_initial(decl_node) == FALSE && TY_size(ty_idx) == 0) {
+        gs_decl_initial(decl_node) == (gs_t) 0 && TY_size(ty_idx) == 0) {
       Set_TY_size(ty_idx,
                   TY_size(Get_TY(gs_tree_type(gs_tree_type(decl_node)))));
     }

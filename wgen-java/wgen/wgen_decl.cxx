@@ -2197,6 +2197,75 @@ AGGINIT::WGEN_Finish_Aggregate_Init (void)
 }
 #endif
 
+static BOOL
+Has_Non_Constant_Init_Value (gs_t init)
+{
+  if (init == NULL) {
+	return FALSE;
+  }
+  switch (gs_tree_code(init)) {
+  case GS_CONSTRUCTOR:
+#ifdef FE_GNU_4_2_0
+      {
+	INT count = gs_constructor_length(init);
+	if (!count)
+	    return TRUE;
+        for (INT i = 0; i < count; i++)
+	  if (Has_Non_Constant_Init_Value (gs_constructor_elts_value(init, i)))
+	    return TRUE;
+        return FALSE;
+      }
+#else
+	if (!gs_constructor_elts(init))
+	    return TRUE;
+	return Has_Non_Constant_Init_Value (gs_constructor_elts(init));
+#endif
+  case GS_TREE_LIST:
+	{
+	gs_t p;
+	for (p = init; p != NULL; p = gs_tree_chain(p)) {
+		if (Has_Non_Constant_Init_Value (gs_tree_value(p))) {
+			return TRUE;
+		}
+/*
+		if (TREE_PURPOSE(p) != NULL_TREE 	     &&
+		    gs_tree_code(TREE_PURPOSE(p)) == GS_FIELD_DECL &&
+		    DECL_BIT_FIELD(TREE_PURPOSE(p)))
+		{
+			// if bitfield, then do each element separately
+			// rather than combine into initv field.
+			return TRUE;
+		}
+*/
+	}
+	return FALSE;
+	}
+  case GS_INTEGER_CST:
+  case GS_REAL_CST:
+  case GS_STRING_CST:
+	return FALSE;
+  case GS_NOP_EXPR:
+	if (gs_tree_code(gs_tree_operand(init,0)) == GS_ADDR_EXPR
+    	    && gs_tree_code(gs_tree_operand(gs_tree_operand(init,0),0)) == GS_STRING_CST) 
+		return FALSE;
+	else
+		return TRUE;
+  case GS_ADDR_EXPR: {
+	gs_t t = gs_tree_operand(init, 0);
+#ifdef KEY // bug 11726
+	if (gs_tree_code_class(t) != GS_TCC_DECLARATION)
+	  return TRUE;
+#endif
+	if (gs_decl_context(t) == 0 ||
+	    gs_tree_code(gs_decl_context(t)) == GS_NAMESPACE_DECL)
+		return FALSE;
+	return TRUE;
+  }
+  default:
+	return TRUE;
+  }
+}
+/*
 static BOOL Has_Non_Constant_Init_Value(gs_t init) {
   if (init == NULL) {
     return FALSE;
@@ -2221,7 +2290,7 @@ static BOOL Has_Non_Constant_Init_Value(gs_t init) {
                               // rather than combine into initv field.
                               return TRUE;
                       }
-      */
+      * /
     }
     return FALSE;
   }
@@ -2250,7 +2319,7 @@ static BOOL Has_Non_Constant_Init_Value(gs_t init) {
   default:
     return TRUE;
   }
-}
+}*/
 
 // For a dynamic initialization, we can either
 // do a series of moves for each element,
@@ -2537,27 +2606,145 @@ void AGGINIT::Traverse_Aggregate_Pad(ST *st, BOOL gen_initv, UINT pad,
 // If gen_initv is TRUE build an initv, otherwise generate a sequence
 // of stores.
 
-void AGGINIT::Traverse_Aggregate_Array(
-    ST *st,         // symbol being initialized
-    gs_t init_list, // list of initializers for each array element
-    gs_t type,      // type of array
-    BOOL gen_initv, // TRUE if initializing with INITV, FALSE for statements
-    UINT current_offset) // offset from start of symbol for array
+void
+AGGINIT::Traverse_Aggregate_Array (
+#ifdef NEW_INITIALIZER
+        WN   *target,
+#else
+        ST   *st,            // symbol being initialized
+#endif
+        gs_t init_list,      // list of initializers for each array element
+        gs_t type,           // type of array
+        BOOL gen_initv,      // TRUE if initializing with INITV, FALSE for statements
+        UINT current_offset) // offset from start of symbol for array
 {
-  INT emitted_bytes = 0;
-  INT pad;
-  TY_IDX ty = Get_TY(type);
-  TY_IDX ety = TY_etype(ty);
-  UINT esize = TY_size(ety);
-  gs_t init;
-  gs_t next;
+  INT    emitted_bytes = 0;
+  INT    pad;
+  TY_IDX ty            = Get_TY(type);
+  TY_IDX ety           = TY_etype (ty);
+  UINT   esize         = TY_size (ety);
+  gs_t   init;
+  gs_t   next;
 
 #ifdef KEY // bug 10880
   if (esize == 0)
     return;
 #endif
 
-  for (init = gs_constructor_elts(init_list); init; init = next) {
+#ifdef FE_GNU_4_2_0
+  INT length = gs_constructor_length(init_list);
+  gs_t curr_index_elem = length > 0? gs_operand (init_list, GS_CONSTRUCTOR_ELTS_INDEX) : NULL;
+  gs_t curr_value_elem = length > 0? gs_operand (init_list, GS_CONSTRUCTOR_ELTS_VALUE) : NULL;
+  for (INT idx = 0;
+       idx < length;
+       idx++) {
+
+    gs_t element_index = gs_operand(curr_index_elem, 0);
+    curr_index_elem = gs_operand(curr_index_elem, 1);
+
+    // Bug 591
+    // In gcc-3.2 (updated Gnu front-end), the TREE_PURPOSE(init)
+    // would give us the current_offset where TREE_VALUE(init) goes in.
+    // We need to pad any gaps here. This is unlike the gcc-2.96 front-end
+    // whereby output_pending_init_elements calls assemble_zeros which
+    // calls WFE_Add_Aggregate_Init_Padding appropriately.
+    // We do not want to modify the Gnu front-end (c-typeck.c) and instead
+    // hack it inside our front-end.
+    INT lindex, hindex;
+    // wgen bug 10919: need to handle the new RANGE_EXPR for TREE_PURPOSE
+    //  while preserving the fix for bug 2373
+    if (gs_tree_code(element_index) == GS_RANGE_EXPR) {
+      lindex = gs_get_integer_value(gs_tree_operand(element_index,0));
+      hindex = gs_get_integer_value(gs_tree_operand(element_index,1));
+    }
+    else lindex = hindex = gs_get_integer_value(element_index);
+    if ( emitted_bytes/esize < lindex ) {
+      // pad (lindex - current_offset/esize)*esize bytes
+#ifdef NEW_INITIALIZER
+      Traverse_Aggregate_Pad (target, gen_initv,
+#else
+              Traverse_Aggregate_Pad (st, gen_initv,
+#endif
+                              (lindex - emitted_bytes/esize)*esize,
+                              current_offset);
+      current_offset += (lindex - emitted_bytes/esize)*esize;
+      emitted_bytes += (lindex - emitted_bytes/esize)*esize;
+    }
+
+    gs_t tree_value = gs_operand(curr_value_elem, 0);
+    curr_value_elem = gs_operand(curr_value_elem, 1);
+    if (gs_tree_code(tree_value) == GS_PTRMEM_CST)  {
+      gs_t t = gs_expanded_ptrmem_cst(tree_value);
+      Is_True(t != NULL,
+              ("Traverse_Aggregate_Array: expanded PTRMEM_CST is NULL"));
+      gs_constructor_elts_set_value(init_list, idx, t);
+      tree_value = gs_constructor_elts_value(init_list, idx);
+      Is_True (tree_value == t, ("gspin list assignment error"));
+    }
+
+    if (gs_tree_code(tree_value) == GS_CONSTRUCTOR) {
+      // recursively process nested ARRAYs and STRUCTs
+      // update array_elem_offset to current_offset to
+      // keep track of where each array element starts
+#ifdef NEW_INITIALIZER
+      Traverse_Aggregate_Constructor (target, tree_value,
+#else
+              Traverse_Aggregate_Constructor (st, tree_value,
+#endif
+#ifdef KEY
+                                      gs_tree_type(type),
+#endif
+                                      gs_tree_type(type),
+                                      gen_initv, current_offset, current_offset,
+                                      0);
+      emitted_bytes += esize;
+      current_offset += esize;
+    }
+
+    else {
+#ifdef TARG_IA64
+      // There are two FDESC_EXPR in the GS Tree and they are the same. (why?)
+      // We need to skip the later if they are equivalent
+      if (gen_initv &&
+          gs_tree_code(tree_value) == GS_FDESC_EXPR &&
+	  idx < length - 1) {
+        gs_t next = gs_operand(curr_value_elem, 0);
+        if ((next != NULL) &&
+	    (gs_tree_code(next) == GS_FDESC_EXPR) &&
+	    (gs_tree_operand(tree_value, 0) == gs_tree_operand(next, 0)) ) {
+  	  idx++; // Skip the next one
+          curr_index_elem = gs_operand(curr_index_elem, 1);
+          curr_value_elem = gs_operand(curr_value_elem, 1);
+	  Add_Initv_For_Tree (tree_value, esize);
+  	  emitted_bytes += (esize << 1);  // *2, fptr + gp
+  	  current_offset += (esize << 1);
+  	  continue;
+  	}
+      }
+#endif
+
+      // initialize SCALARs and POINTERs
+      // note that we should not be encountering bit fields
+      for (INT index = lindex; index <= hindex; index++) {
+        if (gen_initv) {
+          Add_Initv_For_Tree (tree_value, esize);
+          emitted_bytes += esize;
+        }
+        else
+#ifdef NEW_INITIALIZER
+          Gen_Assign_Of_Init_Val (target, tree_value, current_offset, 0,
+#else
+                  Gen_Assign_Of_Init_Val (st, tree_value, current_offset, 0,
+#endif
+                                  ety, FALSE, 0, FLD_HANDLE (), emitted_bytes);
+        current_offset += esize;
+      }
+    }
+  }
+#else
+  for (init = gs_constructor_elts(init_list);
+       init;
+       init = next) {
     // loop through each array element
 
     next = gs_tree_chain(init);
@@ -2570,79 +2757,88 @@ void AGGINIT::Traverse_Aggregate_Array(
     // calls WFE_Add_Aggregate_Init_Padding appropriately.
     // We do not want to modify the Gnu front-end (c-typeck.c) and instead
     // hack it inside our front-end.
-    // czw
-    INT lindex = 0, hindex = 0;
+    INT lindex, hindex;
     // wgen bug 10919: need to handle the new RANGE_EXPR for TREE_PURPOSE
     //  while preserving the fix for bug 2373
-    if (gs_tree_purpose(init)) // czw
-    {
-      if (gs_tree_code(gs_tree_purpose(init)) == GS_RANGE_EXPR) {
-        lindex =
-            gs_get_integer_value(gs_tree_operand(gs_tree_purpose(init), 0));
-        hindex =
-            gs_get_integer_value(gs_tree_operand(gs_tree_purpose(init), 1));
-      } else
-        lindex = hindex = gs_get_integer_value(gs_tree_purpose(init));
-      if (emitted_bytes / esize < lindex) {
-        // pad (lindex - current_offset/esize)*esize bytes
-        Traverse_Aggregate_Pad(st, gen_initv,
-                               (lindex - emitted_bytes / esize) * esize,
-                               current_offset);
-        current_offset += (lindex - emitted_bytes / esize) * esize;
-        emitted_bytes += (lindex - emitted_bytes / esize) * esize;
-      }
+    if (gs_tree_code(gs_tree_purpose(init)) == GS_RANGE_EXPR) {
+      lindex = gs_get_integer_value(gs_tree_operand(gs_tree_purpose(init),0));
+      hindex = gs_get_integer_value(gs_tree_operand(gs_tree_purpose(init),1));
+    }
+    else lindex = hindex = gs_get_integer_value(gs_tree_purpose(init));
+    if ( emitted_bytes/esize < lindex ) {
+      // pad (lindex - current_offset/esize)*esize bytes
+#ifdef NEW_INITIALIZER
+      Traverse_Aggregate_Pad (target, gen_initv,
+#else
+      Traverse_Aggregate_Pad (st, gen_initv,
+#endif
+			      (lindex - emitted_bytes/esize)*esize,
+			      current_offset);
+      current_offset += (lindex - emitted_bytes/esize)*esize;
+      emitted_bytes += (lindex - emitted_bytes/esize)*esize;
     }
 
     gs_t tree_value = gs_tree_value(init);
-    if (gs_tree_code(tree_value) == GS_PTRMEM_CST) {
+    if (gs_tree_code(tree_value) == GS_PTRMEM_CST)  {
       gs_t t = gs_expanded_ptrmem_cst(tree_value);
       Is_True(t != NULL,
-              ("Traverse_Aggregate_Array: expanded PTRMEM_CST is NULL"));
+	      ("Traverse_Aggregate_Array: expanded PTRMEM_CST is NULL"));
       gs_set_tree_value(init, t);
     }
 
-    if (gs_tree_code(gs_tree_value(init)) == GS_CONSTRUCTOR) {
+    if (gs_tree_code(gs_tree_value (init)) == GS_CONSTRUCTOR) {
       // recursively process nested ARRAYs and STRUCTs
       // update array_elem_offset to current_offset to
       // keep track of where each array element starts
-      Traverse_Aggregate_Constructor(st, gs_tree_value(init),
-#ifdef KEY
-                                     gs_tree_type(type),
+#ifdef NEW_INITIALIZER
+      Traverse_Aggregate_Constructor (target, gs_tree_value(init),
+#else
+      Traverse_Aggregate_Constructor (st, gs_tree_value(init),
 #endif
-                                     gs_tree_type(type), gen_initv,
-                                     current_offset, current_offset, 0);
+#ifdef KEY
+				      gs_tree_type(type),
+#endif
+				      gs_tree_type(type),
+                                      gen_initv, current_offset, current_offset,
+                                      0);
       emitted_bytes += esize;
       current_offset += esize;
     }
 
     else {
-    // initialize SCALARs and POINTERs
-    // note that we should not be encountering bit fields
+      // initialize SCALARs and POINTERs
+      // note that we should not be encountering bit fields
 #ifdef TARG_IA64
       if (gen_initv) {
         if ((next != NULL) && (gs_tree_code(tree_value) == GS_FDESC_EXPR) &&
             (gs_tree_code(gs_tree_value(next)) == GS_FDESC_EXPR) &&
-            (gs_tree_value(tree_value) == gs_tree_value(gs_tree_value(next)))) {
+	    (gs_tree_value(tree_value) == gs_tree_value(gs_tree_value(next))) ) {
           init = next;
-          next = gs_tree_chain(next);
-          Add_Initv_For_Tree(tree_value, esize);
-          emitted_bytes += (esize << 1);
-          current_offset += (esize << 1);
-          continue;
-        }
+	  next = gs_tree_chain(next);
+	  Add_Initv_For_Tree (tree_value, esize);
+	  emitted_bytes += (esize << 1);
+	  current_offset += (esize << 1);
+	  continue;
+	}
       }
 #endif
       for (INT index = lindex; index <= hindex; index++) {
-        if (gen_initv) {
-          Add_Initv_For_Tree(gs_tree_value(init), esize);
-          emitted_bytes += esize;
-        } else
-          Gen_Assign_Of_Init_Val(st, gs_tree_value(init), current_offset, 0,
-                                 ety, FALSE, 0, FLD_HANDLE(), emitted_bytes);
-        current_offset += esize;
+	if (gen_initv) {
+	  Add_Initv_For_Tree (gs_tree_value(init), esize);
+	  emitted_bytes += esize;
+	}
+	else
+#ifdef NEW_INITIALIZER
+          Gen_Assign_Of_Init_Val (target, gs_tree_value(init), current_offset, 0,
+#else
+	  Gen_Assign_Of_Init_Val (st, gs_tree_value(init), current_offset, 0,
+#endif
+				  ety, FALSE, 0, FLD_HANDLE (), emitted_bytes);
+	current_offset += esize;
       }
     }
   }
+#endif
 
 #ifdef KEY
   // GCC extension allows arrays to be declared without sizes, and later
@@ -2678,11 +2874,14 @@ void AGGINIT::Traverse_Aggregate_Array(
 #endif /* KEY */
 
   // If the entire array has not been initialized, pad till the end
-  pad = TY_size(ty) - emitted_bytes;
+  pad = TY_size (ty) - emitted_bytes;
 
   if (pad > 0)
-    Traverse_Aggregate_Pad(st, gen_initv, pad, current_offset);
-
+#ifdef NEW_INITIALIZER
+    Traverse_Aggregate_Pad (target, gen_initv, pad, current_offset);
+#else
+  Traverse_Aggregate_Pad (st, gen_initv, pad, current_offset);
+#endif
 } /* Traverse_Aggregate_Array */
 
 #ifdef KEY
@@ -2716,39 +2915,44 @@ UINT Advance_Field_Id(FLD_HANDLE field, UINT field_id) {
 // of the last element in the struct if it has elements, otherwise
 // it returns the field_id passed in for empty structs
 
-UINT AGGINIT::Traverse_Aggregate_Struct(
-    ST *st,         // symbol being initialized
-    gs_t init_list, // list of initializers for elements in STRUCT
-#ifdef KEY
-    gs_t struct_type, // type of top level structure
+UINT
+AGGINIT::Traverse_Aggregate_Struct (
+#ifdef NEW_INITIALIZER
+        WN   *target,
+#else
+        ST   *st,               // symbol being initialized
 #endif
-    gs_t type,      // type of struct
-    BOOL gen_initv, // TRUE if initializing with INITV, FALSE for statements
-    UINT current_offset,    // offset from start of symbol for current struct
-    UINT array_elem_offset, // if struct is with an array, then it is the
-                            //   offset of the outermost struct from the
-                            //   array enclosing the struct
-                            // if struct is not within an array, it is zero
-                            // this is needed when field_id is used to generate
-                            //   stores for initialization
-    UINT field_id)          // field_id of struct
+        gs_t init_list,         // list of initializers for elements in STRUCT
+#ifdef KEY
+        gs_t struct_type,       // type of top level structure
+#endif
+        gs_t type,              // type of struct
+        BOOL gen_initv,         // TRUE if initializing with INITV, FALSE for statements
+        UINT current_offset,    // offset from start of symbol for current struct
+        UINT array_elem_offset, // if struct is with an array, then it is the
+        //   offset of the outermost struct from the
+        //   array enclosing the struct
+        // if struct is not within an array, it is zero
+        // this is needed when field_id is used to generate
+        //   stores for initialization
+        UINT field_id)          // field_id of struct
 {
-  TY_IDX ty = Get_TY(type);                           // get WHIRL type
-  gs_t field = get_first_real_or_virtual_field(type); // get first field in gcc
-  FLD_HANDLE fld = TY_fld(ty); // get first field in WHIRL
+  TY_IDX     ty    = Get_TY(type);       // get WHIRL type
+  gs_t       field = get_first_real_or_virtual_field(type);  // get first field in gcc
+  FLD_HANDLE fld   = TY_fld (ty);        // get first field in WHIRL
 
-  INT emitted_bytes = 0; // keep track of # of bytes initialize;
-  INT current_offset_base = current_offset;
-  INT pad;
-  BOOL is_bit_field;
-  gs_t init;
-  TY_IDX fld_ty;
+  INT        emitted_bytes = 0;          // keep track of # of bytes initialize;
+  INT        current_offset_base = current_offset;
+  INT        pad;
+  BOOL       is_bit_field;
+  gs_t       init;
+  TY_IDX     fld_ty;
 
   // account for anonymous WHIRL fields being generated for every direct,
   // nonempty nonvirtual base class.
   // these are generated first in Create_TY_For_Tree (tree_symtab.cxx)
 
-#ifndef KEY // g++'s class.c already laid out the base types.  Bug 11622.
+#ifndef KEY	// g++'s class.c already laid out the base types.  Bug 11622.
   gs_t type_binfo, basetypes;
 
   if ((type_binfo = gs_type_binfo(type)) != NULL &&
@@ -2758,37 +2962,40 @@ UINT AGGINIT::Traverse_Aggregate_Struct(
     for (list = basetypes; gs_code(list) != EMPTY; list = gs_operand(list, 1)) {
       gs_t binfo = gs_operand(list, 0);
       gs_t basetype = gs_binfo_type(binfo);
-      if (!is_empty_base_class(basetype) || !gs_binfo_virtual_p(binfo)) {
+      if (!is_empty_base_class(basetype) ||
+          !gs_binfo_virtual_p(binfo)) {
         ++field_id;
-        fld = FLD_next(fld);
+        fld = FLD_next (fld);
         field_id += TYPE_FIELD_IDS_USED(basetype);
       }
     }
   }
-#endif // KEY
+#endif	// KEY
 
   while (field && gs_tree_code(field) != GS_FIELD_DECL)
     field = next_real_field(type, field);
 
-  for (init = gs_constructor_elts(init_list); init;
-       init = gs_tree_chain(init)) {
-    // loop through each initializer specified
+#ifdef FE_GNU_4_2_0
+  INT length = gs_constructor_length(init_list);
+  for (INT idx = 0;
+       idx < length;
+       idx++) {
 
     ++field_id; // compute field_id for current field
+    gs_t element_index = gs_constructor_elts_index(init_list, idx);
 
     // if the initialization is not for the current field,
     // advance the fields till we find it
-    if (field && gs_tree_purpose(init) &&
-        gs_tree_code(gs_tree_purpose(init)) == GS_FIELD_DECL) {
-      DevWarn("Encountered FIELD_DECL during initialization");
+    if (field && element_index && gs_tree_code(element_index) == GS_FIELD_DECL) {
+      // DevWarn ("Encountered FIELD_DECL during initialization");
       for (;;) {
-        if (field == gs_tree_purpose(init)) {
+        if (field == element_index) {
           break;
         }
 #ifdef KEY
         // The same field can be created more than once.  Bug 2708.
         if (gs_decl_name(field) &&
-            gs_decl_name(field) == gs_decl_name(gs_tree_purpose(init))) {
+            gs_decl_name(field) == gs_decl_name(element_index)) {
           break;
         }
 #endif
@@ -2797,7 +3004,7 @@ UINT AGGINIT::Traverse_Aggregate_Struct(
 #else
         field_id = Advance_Field_Id(fld, field_id);
 #endif
-        fld = FLD_next(fld);
+        fld = FLD_next (fld);
         field = next_real_field(type, field);
         while (field && gs_tree_code(field) != GS_FIELD_DECL)
           field = next_real_field(type, field);
@@ -2805,21 +3012,25 @@ UINT AGGINIT::Traverse_Aggregate_Struct(
     }
 
     // check if we need to pad upto the offset of the field
-    pad = FLD_ofst(fld) - emitted_bytes;
+    pad = FLD_ofst (fld) - emitted_bytes;
 
     if (pad > 0) {
-      Traverse_Aggregate_Pad(st, gen_initv, pad, current_offset);
+#ifdef NEW_INITIALIZER
+      Traverse_Aggregate_Pad (target, gen_initv, pad, current_offset);
+#else
+      Traverse_Aggregate_Pad (st, gen_initv, pad, current_offset);
+#endif
       current_offset += pad;
-      emitted_bytes += pad;
+      emitted_bytes  += pad;
     }
 
+    gs_t element_value = gs_constructor_elts_value(init_list, idx);
+    if (gs_tree_code(element_value) == GS_NOP_EXPR &&
+        gs_tree_code(gs_tree_operand(element_value, 0)) == GS_CONSTRUCTOR)
+      element_value = gs_tree_operand(element_value, 0);
+
     fld_ty = FLD_type(fld);
-
-    gs_t init_value = gs_tree_value(init);
-    if (gs_tree_code(init_value) == GS_NOP_EXPR)
-      init_value = gs_tree_operand(init_value, 0);
-
-    if (gs_tree_code(init_value) == GS_CONSTRUCTOR) {
+    if (gs_tree_code(element_value) == GS_CONSTRUCTOR) {
       // recursively process nested ARRAYs and STRUCTs
       gs_t element_type;
       element_type = gs_tree_type(field);
@@ -2829,18 +3040,211 @@ UINT AGGINIT::Traverse_Aggregate_Struct(
       // For an example see Traverse_Aggregate_Array
       INT array_size = TY_size(fld_ty);
 #endif
-      field_id = Traverse_Aggregate_Constructor(
-          st, init_value,
-#ifdef KEY
-          struct_type,
+#ifdef NEW_INITIALIZER
+      field_id = Traverse_Aggregate_Constructor (target, element_value,
+#else
+      field_id = Traverse_Aggregate_Constructor (st, element_value,
 #endif
-          element_type, gen_initv, current_offset, array_elem_offset, field_id);
+#ifdef KEY
+                                                 struct_type,
+#endif
+                                                 element_type, gen_initv,
+                                                 current_offset,
+                                                 array_elem_offset, field_id);
 #ifdef KEY
       // see comment above
       if (TY_size(fld_ty) != array_size) {
-        FmtAssert((array_size == 0), ("Unexpected change in size of array"));
-        TY_IDX struct_ty = Get_TY(struct_type);
-        Ty_Table[struct_ty].size += TY_size(fld_ty);
+        FmtAssert ((array_size == 0),
+                   ("Unexpected change in size of array"));
+        TY_IDX struct_ty = Get_TY ( struct_type );
+        Ty_Table[struct_ty].size +=  TY_size(fld_ty);
+      }
+#endif
+      emitted_bytes += TY_size(fld_ty);
+    }
+#ifdef KEY
+      // Fields corresponding to pointer-to-member-functions are represented as
+      // records with fields __pfn and __delta.  The initializer is a TREE_LIST
+      // of __pfn and __delta.  Bug 3143.
+    else if (gs_type_ptrmemfunc_p(gs_tree_type(field))) {
+      gs_t element_type;
+      element_type = gs_tree_type(field);
+      gs_t init_value = element_value;
+      if (gs_tree_code(init_value) == GS_NOP_EXPR)
+        init_value = gs_tree_operand(init_value, 0); // bug 10853
+      GS_ASSERT(gs_tree_code(init_value) == GS_PTRMEM_CST,
+                ("Traverse_Aggregate_Struct: GS_PTRMEM_CST not found"));
+      // PTRMEM_CST was expanded by GCC's cplus_expand_constant.  Get the
+      // result.
+      gs_t expanded_ptrmem_cst = gs_expanded_ptrmem_cst(init_value);
+      FmtAssert(expanded_ptrmem_cst != NULL,
+                ("Traverse_Aggregate_Struct: expanded PTRMEM_CST is NULL"));
+#ifdef NEW_INITIALIZER
+      field_id = Traverse_Aggregate_Constructor (target, expanded_ptrmem_cst,
+#else
+      field_id = Traverse_Aggregate_Constructor (st, expanded_ptrmem_cst,
+#endif
+                                                 struct_type,
+                                                 element_type, gen_initv,
+                                                 current_offset,
+                                                 array_elem_offset, field_id);
+      emitted_bytes += TY_size(fld_ty);
+    }
+#endif
+    else {
+      // initialize SCALARs and POINTERs
+      is_bit_field = FLD_is_bit_field(fld);
+      if (gen_initv) {
+        if (! is_bit_field) {
+#ifdef KEY
+          // Bug 1021
+          // For fields that are arrays of characters with unspecified
+          // lengths, update the field size and the structure size here.
+          if (TY_size(fld_ty) == 0 &&
+              gs_tree_code(element_value) == GS_STRING_CST &&
+              gs_tree_string_pointer(element_value)) {
+            Ty_Table[fld_ty].size =
+                    strlen(gs_tree_string_pointer(element_value));
+            TY_IDX struct_ty = Get_TY ( struct_type );
+            Ty_Table[struct_ty].size += TY_size(fld_ty);
+          }
+#endif
+          Add_Initv_For_Tree (element_value, TY_size(fld_ty));
+          emitted_bytes += TY_size(fld_ty);
+        }
+        else { // do 1 byte a time
+          Add_Bitfield_Initv_For_Tree (element_value, fld, emitted_bytes);
+          // emitted_bytes updated by the call as reference parameter
+        }
+      }
+      else {
+#ifdef NEW_INITIALIZER
+        Gen_Assign_Of_Init_Val (target, element_value,
+#else
+        Gen_Assign_Of_Init_Val (st, element_value,
+#endif
+                                current_offset, array_elem_offset,
+#ifndef KEY
+                is_bit_field ? ty : fld_ty,
+#else
+                                is_bit_field ? Get_TY(struct_type) : fld_ty,
+#endif
+                                is_bit_field, field_id, fld, emitted_bytes);
+        // emitted_bytes updated by the call as reference parameter
+
+        // bug908 open64.net. update field_id for the case of field is struct type.
+        if (TY_kind(fld_ty) == KIND_STRUCT) {
+          FLD_HANDLE field;
+          field = TY_fld(fld_ty); // get first field
+          while (!field.Is_Null()) {
+            field_id=Advance_Field_Id(field,field_id);
+            field=FLD_next(field);
+          }
+        }
+      }
+    }
+
+    current_offset = current_offset_base + emitted_bytes;
+    fld = FLD_next(fld);
+    field = next_real_field(type, field);
+    while (field && gs_tree_code(field) != GS_FIELD_DECL)
+      field = next_real_field(type, field);
+  }
+#else // end FE_GNU_4_2_0
+  #ifdef KEY
+  if (gs_constructor_elts(init_list))
+    ++field_id; // compute field_id for current field
+#endif
+  for (init = gs_constructor_elts(init_list);
+       init;
+       init = gs_tree_chain(init)) {
+    // loop through each initializer specified
+
+#ifdef KEY
+    // Bug 14422: Do the first increment outside the loop. Then advance
+    // the field_id at the tail end of the loop before moving on to next
+    // field, taking into account any fields inside current struct field.
+    // The update at the tail end is done only if there is an iteration
+    // left.
+#else
+    ++field_id; // compute field_id for current field
+#endif
+
+    // if the initialization is not for the current field,
+    // advance the fields till we find it
+    if (field && gs_tree_purpose(init) && gs_tree_code(gs_tree_purpose(init)) == GS_FIELD_DECL) {
+      DevWarn ("Encountered FIELD_DECL during initialization");
+      for (;;) {
+        if (field == gs_tree_purpose(init)) {
+          break;
+        }
+#ifdef KEY
+	// The same field can be created more than once.  Bug 2708.
+        if (gs_decl_name(field) &&
+	    gs_decl_name(field) == gs_decl_name(gs_tree_purpose(init))) {
+          break;
+        }
+#endif
+#ifndef KEY
+        ++field_id;
+#else
+	field_id = Advance_Field_Id(fld, field_id);
+#endif
+        fld = FLD_next (fld);
+        field = next_real_field(type, field);
+        while (field && gs_tree_code(field) != GS_FIELD_DECL)
+          field = next_real_field(type, field);
+      }
+    }
+
+    // check if we need to pad upto the offset of the field
+    pad = FLD_ofst (fld) - emitted_bytes;
+
+    if (pad > 0) {
+#ifdef NEW_INITIALIZER
+      Traverse_Aggregate_Pad (target, gen_initv, pad, current_offset);
+#else
+      Traverse_Aggregate_Pad (st, gen_initv, pad, current_offset);
+#endif
+      current_offset += pad;
+      emitted_bytes  += pad;
+    }
+
+    fld_ty = FLD_type(fld);
+
+    gs_t init_value = gs_tree_value(init);
+    if ( gs_tree_code(init_value) == GS_NOP_EXPR )
+      init_value = gs_tree_operand(init_value, 0);
+
+    if ( gs_tree_code(init_value) == GS_CONSTRUCTOR) {
+      // recursively process nested ARRAYs and STRUCTs
+      gs_t element_type;
+      element_type = gs_tree_type(field);
+#ifdef KEY
+      // The size of the struct have to be adjusted for zero-length arrays
+      // that later get initialized and hence adjusted in size.
+      // For an example see Traverse_Aggregate_Array
+      INT array_size = TY_size(fld_ty);
+#endif
+
+#ifdef NEW_INITIALIZER
+      field_id = Traverse_Aggregate_Constructor (target, init_value,
+#else
+      field_id = Traverse_Aggregate_Constructor (st, init_value,
+#endif
+#ifdef KEY
+  						 struct_type,
+#endif
+                                                 element_type, gen_initv,
+                                                 current_offset,
+                                                 array_elem_offset, field_id);
+#ifdef KEY
+      // see comment above
+      if (TY_size(fld_ty) != array_size) {
+	FmtAssert ((array_size == 0),
+		   ("Unexpected change in size of array"));
+	TY_IDX struct_ty = Get_TY ( struct_type );
+	Ty_Table[struct_ty].size +=  TY_size(fld_ty);
       }
 #endif
       emitted_bytes += TY_size(fld_ty);
@@ -2849,18 +3253,26 @@ UINT AGGINIT::Traverse_Aggregate_Struct(
     // Fields corresponding to pointer-to-member-functions are represented as
     // records with fields __pfn and __delta.  The initializer is a TREE_LIST
     // of __pfn and __delta.  Bug 3143.
-    else if (gs_type_ptrmemfunc_p(gs_tree_type(field))) {
+    else if (field && gs_type_ptrmemfunc_p(gs_tree_type(field))) {
       gs_t element_type;
       element_type = gs_tree_type(field);
 
       GS_ASSERT(gs_tree_code(init_value) == GS_PTRMEM_CST,
-                ("Traverse_Aggregate_Struct: GS_PTRMEM_CST not found"));
+		("Traverse_Aggregate_Struct: GS_PTRMEM_CST not found"));
       // PTRMEM_CST was expanded by GCC's cplus_expand_constant.  Get the
       // result.
       gs_t expanded_ptrmem_cst = gs_expanded_ptrmem_cst(init_value);
-      field_id = Traverse_Aggregate_Constructor(
-          st, expanded_ptrmem_cst, struct_type, element_type, gen_initv,
-          current_offset, array_elem_offset, field_id);
+      FmtAssert(expanded_ptrmem_cst != NULL,
+               ("Traverse_Aggregate_Struct: expanded PTRMEM_CST is NULL"));
+#ifdef NEW_INITIALIZER
+      field_id = Traverse_Aggregate_Constructor (target, expanded_ptrmem_cst,
+#else
+      field_id = Traverse_Aggregate_Constructor (st, expanded_ptrmem_cst,
+#endif
+  						 struct_type,
+                                                 element_type, gen_initv,
+                                                 current_offset,
+                                                 array_elem_offset, field_id);
       emitted_bytes += TY_size(fld_ty);
     }
 #endif
@@ -2868,50 +3280,66 @@ UINT AGGINIT::Traverse_Aggregate_Struct(
       // initialize SCALARs and POINTERs
       is_bit_field = FLD_is_bit_field(fld);
       if (gen_initv) {
-        if (!is_bit_field) {
+        if (! is_bit_field) {
 #ifdef KEY
-          // Bug 1021
-          // For fields that are arrays of characters with unspecified
-          // lengths, update the field size and the structure size here.
-          if (TY_size(fld_ty) == 0 &&
-              gs_tree_code(gs_tree_value(init)) == GS_STRING_CST &&
-              gs_tree_string_pointer(gs_tree_value(init))) {
-            Ty_Table[fld_ty].size =
-                strlen(gs_tree_string_pointer(gs_tree_value(init)));
-            TY_IDX struct_ty = Get_TY(struct_type);
-            Ty_Table[struct_ty].size += TY_size(fld_ty);
-          }
+	  // Bug 1021
+	  // For fields that are arrays of characters with unspecified
+	  // lengths, update the field size and the structure size here.
+	  if (TY_size(fld_ty) == 0 &&
+	      gs_tree_code(gs_tree_value(init)) == GS_STRING_CST &&
+	      gs_tree_string_pointer(gs_tree_value(init))) {
+	    Ty_Table[fld_ty].size =
+	    	strlen(gs_tree_string_pointer(gs_tree_value(init)));
+	    TY_IDX struct_ty = Get_TY ( struct_type );
+	    Ty_Table[struct_ty].size += TY_size(fld_ty);
+	  }
 #endif
-          Add_Initv_For_Tree(gs_tree_value(init), TY_size(fld_ty));
+          Add_Initv_For_Tree (gs_tree_value(init), TY_size(fld_ty));
           emitted_bytes += TY_size(fld_ty);
-        } else { // do 1 byte a time
-          Add_Bitfield_Initv_For_Tree(gs_tree_value(init), fld, emitted_bytes);
+        }
+        else { // do 1 byte a time
+          Add_Bitfield_Initv_For_Tree (gs_tree_value(init), fld, emitted_bytes);
           // emitted_bytes updated by the call as reference parameter
         }
-      } else {
-        Gen_Assign_Of_Init_Val(st, gs_tree_value(init), current_offset,
-                               array_elem_offset,
-#ifndef KEY
-                               is_bit_field ? ty : fld_ty,
+      }
+      else {
+#ifdef NEW_INITIALIZER
+        Gen_Assign_Of_Init_Val (target,  gs_tree_value(init),
 #else
-                               is_bit_field ? Get_TY(struct_type) : fld_ty,
+        Gen_Assign_Of_Init_Val (st, gs_tree_value(init),
 #endif
-                               is_bit_field, field_id, fld, emitted_bytes);
+                                current_offset, array_elem_offset,
+#ifndef KEY
+                                is_bit_field ? ty : fld_ty,
+#else
+				is_bit_field ? Get_TY(struct_type) : fld_ty,
+#endif
+                                is_bit_field, field_id, fld, emitted_bytes);
         // emitted_bytes updated by the call as reference parameter
       }
     }
 
-    // advance ot next field
+#ifdef KEY
+    // Bug 14422:
+    // Count current field before moving to next field. The current field
+    // may be of struct type, in which case its fields need to be counted.
+    // We increment the field-id here instead of at the start of the loop.
+    if (gs_tree_chain(init)) // only if there is an iteration left
+      field_id = Advance_Field_Id(fld, field_id);
+#endif
+    // advance to next field
     current_offset = current_offset_base + emitted_bytes;
     fld = FLD_next(fld);
-    field = next_real_field(type, field);
+    if (field) // bug 13102
+      field = next_real_field(type, field);
     while (field && gs_tree_code(field) != GS_FIELD_DECL)
       field = next_real_field(type, field);
   }
+#endif
 
   // if not all fields have been initialized, then loop through
   // the remaining fields to update field_id
-  while (!fld.Is_Null()) {
+  while ( ! fld.Is_Null()) {
     ++field_id;
     if (!gen_initv && FLD_is_bit_field(fld)) {
       INT bofst = FLD_bofst(fld);
@@ -2924,20 +3352,41 @@ UINT AGGINIT::Traverse_Aggregate_Struct(
         TY_IDX fld_ty = FLD_type(fld);
         TYPE_ID mtyp = TY_mtype(fld_ty);
         mtyp = (mtyp == MTYPE_V) ? MTYPE_I4 : Widen_Mtype(mtyp);
-        WN *init_wn = WN_Intconst(mtyp, 0);
-        WN *wn = WN_Stid(MTYPE_BS, ST_ofst(st) + array_elem_offset, st,
-#ifndef KEY
-                         ty,
+        WN *init_wn = WN_Intconst (mtyp, 0);
+#ifdef NEW_INITIALIZER
+        TY_IDX struct_ty = Get_TY ( struct_type );
+        //TY_IDX ptr_ty = Make_Pointer_Type(struct_ty);
+        //WN *wn = WN_CreateMstore(array_elem_offset, ptr_ty, init_wn, target, WN_Intconst(MTYPE_I4, TY_size(struct_ty)) );
+        WN* wn = NULL;
+        Is_True( (WN_operator(target) == OPR_LDID ||
+                  WN_operator(target) == OPR_LDA),
+                 ("Invalid operator for target"));
+        if( WN_operator(target) == OPR_LDID ) {
+            TY_IDX ptr_ty = Make_Pointer_Type(struct_ty);
+            wn = WN_Istore(MTYPE_BS, array_elem_offset, struct_ty,
+                           target, init_wn, field_id);
+        }
+        else { // OPR_LDA
+            ST *st = WN_st(target);
+            wn = WN_Stid (MTYPE_BS, WN_lda_offset(target) + array_elem_offset,
+                          st, struct_ty, init_wn, field_id);
+        }
 #else
-                         Get_TY(struct_type),
+        WN *wn = WN_Stid (MTYPE_BS, ST_ofst(st) + array_elem_offset, st,
+#ifndef KEY
+                ty,
+#else
+                          Get_TY(struct_type),
 #endif
-                         init_wn, field_id);
+                          init_wn, field_id);
+#endif
         WGEN_Stmt_Append(wn, Get_Srcpos());
       }
     }
 #ifdef KEY
-    field_id = Advance_Field_Id(fld, field_id) - 1;
+    field_id = Advance_Field_Id(fld,field_id)-1;
 #endif
+
     fld = FLD_next(fld);
     field = next_real_field(type, field);
     while (field && gs_tree_code(field) != GS_FIELD_DECL)
@@ -2946,10 +3395,14 @@ UINT AGGINIT::Traverse_Aggregate_Struct(
 
   // if not all fields have been initilaized, then check if
   // padding is needed to the end of struct
-  pad = TY_size(ty) - emitted_bytes;
+  pad = TY_size (ty) - emitted_bytes;
 
   if (pad > 0)
-    Traverse_Aggregate_Pad(st, gen_initv, pad, current_offset);
+#ifdef NEW_INITIALIZER
+    Traverse_Aggregate_Pad (target, gen_initv, pad, current_offset);
+#else
+    Traverse_Aggregate_Pad (st, gen_initv, pad, current_offset);
+#endif
 
   return field_id;
 } /* Traverse_Aggregate_Struct */
@@ -2958,43 +3411,109 @@ UINT AGGINIT::Traverse_Aggregate_Struct(
 // The aggregate element for the specified symbol at the current_offset
 // is a vector.
 // If gen_initv is FALSE generate a sequence of stores.
-void AGGINIT::Traverse_Aggregate_Vector(
-    ST *st,         // symbol being initialized
-    gs_t init_list, // list of initializers for units in vector
-    TYPE_ID mtyp,   // type of vector
-    BOOL gen_initv, // TRUE if initializing with INITV, FALSE for statements
-    UINT current_offset, // offset from start of symbol for current vector
-    BOOL vec_cst)        // init_list is a constant or not
+void
+AGGINIT::Traverse_Aggregate_Vector (
+#ifdef NEW_INITIALIZER
+        WN * target,
+#else
+        ST * st,             // symbol being initialized
+#endif
+        gs_t init_list,      // list of initializers for units in vector
+        TYPE_ID mtyp,	       // type of vector
+        BOOL gen_initv,      // TRUE if initializing with INITV, FALSE for statements
+        UINT current_offset, // offset from start of symbol for current vector
+        BOOL vec_cst)	       // init_list is a constant or not
 {
   gs_t init;
   INT emitted_bytes = 0;
 
   if (vec_cst)
-    init = gs_tree_vector_cst_elts(init_list);
+    init = gs_tree_vector_cst_elts (init_list);
+#ifndef FE_GNU_4_2_0
   else
-    init = gs_constructor_elts(init_list);
+    init = gs_constructor_elts (init_list);
+#else
+  if (!vec_cst)
+  {
+    INT length = gs_constructor_length(init_list);
+    for (INT idx = 0;
+         idx < length;
+         idx++) {
 
-  for (; init; init = gs_tree_chain(init)) {
-    gs_t unit_type = gs_tree_type(gs_tree_value(init));
-    gs_t size = gs_type_size(unit_type);
-    Is_True(gs_tree_code(size) == GS_INTEGER_CST,
-            ("Traverse_Aggregate_Vector: Vector of variable-sized units?"));
-    UINT esize = gs_get_integer_value(size) / BITSPERBYTE;
-    if (gen_initv) {
-      Add_Initv_For_Tree(gs_tree_value(init), esize);
-      emitted_bytes += esize;
-    } else
-      Gen_Assign_Of_Init_Val(st, gs_tree_value(init), current_offset, 0,
-                             Get_TY(unit_type), 0, 0, FLD_HANDLE(),
-                             emitted_bytes);
-    current_offset += esize;
+      gs_t element_value = gs_constructor_elts_value(init_list, idx);
+
+      gs_t unit_type = gs_tree_type(element_value);
+      gs_t size = gs_type_size (unit_type);
+      Is_True (gs_tree_code (size) == GS_INTEGER_CST,
+               ("Traverse_Aggregate_Vector: Vector of variable-sized units?"));
+      UINT esize = gs_get_integer_value(size) / BITSPERBYTE;
+      if (gen_initv)
+      {
+        Add_Initv_For_Tree (element_value, esize);
+        emitted_bytes += esize;
+      }
+      else
+#ifdef NEW_INITIALIZER
+        Gen_Assign_Of_Init_Val (target, element_value,
+#else
+                Gen_Assign_Of_Init_Val (st, element_value,
+#endif
+                                current_offset, 0,
+                                Get_TY(unit_type),
+                                0, 0, FLD_HANDLE(), emitted_bytes);
+      current_offset += esize;
+    }
   }
+  else
+#endif
+
+    for (;
+            init;
+            init = gs_tree_chain(init))
+    {
+      gs_t unit_type = gs_tree_type(gs_tree_value(init));
+      gs_t size = gs_type_size (unit_type);
+      Is_True (gs_tree_code (size) == GS_INTEGER_CST,
+               ("Traverse_Aggregate_Vector: Vector of variable-sized units?"));
+      UINT esize = gs_get_integer_value(size) / BITSPERBYTE;
+      if (gen_initv)
+      {
+        Add_Initv_For_Tree (gs_tree_value(init), esize);
+        emitted_bytes += esize;
+      }
+      else
+#ifdef NEW_INITIALIZER
+        Gen_Assign_Of_Init_Val (target, gs_tree_value(init),
+#else
+                Gen_Assign_Of_Init_Val (st, gs_tree_value(init),
+#endif
+                                current_offset, 0,
+                                Get_TY(unit_type),
+                                0, 0, FLD_HANDLE(), emitted_bytes);
+      current_offset += esize;
+    }
 
   // bug 11615: If the entire vector has not been initialized, pad till the end
   INT pad = MTYPE_byte_size(mtyp) - emitted_bytes;
 
+#ifdef NEW_INITIALIZER
+  // When object size can't be obtained from mtyp, get it from
+  // the pointed-to object.
+  if ((MTYPE_byte_size(mtyp) == 0) && target
+      && (WN_operator(target) == OPR_LDA)) {
+    TY_IDX pointer_type = WN_ty(target);
+    TY_IDX object_type = TY_pointed(pointer_type);
+    UINT64 object_size = TY_size(object_type);
+    pad = object_size - emitted_bytes;
+  }
+#endif
+
   if (pad > 0)
-    Traverse_Aggregate_Pad(st, gen_initv, pad, current_offset);
+#ifdef NEW_INITIALIZER
+    Traverse_Aggregate_Pad (target, gen_initv, pad, current_offset);
+#else
+  Traverse_Aggregate_Pad (st, gen_initv, pad, current_offset);
+#endif
 } /* Traverse_Aggregate_Vector */
 
 void Traverse_Aggregate_Vector_Const(
@@ -3758,44 +4277,58 @@ bool decl_is_needed_vtt(gs_t decl) {
 }
 #endif
 
-bool decl_is_needed_vtable(gs_t decl) {
+bool
+decl_is_needed_vtable (gs_t decl)
+{
   bool needed = false;
-  if (gs_decl_name(decl) && gs_identifier_pointer(gs_decl_name(decl)) &&
-#ifdef KEY
+  if (gs_decl_name(decl) &&
+      gs_identifier_pointer(gs_decl_name(decl)) &&
+      #ifdef KEY
       !strncmp("_ZTV", gs_identifier_pointer(gs_decl_name(decl)), 4)
 #else
-      !strncmp("__vt_", gs_identifier_pointer(gs_decl_name(decl)), 5)
+    !strncmp("__vt_", gs_identifier_pointer(gs_decl_name(decl)), 5)
 #endif
-  ) {
+          ) {
 
-    gs_t entries = gs_constructor_elts(gs_decl_initial(decl));
+#ifdef FE_GNU_4_2_0
+    INT count = gs_constructor_length (gs_decl_initial (decl));
+    for (INT idx = 0;
+         idx < count;
+         idx++)
+#else
+      gs_t entries = gs_constructor_elts (gs_decl_initial (decl));
 
-    for (; entries; entries = gs_tree_chain(entries)) {
+    for (; entries; entries = gs_tree_chain (entries))
+#endif
+    {
 
       gs_t fnaddr;
       gs_t fn;
 
-      fnaddr = gs_tree_value(entries);
+#ifdef FE_GNU_4_2_0
+      fnaddr = gs_constructor_elts_value (gs_decl_initial (decl), idx);
+#else
+      fnaddr = gs_tree_value (entries);
+#endif
 
 #ifdef KEY
-      if (gs_tree_code(fnaddr) == GS_NOP_EXPR &&
-          gs_tree_code(gs_tree_operand(fnaddr, 0)) == GS_ADDR_EXPR) {
-        fn = gs_tree_operand(gs_tree_operand(fnaddr, 0),
-                             0); // fn can be VAR_DECL
+      if (gs_tree_code (fnaddr) == GS_NOP_EXPR &&
+          gs_tree_code (gs_tree_operand (fnaddr, 0)) == GS_ADDR_EXPR) {
+        fn = gs_tree_operand (gs_tree_operand (fnaddr, 0), 0);  // fn can be VAR_DECL
 
-      } else if (gs_tree_code(fnaddr) != GS_ADDR_EXPR) {
+      } else if (gs_tree_code (fnaddr) != GS_ADDR_EXPR) {
         /* This entry is an offset: a virtual base class offset, a
            virtual call offset, and RTTI offset, etc.  */
         continue;
       } else
-        fn = gs_tree_operand(fnaddr, 0);
+        fn = gs_tree_operand (fnaddr, 0);
 #else
-      if (gs_tree_code(fnaddr) != GS_ADDR_EXPR)
+      if (gs_tree_code (fnaddr) != GS_ADDR_EXPR)
         /* This entry is an offset: a virtual base class offset, a
            virtual call offset, and RTTI offset, etc.  */
         continue;
 
-      fn = gs_tree_operand(fnaddr, 0);
+      fn = gs_tree_operand (fnaddr, 0);
 #endif
 
 #ifdef KEY
@@ -3807,11 +4340,12 @@ bool decl_is_needed_vtable(gs_t decl) {
       }
 #endif
 
-      if (!gs_decl_external(fn) && !gs_decl_weak(fn)
-#ifndef KEY // Under g++ 3.2 -O3, all functions are marked DECL_INLINE.
-          && !gs_decl_inline(fn)
+      if (!gs_decl_external(fn) &&
+          !gs_decl_weak(fn)
+#ifndef KEY	// Under g++ 3.2 -O3, all functions are marked DECL_INLINE.
+        && !gs_decl_inline(fn)
 #endif
-      ) {
+              ) {
         needed = TRUE;
         break;
       }
@@ -3820,6 +4354,7 @@ bool decl_is_needed_vtable(gs_t decl) {
 
   return needed;
 }
+
 
 void WGEN_Process_Var_Decl(gs_t decl) {
   // fprintf(stderr, "VAR_DECL: %s\n", IDENTIFIER_POINTER(gs_decl_name(decl)));
