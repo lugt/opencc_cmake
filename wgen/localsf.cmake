@@ -14,12 +14,6 @@ SET(FE_CXX_SRCS
     wgen_tracing.cxx
 )
   
-SET(OPENMP_SRCS            
-    omp_directive.cxx   
-    wgen_omp_check_stack.cxx 
-    wgen_omp_directives.cxx
-)
-  
 SET(COMMON_COM_CXX_SRCS    
    config.cxx           
    const.cxx            
@@ -78,10 +72,6 @@ foreach(ONE_C_FILE IN LISTS FE_C_SRCS )
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS FE_CXX_SRCS )
-  list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
-endforeach()
-
-foreach(ONE_C_FILE IN LISTS OPENMP_SRCS )
   list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
 endforeach()
 
