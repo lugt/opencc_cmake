@@ -33,6 +33,11 @@
 #include "config.h"
 #include "file_util.h" // for Last_Pathname_Component
 #include "wgen_misc.h"
+#include "jgen_node.h"
+#include "jgen_dst.h"
+#include "json_reader.h"
+#include "jgen_global.h"
+#include "jgen_visitor.h"
 
 #include <iostream>
 #include <string>
@@ -100,6 +105,7 @@ public:
   }
 
 private:
+    JGEN_Root root;
   // Proceed to next stage in JGEN
   int proceed(){
     /* 
@@ -108,13 +114,16 @@ private:
     int outcome = 0;
     while(stage != JGEN_FATAL_STOPPED && stage != JGEN_SUCCESS){
       if(stage <= JGEN_JSON){
-	//void * jsonobj = json2mid.read(_in_filepath);
-	stage = JGEN_PARSE;
+        ir.open(argv[1]);
+	    stage = JGEN_PARSE;
       }else if(stage <= JGEN_PARSE){
-	//void * parse_out = parse.parse(jsonobj);
-	stage = JGEN_WRITE;
+        root.init(_out_filepath.c_str());
+        root.
+        //void * parse_out = parse.parse(jsonobj);
+	    stage = JGEN_WRITE;
       }else if(stage <= JGEN_WRITE){
-	stage = JGEN_SUCCESS;
+        root.finish();
+	    stage = JGEN_SUCCESS;
       }
     }
     
@@ -149,13 +158,15 @@ void output_help(){
   std::cout << "       Jgen : Json to Whirl Generator      \n"<<
               " Further description please go to wiki/docs  " << std::endl;
   std::cout << " -  https://github.com/lugt/opencc_cmake   -" << std::endl;
-  std::cout << " -  Base:2018.07.1   WH:5.0     JS:18.06   -" << std::endl;
+  std::cout << " -  Base:2018.08.1   WH:5.0     JS:18.07   -" << std::endl;
   std::cout << "--------------------------------------------" << std::endl;
   std::cout << "    Author : Jason Lu    -  lu.gt@163.com   " << std::endl;
+  std::cout << "    Author : Shijie Li   - shijieli@qq.com  " << std::endl;
   std::cout << "--------------------------------------------" << std::endl;
-  std::cout << "Usage : jgen <INPUT_JSON_FILE> <OUTPUT_B_FILE>" << std::endl;
-  std::cout << "Usage : jgen <INPUT_JSON_FILE> <OUTPUT_B_FILE> [... PARAMS]" << std::endl;
-  std::cout << "Usage : jgen --help " << std::endl;      
+  std::cout << "Usage  : jgen <INPUT_JSON_FILE> <OUTPUT_B_FILE>" << std::endl;
+  std::cout << "Params : jgen <INPUT_JSON_FILE> <OUTPUT_B_FILE> [... PARAMS]" << std::endl;
+  std::cout << "Help   : jgen --help " << std::endl;
+  std::cout << "--------------------------------------------" << std::endl;
 }
   
 JGEN * g;

@@ -1,23 +1,521 @@
+#ifndef OSPREY_JGEN_TYPE_H
+#define OSPREY_JGEN_TYPE_H
+
 #include "json/json.h"
+#include "jgen_include.h"
 #include "json_reader.h"
+#include "jgen_st.h"
+
+#include <iostream>
+#include <string>
+
+using std::string;
+using std::cerr;
+using std::cout;
+
+namespace JGEN
+{
 
 // idx is always zero.(preserved)
-extern TY_IDX JGEN_TY_Create(Json::Value val, TY_IDX idx){
-  UINT align = JGEN_json_getbits(val);
-  // Check if Predefined
-  switch(JGEN_JSON_TY_GetKind(val)){
-  case JGEN_JSON_KIND_OBJECT:
-  case JGEN_JSON_KIND_INT:
-  case JGEN_JSON_KIND_FLOAT:
-  case JGEN_JSON_KIND_DOUBLE:
-  case JGEN_JSON_KIND_LONG:
-  case JGEN_JSON_KIND_FUNCPTR:
-  case JGEN_JSON_KIND_VOID:
-  case JGEN_JSON_KIND_STRING:
-  case JGEN_JSON_KIND_NULL:
-  }
+    extern TY_IDX JGEN_TY_Create (Json::Value val, TY_IDX idx)
+    {
+     /* UINT align = JGEN_json_getbits (val);
+      // Check if Predefined
+      switch (JGEN_JSON_TY_GetKind (val))
+        {
+          case JGEN_JSON_KIND_OBJECT:
+          case JGEN_JSON_KIND_INT:
+          case JGEN_JSON_KIND_FLOAT:
+          case JGEN_JSON_KIND_DOUBLE:
+          case JGEN_JSON_KIND_LONG:
+          case JGEN_JSON_KIND_FUNCPTR:
+          case JGEN_JSON_KIND_VOID:
+          case JGEN_JSON_KIND_STRING:
+          case JGEN_JSON_KIND_NULL:
+        }*/
+    }
+
+    class JGEN_TY {
+     public:
+      static std::string type_str;
+      static long long kind;
+      static long long flag;
+      static TY_IDX idx;
+      static TYPE_ID mtype;
+      static INT64 tsize;
+      static BOOL variable_size;
+      static std::string kname;
+      static JGEN_TY *return_val;
+      static vector<JGEN_TY> args;
+
+      void init (std::string &name_, long long kind_, long long flag_, INT64 tsize_,
+                 BOOL isLengthVariable_, string kname_, JGEN_TY *retval);
+
+      static void createFunction ()
+      {
+
+        TY &ty = (idx == TY_IDX_ZERO) ? New_TY (idx) : Ty_Table[idx];
+        Clear_TY_is_incomplete (idx);
+        TY_Init (ty, 0, KIND_FUNCTION, MTYPE_UNKNOWN, 0);
+        Set_TY_align (idx, 1);
+        TY_IDX ret_ty_idx;
+        TY_IDX arg_ty_idx;
+        TYLIST tylist_idx;
+
+        // allocate TYs for return as well as parameters
+        // this is needed to avoid mixing TYLISTs if one
+        // of the parameters is a pointer to a function
+
+        if (return_val != nullptr)
+          {
+            ret_ty_idx = return_val->idx;
+          }
+
+        for (auto it = args.begin ();
+             it != args.end ();
+             it++)
+          {
+            arg_ty_idx = it->idx;
+            if (TY_is_incomplete (arg_ty_idx) ||
+                (TY_kind (arg_ty_idx) == KIND_POINTER &&
+                 TY_is_incomplete (TY_pointed (arg_ty_idx))))
+              Set_TY_is_incomplete (idx);
+          }
+
+        // if return type is pointer to a zero length struct
+        // convert it to void
+        if (!JGEN_Keep_Zero_Length_Structs &&
+            TY_mtype (ret_ty_idx) == MTYPE_M &&
+            TY_size (ret_ty_idx) == 0)
+          {
+            // zero length struct being returned
+            DevWarn ("function returning zero length struct at line %d", lineno);
+            ret_ty_idx = Be_Type_Tbl (MTYPE_V);
+          }
+
+        // If the front-end adds the fake first param, then convert the
+        // function to return void.
+        if (TY_return_in_mem (ret_ty_idx))
+          {
+            ret_ty_idx = Be_Type_Tbl (MTYPE_V);
+            Set_TY_return_to_param (idx);        // bugs 2423 2424
+          }
+        Set_TYLIST_type (New_TYLIST (tylist_idx), ret_ty_idx);
+        Set_TY_tylist (ty, tylist_idx);
+        for (auto it = args.begin ();
+             it != args.end ();
+             it++)
+          {
+            arg_ty_idx = it->idx;
+            Is_True (!TY_is_incomplete (arg_ty_idx) ||
+                     TY_is_incomplete (idx),
+                     ("Create_TY_For_Tree: unexpected TY flag"));
+            if (!JGEN_Keep_Zero_Length_Structs &&
+                TY_mtype (arg_ty_idx) == MTYPE_M &&
+                TY_size (arg_ty_idx) == 0)
+              {
+                // zero length struct passed as parameter
+                DevWarn ("zero length struct encountered in function prototype at line %d", lineno);
+              }
+            else
+              Set_TYLIST_type (New_TYLIST (tylist_idx), arg_ty_idx);
+          }
+        if (get_num_args ())
+          {
+            Set_TY_has_prototype (idx);
+            if (arg_ty_idx != Be_Type_Tbl(MTYPE_V))
+              {
+                Set_TYLIST_type (New_TYLIST (tylist_idx), 0);
+                Set_TY_is_varargs (idx);
+              }
+            else
+              Set_TYLIST_type (Tylist_Table[tylist_idx], 0);
+          }
+        else
+          Set_TYLIST_type (New_TYLIST (tylist_idx), 0);
+
+        // TODO: TARGET X8664 SSE Specification Ignored
+      }
+
+      static void get_TY (long long _kind, std::string kindName, long long flag)
+      {
+        tsize = 0; /// Variable Length Array check? Variable Length Structure Check?
+        mtype = 0;
+        variable_size = FALSE;
+        kname = kindName;
+        kind = _kind;
+        idx = 0;
+        _getTY (_kind, flag);
+      }
+
+      static void _getTY (long long TY_KIND, long long flag)
+      {
+
+        cout << " -- Getting TY for " << kname;
+        switch (TY_KIND)
+          {
+            case JGEN_TYPE_VOID:
+              {
+                idx = MTYPE_To_TY (MTYPE_V);
+                break;
+              }
+            case JGEN_TYPE_BOOLEAN:
+            case JGEN_TYPE_INTEGER:
+            case JGEN_TYPE_OFFSET:
+              {
+                create_integer ();
+                break;
+              }
+            case JGEN_TYPE_ENUMERATION:
+              create_enumeration ();
+            break;
+            case JGEN_TYPE_CHAR:
+            case JGEN_TYPE_BYTE:
+              {
+                create_char ();
+                break;
+              }
+            case JGEN_TYPE_FLOAT:
+            case JGEN_TYPE_DOUBLE:
+            case JGEN_TYPE_NUMBER:
+              {
+                create_floating ();
+                break;
+              }
+            case JGEN_TYPE_HANDLE:
+            case JGEN_TYPE_POINTER:
+              {
+                idx = Be_Type_Tbl(Pointer_Size == 8 ? MTYPE_I8 : MTYPE_I4);
+                break;
+              }
+            case JGEN_TYPE_ARRAY:
+              {
+                createArray ();
+                break;
+              }
+            case JGEN_TYPE_RECORD:
+            case JGEN_TYPE_UNION:
+              /** TOOD RECORD, UNION **/
+              cerr << "Unfinished Type : Union";
+            break;
+            case JGEN_TYPE_METHOD:
+            case JGEN_TYPE_FUNCTION:
+              createFunction ();
+            break;
+            default:
+              cerr << "Unexpected Type KIND : " << kind;
+
+          }
+        if (isConst ())
+          Set_TY_is_const (idx);
+        if (isVolatile ())
+          Set_TY_is_volatile (idx);
+        if (isRestrict ())
+          Set_TY_is_restrict (idx);
+
+      }
+
+      static void create_char ()
+      {
+        mtype = (isUnsigned (flag) ? MTYPE_U1 : MTYPE_I1);
+        idx = MTYPE_To_TY (mtype);    // use predefined type
+      }
+
+      static void create_floating ()
+      {
+        switch (tsize)
+          {
+            case 4:
+              mtype = MTYPE_F4;
+            break;
+            case 8:
+              mtype = MTYPE_F8;
+            break;
+          }
+        idx = MTYPE_To_TY (mtype);
+      }
+
+      static void create_enumeration ()
+      {
+        switch (tsize)
+          {
+            case 1: // bug 14445
+              mtype = (isUnsigned (flag) ? MTYPE_U1 :
+                       MTYPE_I1);
+            break;
+            case 2: // bug 14445
+              mtype = (isUnsigned (flag) ? MTYPE_U2 :
+                       MTYPE_I2);
+            break;
+            case 8: // bug 500
+              mtype = (isUnsigned (flag) ? MTYPE_U8 :
+                       MTYPE_I8);
+            break;
+            default:
+              mtype = (isUnsigned (flag) ? MTYPE_U4 :
+                       MTYPE_I4);
+          }
+        idx = MTYPE_To_TY (mtype);
+      }
+
+      static void create_integer ()
+      {
+        switch (tsize)
+          {
+            case 1:
+              mtype = MTYPE_I1;
+            break;
+            case 2:
+              mtype = MTYPE_I2;
+            break;
+            case 4:
+              mtype = MTYPE_I4;
+            break;
+            case 8:
+              mtype = MTYPE_I8;
+            break;
+          }
+        if (isUnsigned (flag))
+          {
+            mtype = MTYPE_complement(mtype);
+          }
+        idx = MTYPE_To_TY (mtype);
+        if (TARGET_64BIT)
+          {
+
+            // TODO:Change back to align
+            Set_TY_align (idx, 1);
+            //    Set_TY_align(idx, align);
+          }
+      }
+
+      static void createArray ()
+      {
+
+        TY &ty = (idx == TY_IDX_ZERO) ? New_TY (idx) : Ty_Table[idx];
+        Clear_TY_is_incomplete (idx);
+        TY_Init (ty, tsize, KIND_ARRAY, MTYPE_M,
+                 Save_Str (type_str.c_str ()));
+
+        // for the anonymoust array
+        if (type_str == "NULL")
+          Set_TY_anonymous (ty);
+
+        Set_TY_etype (ty, get_element_type ());
+        Set_TY_align (idx, TY_align (TY_etype (ty)));
+
+        // For GNU VLS (Variable length array in struct),
+        // the size and upper boundary is expression.
+        // If the TYPE_TY_IDX(type_tree) is not set, when
+        // expanding the TY's size, it will fall into a infinite
+        // recursion if the type_tree is referenced in the
+        // size expression. So we set the TYPE_TY_IDX here.
+        if (isReadonly ())
+          Set_TY_is_const (idx);
+        if (isVolatile ())
+          Set_TY_is_volatile (idx);
+        if (isRestrict ())
+          Set_TY_is_restrict (idx);
+
+        // assumes 1 dimension
+        // nested arrays are treated as arrays of arrays
+        ARB_HANDLE arb = New_ARB ();
+        ARB_Init (arb, 0, 0, 0);
+        Set_TY_arb (ty, arb);
+        Set_ARB_first_dimen (arb);
+        Set_ARB_last_dimen (arb);
+        Set_ARB_dimension (arb, 1);
+
+        if (get_type_size (get_element_type ()) == 0)
+          return; // anomaly:  type will never be needed
+
+        // =================== Array stride ======================
+        if (!isVariableSize ())
+          {
+            Set_ARB_const_stride (arb);
+            Set_ARB_stride_val (arb, get_element_size_unit ()/*gs_get_integer_value(gs_type_size_unit(gs_tree_type(type_tree)))*/);
+          }
+        else if (!JGEN_expanding_function_definition &&
+                 JGEN_processing_function_prototype)
+          {
+            Set_ARB_const_stride (arb);
+            // dummy stride val 4
+            Set_ARB_stride_val (arb, 4);
+            Set_TY_is_incomplete (idx);
+          }
+        else
+          {
+            /* TODO:Make this available
+            WN *swn;
+            swn = WGEN_Expand_Expr(gs_type_size_unit(gs_tree_type(type_tree)));
+            if (WN_opcode(swn) == OPC_U4I4CVT ||
+                WN_opcode(swn) == OPC_U8I8CVT) {
+                swn = WN_kid0(swn);
+            }
+            // In the event that swn operator is not
+            // OPR_LDID, save expr node swn
+            // and use LDID of that stored address as swn.
+            // Copied from Wfe_Save_Expr in wfe_expr.cxx
+            if (WN_operator(swn) != OPR_LDID) {
+                TYPE_ID mtype = WN_rtype(swn);
+                TY_IDX ty_idx = MTYPE_To_TY(mtype);
+                ST *st;
+                st = Gen_Temp_Symbol(ty_idx, "__save_expr");
+                WGEN_add_pragma_to_enclosing_regions(WN_PRAGMA_LOCAL, st);
+                WGEN_Set_ST_Addr_Saved(swn);
+                swn = WN_Stid(mtype, 0, st, ty_idx, swn);
+                WGEN_Stmt_Append(swn, Get_Srcpos());
+                swn = WN_Ldid(mtype, 0, st, ty_idx);
+            }
+            FmtAssert (WN_operator(swn) == OPR_LDID,
+                       ("stride operator for VLA not LDID"));
+            ST *st = WN_st(swn);
+            TY_IDX ty_idx = ST_type(st);
+            WN *wn = WN_CreateXpragma (WN_PRAGMA_COPYIN_BOUND,
+                                       (ST_IDX) NULL, 1);
+            WN_kid0(wn) = WN_Ldid(TY_mtype(ty_idx), 0, st, ty_idx);
+            WGEN_Stmt_Append(wn, Get_Srcpos());
+            Clear_ARB_const_stride(arb);
+            Set_ARB_stride_var(arb, (ST_IDX) ST_st_idx(st));
+            Clear_TY_is_incomplete(idx);*/
+          }
+
+        // ================= Array lower bound =================
+        Set_ARB_const_lbnd (arb);
+        Set_ARB_lbnd_val (arb, 0);
+
+        // ================= Array upper bound =================
+        if (get_type_size (get_element_type ()) != 0)
+          {
+            // For Zero-length arrays, TYPE_MAX_VALUE tree is NULL
+            if (!isZeroMaxValue (get_element_type ()))
+              {
+                Set_ARB_const_ubnd (arb);
+                Set_ARB_ubnd_val (arb, 0xffffffff);
+              }
+            else if (isSizeMaxValueConstant ())
+              {
+                Set_ARB_const_ubnd (arb);
+                Set_ARB_ubnd_val (arb, get_max_value (get_element_type ()));
+              }
+            else if (!JGEN_expanding_function_definition &&
+                     JGEN_processing_function_prototype)
+              {
+                Set_ARB_const_ubnd (arb);
+                // dummy upper bound 8
+                Set_ARB_ubnd_val (arb, 8);
+                Set_TY_is_incomplete (idx);
+              }
+            else
+              {
+                // Get WN <- Expr
+                /* TODO:Make this available
+                WN *uwn = WGEN_Expand_Expr();
+                if (WN_opcode(uwn) == OPC_U4I4CVT ||
+                    WN_opcode(uwn) == OPC_U8I8CVT) {
+                    uwn = WN_kid0(uwn);
+                }
+                ST *st;
+                TY_IDX ty_idx;
+                WN *wn;
+                if (WN_operator(uwn) != OPR_LDID) {
+                    ty_idx = MTYPE_To_TY(WN_rtype(uwn));
+                    st = Gen_Temp_Symbol(ty_idx, "__vla_bound");
+                    WGEN_add_pragma_to_enclosing_regions(WN_PRAGMA_LOCAL, st);
+                    wn = WN_Stid(TY_mtype(ty_idx), 0, st, ty_idx, uwn);
+                    WGEN_Stmt_Append(wn, Get_Srcpos());
+                } else {
+                    st = WN_st(uwn);
+                    ty_idx = ST_type(st);
+                }
+
+                wn = WN_CreateXpragma (WN_PRAGMA_COPYIN_BOUND, (ST_IDX) NULL, 1);
+                // Create An Ldid for the array bound to check for sizes.
+                WN_kid0(wn) = WN_Ldid(TY_mtype(ty_idx), 0, st, ty_idx);
+                WGEN_Stmt_Append(wn, Get_Srcpos());
+
+                Clear_ARB_const_ubnd(arb);
+                Set_ARB_ubnd_var(arb, ST_st_idx(st));
+                Clear_TY_is_incomplete(idx);*/
+              }
+          }
+        else
+          { /* situation : type size == 0 */
+            Clear_ARB_const_ubnd (arb);
+            Set_ARB_ubnd_val (arb, 0);
+          }
+
+        /** TODO Array **/
+        cerr << "Unfinished Type : Array";
+      }
+
+      static bool isZeroMaxValue (TY_IDX ty)
+      {
+        return false;
+      }
+
+      static bool isSizeMaxValueConstant ()
+      {
+        return true;
+      }
+
+      static bool isVariableSize ()
+      {
+        return false;
+      }
+
+      static int get_type_size (TY_IDX type)
+      {
+        return 0;
+      }
+
+      static int get_num_args ()
+      {
+        return 0;
+      }
+
+      static bool isUnsigned (long long flag)
+      {
+        return true;
+      }
+
+      static int get_element_type ()
+      {
+        return 0;
+      }
+
+      static bool isConst ()
+      {
+        return 0;
+      }
+
+      static int get_element_size_unit ()
+      {
+        return 0;
+      }
+
+      static long get_max_value (TY_IDX ty)
+      {
+        return 1;
+      }
+
+      static bool isReadonly ()
+      {
+        return false;
+      }
+      static bool isVolatile ()
+      {
+        return false;
+      }
+      static bool isRestrict ()
+      {
+        return false;
+      }
+    };
+
 }
 
+#endif
 
 #ifdef USE_ME_NO
 

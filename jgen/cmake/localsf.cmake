@@ -1,7 +1,14 @@
 SET(JGEN_SRCS 
   json2whirl.cxx
   json_reader.cxx
+        # JGEN GLobals
   jgen_global.cpp
+  jgen_visitor.cpp
+        #JGEN Type/ST/Decl
+  jgen_decl.cxx
+  jgen_type.cpp
+  jgen_st.cpp
+
 #wgen_decl.cxx
 )
 
@@ -9,7 +16,12 @@ SET(JREAD_SRCS
   json_reader.cxx
   test.cxx
   jgen_global.cpp
-  jgen_node.h
+  jgen_node.cpp
+  jgen_visitor.cpp
+  jgen_decl.cxx
+  jgen_type.cpp
+  jgen_st.cpp
+
 #wgen_decl.cxx
 )
 
