@@ -89,7 +89,10 @@ static char *rcs_id = "$Source: "
 
 #define USE_STANDARD_TYPES 1
 #include "defs.h"
+#if ! defined(BUILD_OS_DARWIN)
+#include "elf_stuff.h"
 #include "em_elf.h"
+#endif /* ! defined(BUILD_OS_DARWIN) */
 #include "config.h"
 #include "config_platform.h"
 #include "config_targ.h"

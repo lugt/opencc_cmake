@@ -52,6 +52,9 @@ SET(COMMON_COM_CXX_SRCS
    xstats.cxx
 )
 
+SET(COM_UTIL_SRCS
+       cxx_memory.cxx)
+
 set(WGENUTIL_O_CXX_SRC
   wn_util.cxx)
 
@@ -95,6 +98,10 @@ endforeach()
 
 foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_CXX_SRCS )
   list(APPEND WGEN_SRC ${NEW_WGEN_DIR}/common/com/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
+endforeach()
+
+foreach(ONE_C_FILE IN LISTS COM_UTIL_SRCS)
+  list(APPEND WGEN_SRC ${NEW_WGEN_DIR}/common/util/${ONE_C_FILE})
 endforeach()
 
 

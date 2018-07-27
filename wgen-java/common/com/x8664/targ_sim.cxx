@@ -577,7 +577,7 @@ static PLOC Setup_Parameter_Locations(TY_IDX pu_type) {
 
   TY_IDX ret_type =
       (TY_kind(pu_type) == KIND_FUNCTION ? TY_ret_type(pu_type) : pu_type);
-  RETURN_INFO info = Get_Return_Info(ret_type, No_Simulated);
+  RETURN_INFO info = Get_Return_Info(ret_type, No_Simulated, FALSE);
   if (TY_is_varargs(pu_type)) {
     // find last fixed parameter
     TYLIST_IDX idx = TY_tylist(pu_type);

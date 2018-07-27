@@ -671,7 +671,7 @@ public:
     Is_True(w!=0,("Bad Tree Root"));
   }
   WN_TREE_CONTAINER(const WN* w) :
-    _start (const_iterator(w)), _finish (const_iterator()), _root (w) {
+    _start (const_iterator(w)), _finish (const_iterator()), _root ((WN *)w) {
     Is_True(w!=0,("Bad Tree Root"));
   }
                                        

@@ -44,7 +44,7 @@
 #include <alloca.h>
 
 #include <ext/hash_map> // stl hash table
-#include <ext/algorithm>
+#include <algorithm>
 
 #include "defs.h"
 #include "config.h"

@@ -194,7 +194,7 @@ char *ir_b_grow_map(Elf64_Word min_size, Output_File *fl) {
     else
       fl->mapped_size += MAPPED_SIZE;
   }
-#ifndef linux
+#if !(defined(linux) || defined(BUILD_OS_DARWIN) || defined(__APPLE__))
   fl->map_addr = (char *)mmap(0, fl->mapped_size, PROT_READ | PROT_WRITE,
                               MAP_SHARED | MAP_AUTOGROW, fl->output_fd, 0);
 #else
@@ -214,7 +214,7 @@ char *ir_b_grow_map(Elf64_Word min_size, Output_File *fl) {
 extern char *ir_b_create_map(Output_File *fl) {
   int fd = fl->output_fd;
   fl->mapped_size = INIT_TMP_MAPPED_SIZE;
-#ifndef linux
+#if !(defined(linux) || defined(BUILD_OS_DARWIN) || defined(__APPLE__))
   fl->map_addr = (char *)mmap(0, fl->mapped_size, PROT_READ | PROT_WRITE,
                               MAP_SHARED | MAP_AUTOGROW, fd, 0);
 #else
