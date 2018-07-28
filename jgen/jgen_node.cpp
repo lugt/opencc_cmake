@@ -7,6 +7,7 @@
 #include "json_reader.h"
 #include "jgen_node.h"
 #include "jgen_type.h"
+#include "jgen_visitor.h"
 #include <string>
 
 using std::string;
@@ -270,9 +271,10 @@ namespace JGEN
         }
     }
 
-    void JGEN_Root::traverse_decl (JGEN::Json_IR_Decl decl)
+    void JGEN_Root::traverse_decl (Json_IR_Decl decl)
     {
-
+      JGEN_Visitor visitor{};
+      visitor.visit_top_decl (decl);
     }
     const string &JGEN_Root::getOutput_file () const
     {

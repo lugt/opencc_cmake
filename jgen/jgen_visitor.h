@@ -5,7 +5,8 @@
 #ifndef OSPREY_JGEN_VISITOR_H
 #define OSPREY_JGEN_VISITOR_H
 
-#include "jgen_decl.h"
+#include "json_ir_decl.h"
+#include "jgen_include.h"
 #include "jgen_st.h"
 
 namespace JGEN{
@@ -15,6 +16,10 @@ namespace JGEN{
       Json_IR_Decl * now_decl;
 
      public:
+
+      JGEN_Visitor(){};
+      ~JGEN_Visitor(){};
+
       int visit_top_decl(Json_IR_Decl provider);
 
       int visit_decl(Json_IR_Decl provider);

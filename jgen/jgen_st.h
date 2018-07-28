@@ -153,8 +153,6 @@ namespace JGEN
 
       static void createNameSpace ();
 
-      static void createClass ();
-
       static int getLineNumber ()
       {
           return 1;
@@ -164,6 +162,7 @@ namespace JGEN
       {
           anon_count = 0;
       }
+      static void createClass ();
     };
 
 }

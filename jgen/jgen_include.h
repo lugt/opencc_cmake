@@ -189,5 +189,6 @@ extern mUINT32 Cif_Level;       	/* CIF level */
 #define JGEN_TYPE_UNION 20000016
 
 
+#define JGEN_DECL_CLASS 30
 
 #endif //OSPREY_JGEN_INCLUDE_H
