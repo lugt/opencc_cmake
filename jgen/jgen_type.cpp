@@ -22,6 +22,14 @@ namespace JGEN
     void
     JGEN_TY::init (std::string &name_, long long kind_, long long flag_, INT64 tsize_, BOOL isLengthVariable_, string kname_, JGEN_TY *retval)
     {
-
+        type_str = name_;
+        kind = kind_;
+        flag = flag_;
+        tsize = tsize_;
+        variable_size = isLengthVariable_;
+        kname = kname_;
+        return_val = retval;
     }
+
+
 }

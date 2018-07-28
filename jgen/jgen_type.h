@@ -16,25 +16,6 @@ using std::cout;
 namespace JGEN
 {
 
-// idx is always zero.(preserved)
-    extern TY_IDX JGEN_TY_Create (Json::Value val, TY_IDX idx)
-    {
-     /* UINT align = JGEN_json_getbits (val);
-      // Check if Predefined
-      switch (JGEN_JSON_TY_GetKind (val))
-        {
-          case JGEN_JSON_KIND_OBJECT:
-          case JGEN_JSON_KIND_INT:
-          case JGEN_JSON_KIND_FLOAT:
-          case JGEN_JSON_KIND_DOUBLE:
-          case JGEN_JSON_KIND_LONG:
-          case JGEN_JSON_KIND_FUNCPTR:
-          case JGEN_JSON_KIND_VOID:
-          case JGEN_JSON_KIND_STRING:
-          case JGEN_JSON_KIND_NULL:
-        }*/
-    }
-
     class JGEN_TY {
      public:
       static std::string type_str;
@@ -336,7 +317,7 @@ namespace JGEN
             Set_ARB_stride_val (arb, get_element_size_unit ()/*gs_get_integer_value(gs_type_size_unit(gs_tree_type(type_tree)))*/);
           }
         else if (!JGEN_expanding_function_definition &&
-                 JGEN_processing_function_prototype)
+                 JGEN_processing_function_prototypes)
           {
             Set_ARB_const_stride (arb);
             // dummy stride val 4
@@ -399,7 +380,7 @@ namespace JGEN
                 Set_ARB_ubnd_val (arb, get_max_value (get_element_type ()));
               }
             else if (!JGEN_expanding_function_definition &&
-                     JGEN_processing_function_prototype)
+                     JGEN_processing_function_prototypes)
               {
                 Set_ARB_const_ubnd (arb);
                 // dummy upper bound 8

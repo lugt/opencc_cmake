@@ -14,11 +14,11 @@ using std::endl;
 using std::string;
 using std::vector;
 
-BOOL JGEN_processing_function_prototype = FALSE;
-BOOL JGEN_Keep_Zero_Length_Structs = FALSE;
-
 namespace JGEN
 {
+    extern BOOL JGEN_processing_function_prototypes;
+    extern BOOL JGEN_Keep_Zero_Length_Structs;
+
     class JGEN_ST {
 
       static TY_IDX ty_idx;

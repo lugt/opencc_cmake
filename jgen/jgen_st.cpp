@@ -8,6 +8,9 @@
 namespace JGEN
 {
 
+    BOOL JGEN_processing_function_prototypes = FALSE;
+    BOOL JGEN_Keep_Zero_Length_Structs = FALSE;
+
     TY_IDX JGEN_ST::ty_idx;
     ST *JGEN_ST::st;
     char *JGEN_ST::name;
@@ -44,9 +47,9 @@ namespace JGEN
     void JGEN_ST::create_func (int flag, std::string funcName, bool isMethod)
     {
 
-      JGEN_processing_function_prototype = TRUE;
+      JGEN_processing_function_prototypes = TRUE;
       TY_IDX func_ty_idx = get_related_TY ();
-      JGEN_processing_function_prototype = FALSE;
+      JGEN_processing_function_prototypes = FALSE;
 
       sclass = SCLASS_EXTERN;
       eclass = isPublic (flag) || isWeak (flag) ?
