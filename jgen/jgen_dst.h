@@ -6,8 +6,9 @@
 #include <vector>
 #include <map>
 
+#ifdef NO_SUCE_CCC
+
 extern "C" char *cplus_demangle (const char *, int);
-#endif
 
 
 /*
@@ -130,3 +131,6 @@ DST_build(int num_copts, /* Number of options passed to fec(c) */
 
 
 static const char *current_file_name = NULL;
+
+
+#endif

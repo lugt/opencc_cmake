@@ -94,6 +94,11 @@ void get_err_tables(){
 }
 
 
+void Cleanup_Files(BOOL a, BOOL dotofile){
+
+}
+
+
 static std::vector<WN*> curr_entry_wn;
 static void Push_Current_Entry_WN(WN *wn) { curr_entry_wn.push_back(wn); }
 static void Pop_Current_Entry_WN() { curr_entry_wn.pop_back(); }

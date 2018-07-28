@@ -1,11 +1,12 @@
 SET(JGEN_SRCS 
   json2whirl.cxx
   json_reader.cxx
+  json_ir_decl.cxx
         # JGEN GLobals
   jgen_global.cpp
   jgen_visitor.cpp
+  jgen_node.cpp
         #JGEN Type/ST/Decl
-  jgen_decl.cxx
   jgen_type.cpp
   jgen_st.cpp
 
@@ -18,7 +19,7 @@ SET(JREAD_SRCS
   jgen_global.cpp
   jgen_node.cpp
   jgen_visitor.cpp
-  jgen_decl.cxx
+  json_ir_decl.cxx
   jgen_type.cpp
   jgen_st.cpp
 
@@ -103,27 +104,27 @@ set(BE_COM_SRC
 
 
 foreach(ONE_C_FILE IN LISTS FE_C_SRCS )
-  list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
+  list(APPEND COMMON_WN_FUNCS ${WGEN_DIR}/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS FE_CXX_SRCS )
-  list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
+  list(APPEND COMMON_WN_FUNCS ${WGEN_DIR}/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS OPENMP_SRCS )
-  list(APPEND WGEN_SRC ${WGEN_DIR}/${ONE_C_FILE})
+  list(APPEND COMMON_WN_FUNCS ${WGEN_DIR}/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS COMMON_COM_CXX_SRCS )
-  list(APPEND WGEN_SRC ${COMMON_COM_DIR}/${ONE_C_FILE})
+  list(APPEND COMMON_WN_FUNCS ${COMMON_COM_DIR}/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_SRCS )
-  list(APPEND WGEN_SRC ${COMMON_COM_DIR}/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
+  list(APPEND COMMON_WN_FUNCS ${COMMON_COM_DIR}/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
 endforeach()
 
 foreach(ONE_C_FILE IN LISTS COMMON_COM_TARG_CXX_SRCS )
-  list(APPEND WGEN_SRC ${COMMON_COM_DIR}/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
+  list(APPEND COMMON_WN_FUNCS ${COMMON_COM_DIR}/${BUILD_TARGET_PREFIX}/${ONE_C_FILE})
 endforeach()
 
 

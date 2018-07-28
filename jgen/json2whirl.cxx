@@ -21,18 +21,8 @@
 */
 
 #include "json2whirl.h"
-#include <stdio.h>
+#include <cstdio>
 #include <stdlib.h>
-#include <sys/stat.h>
-#include <cmplrs/rcodes.h>
-#include "gspin-wgen-interface.h" 
-#include "defs.h"
-#include "glob.h"
-#include "erglob.h"
-#include "err_host.tab"
-#include "config.h"
-#include "file_util.h" // for Last_Pathname_Component
-#include "wgen_misc.h"
 #include "jgen_node.h"
 #include "jgen_dst.h"
 #include "json_reader.h"
@@ -48,7 +38,7 @@
 
 namespace JGEN{
 
-class JGEN{
+class Json2Whirl{
 private:
 
   int stage;
@@ -64,7 +54,7 @@ public:
   /**
    *  Empty Initializer
    */
-  JGEN() : stage(0), stage_json(0),
+  Json2Whirl() : stage(0), stage_json(0),
 	   stage_write(0), stage_parse(0), last_error(0) {
     _in_filepath = "";
     _out_filepath = "";
@@ -75,7 +65,7 @@ public:
    *  @param json_path Path to JSON Input File
    *  @param out_path Path to Output Whirl (.B) file
    */
-  JGEN(std::string & json_path,
+  Json2Whirl(std::string & json_path,
        std::string & out_path)  :   stage(0), stage_json(0), stage_write(0), stage_parse(0),
 			       last_error(0) {
     _in_filepath = json_path;
@@ -106,6 +96,7 @@ public:
 
 private:
     JGEN_Root root;
+    Json_IR ir;
   // Proceed to next stage in JGEN
   int proceed(){
     /* 
@@ -114,11 +105,12 @@ private:
     int outcome = 0;
     while(stage != JGEN_FATAL_STOPPED && stage != JGEN_SUCCESS){
       if(stage <= JGEN_JSON){
-        ir.open(argv[1]);
+        ir.open(_in_filepath.c_str());
 	    stage = JGEN_PARSE;
       }else if(stage <= JGEN_PARSE){
-        root.init(_out_filepath.c_str());
-        root.
+        root.init(_out_filepath);
+        Json_IR_Decl top_decl = ir.get_top_decl();
+        root.traverse_decl ( & top_decl );
         //void * parse_out = parse.parse(jsonobj);
 	    stage = JGEN_WRITE;
       }else if(stage <= JGEN_WRITE){
@@ -169,7 +161,7 @@ void output_help(){
   std::cout << "--------------------------------------------" << std::endl;
 }
   
-JGEN * g;
+Json2Whirl * g;
 
 int jgen_process_command(int argc, char ** argv){
   if(argc < 2) {
@@ -189,13 +181,13 @@ int jgen_process_command(int argc, char ** argv){
     fno = fni + ".B";
   }
   std::cout << ", and output as " << fno << std::endl;
-  g = new JGEN(fni, fno);
+  g = new Json2Whirl(fni, fno);
   return 0;
 }
 
 void jgen_act_accord(){
-  if(g == NULL){
-    throw new std::exception();
+  if(g == nullptr){
+    throw std::exception();
   }
   g->startProcess();
 }

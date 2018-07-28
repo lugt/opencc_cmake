@@ -12,6 +12,7 @@
 #define JSON_READER_H_
 
 #include <json/json.h>
+#include "json_ir_decl.h"
 
 extern int JSON_READING_STATE;
 
@@ -89,6 +90,8 @@ namespace JGEN {
         Json::Value get_type_tree();
 
         Json::Value get_sym_tree();
+
+        Json_IR_Decl get_top_decl ();
     };
 
     class Json_Typetree {

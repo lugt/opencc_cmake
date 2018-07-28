@@ -12,10 +12,6 @@
 
 using std::string;
 
-void Cleanup_Files(BOOL a, BOOL dotofile){
-
-}
-
 
 // *****  Misc Extra Start
 
@@ -120,9 +116,6 @@ extern BOOL c_omit_external; // for C programs, omit generating functions with
     Wgen_Decl Prefix ended.
 
 **/
-
-
-
 
 extern char *ABI_Name;
 
@@ -271,18 +264,27 @@ namespace JGEN
         }
     }
 
-    void JGEN_Root::traverse_decl (Json_IR_Decl decl)
+    void JGEN_Root::traverse_decl (Json_IR_Decl * decl)
     {
-      JGEN_Visitor visitor{};
-      visitor.visit_top_decl (decl);
+      if(decl != nullptr) {
+          JGEN_Visitor visitor{};
+          visitor.visit_top_decl ( * decl );
+      }
     }
+
     const string &JGEN_Root::getOutput_file () const
     {
       return output_file;
     }
+
     void JGEN_Root::setOutput_file (const string &output_file)
     {
       JGEN_Root::output_file = output_file;
+    }
+
+    void JGEN_NODE::set_line_info_and_file (int line, string &fn)
+    {
+
     }
 }
 

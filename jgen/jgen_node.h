@@ -9,14 +9,15 @@
 #include "jgen_st.h"
 #include "jgen_global.h"
 #include "json_reader.h"
+#include "json_ir_decl.h"
 
 /***
  *
  *    JGEN Node is the key to the whole Json->Whirl Generation Process
  *
  *    Prerequisite Class :
- *    JGEN::Json_IR
- *    JGEN::J
+ *    Json_IR
+ *    J
  *
  *
  *    Key Class:
@@ -40,21 +41,21 @@ namespace JGEN
 {
 
     class JGEN_NODE {
-     public:
-      WN *whirl;
+     protected:
+      WN * whirl;
       string name;
-      void *json_value;
-      JGEN_NODE *root;
+      void * json_value;
+      JGEN_NODE * root;
+     public:
       JGEN_NODE ()
       {
         whirl = nullptr;
         root = nullptr;
         name = "empty_node";
+        json_value = nullptr;
       }
 
-      void set_line_info_and_file (int line, string &fn)
-      {
-      }
+      void set_line_info_and_file (int line, string &fn);
     };
 
     class JGEN_Variable : public JGEN_NODE {
@@ -63,7 +64,7 @@ namespace JGEN
     };
 
     class JGEN_Root : public JGEN_NODE {
-     private:
+     protected:
       string output_file;
      public:
       JGEN_Root ()
@@ -79,8 +80,8 @@ namespace JGEN
       void init ();
       void init (string &fn);
       void finish ();
-      void write_types (JGEN::Json_Typetree type_tree);
-      void traverse_decl (JGEN::Json_IR_Decl decl);
+      void write_types (Json_Typetree type_tree);
+      void traverse_decl (Json_IR_Decl * decl);
 
     };
 
@@ -88,7 +89,7 @@ namespace JGEN
      private:
       JGEN_NODE parent;
      public:
-      JGEN_Function (JGEN_Root parent)
+      JGEN_Function (JGEN_Root & parent)
       {
         root = &parent;
 

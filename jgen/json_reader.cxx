@@ -100,7 +100,7 @@ namespace JGEN {
     }
 
     Json::Value Json_IR::get_defs() {
-        Json::Value val = root["defs"];
+        Json::Value val = root["code_table"]["defs"];
         return val;
     }
 
@@ -110,6 +110,10 @@ namespace JGEN {
 
     Json::Value Json_IR::get_type_tree() {
         return root["type_table"];
+    }
+    Json_IR_Decl Json_IR::get_top_decl ()
+    {
+      return Json_IR_Decl (root["code_table"], root);
     }
 
     void Json_Typetree_Simple::init(Json::Value &tree) {

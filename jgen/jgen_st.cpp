@@ -4,6 +4,7 @@
 
 #include <string>
 #include "jgen_st.h"
+#include "jgen_include.h"
 
 namespace JGEN
 {

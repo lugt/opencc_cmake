@@ -3,22 +3,23 @@
 //
 
 #include "jgen_visitor.h"
+#include "json_ir_decl.h"
 
 namespace JGEN
 {
     int JGEN_Visitor::visit_top_decl (Json_IR_Decl provider)
     {
-
         if(provider.getDeclKind () == JGEN_DECL_CLASS){
             provider.get_next_decl ();
-            JGEN_ST st;
-            st.createClass ();
+            JGEN_ST::createClass ();
         }
 
         // Find Child
         if(provider.hasChild () > 0){
-            Json_IR_Decl child = provider.getFirstChild ();
-            visit_decl(child);
+            Json_IR_Decl * child = provider.getFirstChild ();
+            if(child != nullptr){
+                visit_decl(*child);
+            }
         }
         return 0;
     }
