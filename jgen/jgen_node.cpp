@@ -252,7 +252,7 @@ namespace JGEN
       JGEN_Entry (this->output_file);
     };
 
-    void JGEN_Root::write_types (JGEN::Json_Typetree type_tree)
+    void JGEN_Root::write_types (JGEN::JGEN_Typetree_Base type_tree)
     {
       string q = "SomeWhatType";
       string kind_default_name = "kindDefault";
@@ -267,6 +267,7 @@ namespace JGEN
     void JGEN_Root::traverse_decl (Json_IR_Decl * decl)
     {
       if(decl != nullptr) {
+          logger("-- [Jgen_Root::traverseDecl]");
           JGEN_Visitor visitor{};
           visitor.visit_top_decl ( * decl );
       }

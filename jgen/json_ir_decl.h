@@ -28,13 +28,6 @@ namespace JGEN{
       Json_IR_Decl(Json::Value & code_table, Json::Value & root);
 
       /**
-       * Initilize the Provider with Json::Value
-       * @param data
-       * @return -1,-2,-3 = fail, 0 = ok
-       */
-      int init(void * data);
-
-      /**
        *
        */
       int get_next_decl();
@@ -48,7 +41,7 @@ namespace JGEN{
       /**
        *  Returns a child
        */
-      Json_IR_Decl * getFirstChild();
+      Json_IR_Decl * getChildAtPosition (unsigned int pos);
 
 
       /***
@@ -56,7 +49,22 @@ namespace JGEN{
        *  @return longlong JGEN_DECL_CLASS
        */
       int getDeclKind();
-
+      const Json::Value &getRoot() const;
+      void setRoot(const Json::Value &root);
+      const Json::Value &getDecl() const;
+      void setDecl(const Json::Value &decl);
+      int getSymbol_json_id() const;
+      void setSymbol_json_id(int symbol_json_id);
+      int getType_json_id() const;
+      void setType_json_id(int type_json_id);
+      int getTag_json() const;
+      void setTag_json(int tag_json);
+      int getKind() const;
+      void setKind(int kind);
+      const string &getTag_name() const;
+      void setTag_name(const string &tag_name);
+      int getChild_count() const;
+      void setChild_count(int child_count);
 
     };
 }

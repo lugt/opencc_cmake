@@ -4,6 +4,8 @@
 
 #include "jgen_include.h"
 #include "jgen_global.h"
+#include "err_host.tab"
+#include <sstream>
 
 #ifndef TARG_MIPS
 BOOL TARGET_64BIT = TRUE;
@@ -87,7 +89,6 @@ enum debug_info_level
     DINFO_LEVEL_VERBOSE   /* Write normal info plus #define/#undef info.  */
 };
 
-#include "err_host.tab"
 
 void get_err_tables(){
  Set_Error_Tables ( Phases, host_errlist );
@@ -102,3 +103,38 @@ void Cleanup_Files(BOOL a, BOOL dotofile){
 static std::vector<WN*> curr_entry_wn;
 static void Push_Current_Entry_WN(WN *wn) { curr_entry_wn.push_back(wn); }
 static void Pop_Current_Entry_WN() { curr_entry_wn.pop_back(); }
+
+extern void logger(string str){
+  cout << str << endl;
+}
+
+extern void logger(const char *str){
+  cout << str << endl;
+}
+
+using std::stringstream;
+string int2str(int a){
+  stringstream ss;
+  ss<<a;
+  return ss.str();
+};
+string long2str(long a){
+ stringstream ss;
+ ss<<a;
+ return ss.str();
+};
+string ll2str(long long a){
+ stringstream ss;
+ ss<<a;
+ return ss.str();
+};
+string char2str(char a){
+ stringstream ss;
+ ss<<a;
+ return ss.str();
+};
+string double2str(double a){
+ stringstream ss;
+ ss<<a;
+ return ss.str();
+};

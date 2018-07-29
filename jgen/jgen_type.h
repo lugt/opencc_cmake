@@ -16,6 +16,39 @@ using std::cout;
 namespace JGEN
 {
 
+    class JGEN_Typetree_Base {
+
+     public:
+
+      virtual void init(Json::Value &tree) {};
+
+      // Reading another node (next) (traverse)
+      // @return whether there is one to be read(1), or none (0)
+      virtual int next() {};
+
+      // read Kind from Node
+      virtual unsigned long long getKind(){};
+
+      // read Name from Node
+      virtual std::string &getKindName(){};
+
+      // read Kind from Node
+      virtual unsigned long long getFlag(){};
+
+      // get DefId form Node
+      virtual int getJsonRefId(){};
+
+      // get (Symbol) Name from Node
+      virtual std::string &getJsonName(){};
+
+      // retrieve the previously bound Idx
+      virtual int getIdx(){};
+
+      // bind Idx to the tree node
+      virtual void setTypeIdx(int idx){};
+
+    };
+
     class JGEN_TY {
      public:
       static std::string type_str;

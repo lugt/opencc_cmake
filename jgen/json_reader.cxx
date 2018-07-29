@@ -39,54 +39,57 @@ namespace JGEN {
         // 1. Get All Data Stored In
         try {
             Json::Value::Members roots = root.getMemberNames();
-            if (roots.size() <= 0) {
+            if (roots.empty()) {
                 // Error
-                cerr << " No Class Object Found in json" << endl;
+                cerr << "-- [FATAL ERROR] [Json_Reader] No Class Object Found in json" << endl;
                 return -3;
             } else {
-                cout << " selecting to read the class of " << roots[0] << endl;
+                cout << "-- [INFO] [Json_Reader] selecting to read the class : (" << roots[0] << ")" << endl;
             }
 
             // only get the first;
             string corename = roots[0];
             if (root[corename].isNull()) {
-                cerr << " Class Object is Null " << endl;
+                cerr << "-- [Json_Reader] Class Object is Null " << endl;
                 return -4;
             }
 
-            root = root[corename];
-            if (root["defs"].isNull()) {
-                cerr << " Cannot find defs in the class object" << endl;
+            root = root[corename]; //TODO:
+            if (root["code_table"].isNull()) {
+                cerr << "-- [Json_Reader] Cannot find defs in the class object" << endl;
                 return -5;
             }
 
             if (root["symbol_table"].isNull()) {
-                cerr << " Cannot find symbol_table in the class object" << endl;
+                cerr << "-- [Json_Reader]  Cannot find symbol_table in the class object" << endl;
                 return -6;
             }
 
             if (root["type_table"].isNull()) {
-                cerr << " Cannot find type_table in the class object" << endl;
+                cerr << "-- [Json_Reader]  Cannot find type_table in the class object" << endl;
                 return -7;
             }
-        } catch (std::exception e) {
-            cerr << "Exception" << endl;
+            return 0;
+        } catch (std::exception & e) {
+            cerr << "-- [Json_Reader] Exception" << endl;
             cerr << e.what();
+            return -5;
         }
     }
 
     int Json_IR::read_string(const char *str) {
-        if (json_data == NULL) {
+        if (json_data == nullptr) {
             return -2;
         }
-        if (!reader.parse(json_data, json_data + sizeof(json_data), root)) {
-            cerr << "json parse failed\n";
+        if (!reader.parse(json_data, json_data + strlen(json_data), root)) {
+            cerr << "-- [Json_Reader] json parse failed\n";
             return -1;
         }
+        return 0;
     }
 
     int Json_IR::open(const char *string1) {
-        if (string1 == NULL) {
+        if (string1 == nullptr) {
             return -2;
         }
         fn = string1;
@@ -111,15 +114,20 @@ namespace JGEN {
     Json::Value Json_IR::get_type_tree() {
         return root["type_table"];
     }
-    Json_IR_Decl Json_IR::get_top_decl ()
+
+    Json_IR_Decl * Json_IR::get_top_decl ()
     {
-      return Json_IR_Decl (root["code_table"], root);
+        return new Json_IR_Decl (root["code_table"], root);
+    }
+
+    bool Json_IR::isNull() {
+      return root.isNull();
     }
 
     void Json_Typetree_Simple::init(Json::Value &tree) {
         // Take whatever needed form tree
         // Mark the length, and current cursot to zero.
-        _tree = tree;
+        _tree = &tree;
     };
 
     // Reading another node (next) (traverse)
@@ -162,11 +170,5 @@ namespace JGEN {
     void Json_Typetree_Simple::setTypeIdx(int idx) {
 
     };
-
-    // bind Idx to the tree node
-    Json_MemberFields &Json_Typetree_Simple::getMemberFields(int idx) {
-
-    };
-
 
 }

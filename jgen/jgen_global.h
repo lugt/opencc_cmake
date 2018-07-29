@@ -57,5 +57,14 @@ extern BOOL SSE_Reg_Parm ;
 
 extern void get_err_tables();
 
+extern void logger(string str);
+
+extern void logger(const char *str);
+
+extern string int2str(int a);
+extern string long2str(long a);
+extern string ll2str(long long a);
+extern string char2str(char a);
+extern string double2str(double a);
 
 #endif //OSPREY_JGEN_GLOBAL_H

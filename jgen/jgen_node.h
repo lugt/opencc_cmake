@@ -28,7 +28,7 @@
  */
 
 using JGEN::Json_IR;
-using JGEN::Json_Typetree;
+using JGEN::JGEN_Typetree_Base;
 
 /***
     WGEN_decl Ended
@@ -80,7 +80,7 @@ namespace JGEN
       void init ();
       void init (string &fn);
       void finish ();
-      void write_types (Json_Typetree type_tree);
+      void write_types (JGEN_Typetree_Base type_tree);
       void traverse_decl (Json_IR_Decl * decl);
 
     };

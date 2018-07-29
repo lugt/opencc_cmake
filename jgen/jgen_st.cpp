@@ -20,32 +20,36 @@ namespace JGEN
     ST_EXPORT JGEN_ST::eclass;
     SYMTAB_IDX JGEN_ST::level;
     INT JGEN_ST::anon_count;
-    void *JGEN_ST::context;
-    void *JGEN_ST::node;
-    int JGEN_ST::flag;
+    JGEN_SymbolTree_Base * JGEN_ST::context;
+    JGEN_SymbolTree_Base * JGEN_ST::node;
+    long long JGEN_ST::flag;
 
-    void JGEN_ST::get_ST (void *node_, int kind, int flag_, std::string name, void *parent)
-    {
+
+    void JGEN_ST::getST(JGEN_SymbolTree_Base *node_, int SymTreeId_) {
       node = node_;
-      context = parent;
+      if(node_ == nullptr){
+        throw "[Error] [getST] null on initializing ST";
+      }
+      context = node_->getParent();
+      U64U flag_ = node_->getFlag();
       flag = flag_;
-      int a = JGEN_FUNC;
-      a = JGEN_METHOD;
+      U64U kind = node_->getKind();
+
       if ((kind == JGEN_FUNC) || (kind == JGEN_METHOD))
-        {
-          create_func (flag_, name, (kind == JGEN_METHOD));
-        }
+      {
+        create_func (flag_, name, (kind == JGEN_METHOD));
+      }
       else if (kind == JGEN_VAR)
-        {
-          createVar (kind, flag_);
-        }
+      {
+        createVar (kind, flag_);
+      }
       else if (kind == JGEN_CLASS)
-        {
-          createClass ();
-        }
+      {
+        createClass ();
+      }
     }
 
-    void JGEN_ST::create_func (int flag, std::string funcName, bool isMethod)
+    void JGEN_ST::create_func (U64U flag, std::string funcName, bool isMethod)
     {
 
       JGEN_processing_function_prototypes = TRUE;
@@ -123,7 +127,7 @@ namespace JGEN
           sclass = SCLASS_UGLOBAL;
         }
     }
-    void JGEN_ST::createVar (int kind, int flag)
+    void JGEN_ST::createVar (U64U kind, U64U flag)
     {
 
       if (kind == JGEN_PARM)
@@ -375,7 +379,18 @@ namespace JGEN
       //else  TODO: Set Line Number
       Set_ST_Line (*st, static_cast<mUINT32>(getLineNumber ()));
       ST_Init (st, Save_Str (name), CLASS_VAR, sclass, eclass, ty_idx);
+    }
 
+    void JGEN_ST::setName(char *name) {
+      JGEN_ST::name = name;
+    }
+
+    void JGEN_ST::setFlag(U64U flag) {
+      JGEN_ST::flag = flag;
+    }
+
+    void JGEN_ST::setLineNum(int lineNum) {
+      JGEN_ST::lineNum = lineNum;
     }
 
 }

@@ -13,6 +13,7 @@
 
 #include <json/json.h>
 #include "json_ir_decl.h"
+#include "jgen_type.h"
 
 extern int JSON_READING_STATE;
 
@@ -91,64 +92,31 @@ namespace JGEN {
 
         Json::Value get_sym_tree();
 
-        Json_IR_Decl get_top_decl ();
+        Json_IR_Decl * get_top_decl ();
+      bool isNull();
     };
 
-    class Json_Typetree {
+    class Json_Typetree_Simple : public JGEN_Typetree_Base {
 
     public:
 
-        Json_Typetree(){};
-
-        Json_Typetree(Json::Value & val){
-            init(val);
-        }
-
-        virtual ~Json_Typetree(){}
-
-        virtual void init(Json::Value &tree) {};
-
-        // Reading another node (next) (traverse)
-        // @return whether there is one to be read(1), or none (0)
-        virtual int next() {};
-
-        // read Kind from Node
-        virtual unsigned long long getKind(){};
-
-        // read Name from Node
-        virtual std::string &getKindName(){};
-
-        // read Kind from Node
-        virtual unsigned long long getFlag(){};
-
-        // get DefId form Node
-        virtual int getJsonRefId(){};
-
-        // get (Symbol) Name from Node
-        virtual std::string &getJsonName(){};
-
-        // retrieve the previously bound Idx
-        virtual int getIdx(){};
-
-        // bind Idx to the tree node
-        virtual void setTypeIdx(int idx){};
-
-        // bind Idx to the tree node
-        virtual Json_MemberFields &getMemberFields(int idx){};
-    };
-
-    class Json_Typetree_Simple : public Json_Typetree {
-
-    public:
-
-        Json::Value _tree;
+        Json::Value * _tree;
         int flag;
         int statics;
+        int count;
 
-
-        Json_Typetree_Simple() {}
+        Json_Typetree_Simple() {
+            flag = 0;
+            _tree = nullptr;
+            statics = 0;
+            count = 0;
+        }
 
         Json_Typetree_Simple(Json::Value & val) {
+            flag = 0;
+            _tree = nullptr;
+            statics = 0;
+            count = 0;
             init(val);
         }
 
@@ -180,7 +148,7 @@ namespace JGEN {
         void setTypeIdx(int idx) override ;
 
 // bind Idx to the tree node
-        Json_MemberFields &getMemberFields(int idx) override ;
+//      Json_MemberFields &getMemberFields(int idx) override ;
 
     };
 
