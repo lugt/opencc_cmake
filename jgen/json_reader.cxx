@@ -171,4 +171,38 @@ namespace JGEN {
 
     };
 
+    void Json_SymbolTree_Simple::init(void *tree) {
+        JGEN_SymbolTree_Base::init(tree);
+    }
+    int Json_SymbolTree_Simple::next() {
+        return JGEN_SymbolTree_Base::next();
+    }
+    unsigned long long Json_SymbolTree_Simple::getKind() {
+        return JGEN_SymbolTree_Base::getKind();
+    }
+    std::string &Json_SymbolTree_Simple::getKindName() {
+        return JGEN_SymbolTree_Base::getKindName();
+    }
+    unsigned long long Json_SymbolTree_Simple::getFlag() {
+        return JGEN_SymbolTree_Base::getFlag();
+    }
+    int Json_SymbolTree_Simple::getJsonRefId() {
+        return JGEN_SymbolTree_Base::getJsonRefId();
+    }
+    std::string &Json_SymbolTree_Simple::getJsonName() {
+        return JGEN_SymbolTree_Base::getJsonName();
+    }
+    int Json_SymbolTree_Simple::getIdx() {
+        return JGEN_SymbolTree_Base::getIdx();
+    }
+    void Json_SymbolTree_Simple::setTypeIdx(int idx) {
+        JGEN_SymbolTree_Base::setTypeIdx(idx);
+    }
+    int Json_SymbolTree_Simple::gotoStId(unsigned int ir_sym_id) {
+        // Goto Id, slowest doing
+        if(_tree->size() > 0){
+            // Goto IR_SYM_ID
+        }
+        return JGEN_SymbolTree_Base::gotoStId(ir_sym_id);
+    }
 }

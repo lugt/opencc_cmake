@@ -4,15 +4,19 @@
 #include <string>
 #include <iostream>
 #include "jgen_include.h"
+#include "jgen_st.h"
+#include "jgen_type.h"
 #include <json/json.h>
+#include "jgen_base_decl.h"
 
 using std::string;
 
 namespace JGEN{
+
     /**
        *  Json IR Decl Interface
        * */
-    class Json_IR_Decl{
+    class Json_IR_Decl : public JGEN_IR_Decl{
      private:
        Json::Value root;
        Json::Value decl;
@@ -65,6 +69,8 @@ namespace JGEN{
       void setTag_name(const string &tag_name);
       int getChild_count() const;
       void setChild_count(int child_count);
+      JGEN_SymbolTree_Base * get_symbol_tree();
+      JGEN_Typetree_Base * get_type_tree();
 
     };
 }

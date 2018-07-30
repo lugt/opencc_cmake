@@ -54,6 +54,8 @@ namespace JGEN
       virtual JGEN_SymbolTree_Base & getMemberFields(int idx){};
 
       virtual JGEN_SymbolTree_Base * getParent(){};
+
+      virtual int gotoStId(unsigned int ir_sym_id){};
     };
 
     class JGEN_ST {

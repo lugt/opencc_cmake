@@ -93,6 +93,7 @@ namespace JGEN {
         Json::Value get_sym_tree();
 
         Json_IR_Decl * get_top_decl ();
+
       bool isNull();
     };
 
@@ -150,6 +151,63 @@ namespace JGEN {
 // bind Idx to the tree node
 //      Json_MemberFields &getMemberFields(int idx) override ;
 
+    };
+
+    class Json_SymbolTree_Simple : public JGEN_SymbolTree_Base {
+
+     public:
+
+      Json::Value * _tree;
+      int flag;
+      int statics;
+      int count;
+
+      Json_SymbolTree_Simple() {
+          flag = 0;
+          _tree = nullptr;
+          statics = 0;
+          count = 0;
+          _tree = nullptr;
+      }
+
+      Json_SymbolTree_Simple(Json::Value & symtree) {
+          flag = 0;
+          _tree = nullptr;
+          statics = 0;
+          count = 0;
+          init((void *) & symtree);
+      }
+
+      void init(void * tree) override ;
+
+    // Reading another node (next) (traverse)
+    // @return whether there is one to be read(1), or none (0)
+      int next() override;
+
+    // read Kind from Node
+      unsigned long long getKind() override;
+
+    // read Name from Node
+      std::string &getKindName() override;
+
+    // read Kind from Node
+      unsigned long long getFlag() override;
+
+    // get DefId form Node
+      int getJsonRefId() override ;
+
+    // get (Symbol) Name from Node
+      std::string &getJsonName() override;
+
+    // retrieve the previously bound Idx
+      int getIdx() override;
+
+    // bind Idx to the tree node
+      void setTypeIdx(int idx) override ;
+
+    // bind Idx to the tree node
+    //      Json_MemberFields &getMemberFields(int idx) override ;
+      int gotoStId(unsigned int ir_sym_id) override;
     };
 
 

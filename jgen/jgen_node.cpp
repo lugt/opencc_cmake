@@ -264,7 +264,7 @@ namespace JGEN
         }
     }
 
-    void JGEN_Root::traverse_decl (Json_IR_Decl * decl)
+    void JGEN_Root::traverse_decl (JGEN_IR_Decl * decl)
     {
       if(decl != nullptr) {
           logger("-- [Jgen_Root::traverseDecl]");

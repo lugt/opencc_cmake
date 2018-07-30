@@ -11,7 +11,7 @@ using std::stringstream;
 
 namespace JGEN
 {
-    int JGEN_Visitor::visit_top_decl (Json_IR_Decl & provider)
+    int JGEN_Visitor::visit_top_decl (JGEN_IR_Decl & provider)
     {
         // STAGE-PARSING1
         visit_first_round(provider);
@@ -19,7 +19,7 @@ namespace JGEN
         visit_child_round(provider);
         return 0;
     }
-    int JGEN_Visitor::visit_decl (Json_IR_Decl provider)
+    int JGEN_Visitor::visit_decl (JGEN_IR_Decl provider)
     {
         // If it's a class,
         visit_first_round(provider);
@@ -29,20 +29,22 @@ namespace JGEN
     }
 
 
-    void JGEN_Visitor::visit_first_round (Json_IR_Decl &provider)
+    void JGEN_Visitor::visit_first_round (JGEN_IR_Decl &provider)
     {
+        JGEN_SymbolTree_Base * symtree = nullptr;
+        JGEN_Typetree_Base * typetree = nullptr;
         switch(provider.getDeclKind ()){
             case JGEN_DECL_CLASS:
               logger("-- [Json_Visitor]:: ***  visiting a class  defition.  ***");
-              JGEN_SymbolTree_Base * symtree = provider.get_symbol_tree();
-              JGEN_Typetree_Base * typetree = provider.get_type_tree();
+              symtree = provider.get_symbol_tree();
+              typetree = provider.get_type_tree();
               JGEN_ST::getST(symtree, provider.getSymbol_json_id());
               // Preserve symbol_json_id <--> ST_IDX
               break;
             case JGEN_DECL_METHOD:
               logger("-- [Json_Visitor]:: ***  visiting a method defition.  ***");
-              JGEN_SymbolTree_Base * symtree = provider.get_symbol_tree();
-              JGEN_Typetree_Base * typetree = provider.get_type_tree();
+              symtree = provider.get_symbol_tree();
+              typetree = provider.get_type_tree();
               JGEN_ST::getST(symtree, provider.getSymbol_json_id());
               break;
             case JGEN_DECL_VAR:
@@ -56,18 +58,18 @@ namespace JGEN
         }
     }
 
-    void JGEN_Visitor::visit_second_round (Json_IR_Decl &provider)
+    void JGEN_Visitor::visit_second_round (JGEN_IR_Decl &provider)
     {
       if(provider.getDeclKind () == JGEN_DECL_CLASS){
 
       }
     }
-    void JGEN_Visitor::visit_child_round (Json_IR_Decl & provider)
+    void JGEN_Visitor::visit_child_round (JGEN_IR_Decl & provider)
     {
         unsigned int position = 0;
         for(position = 0; position < provider.hasChild () && position <= INT_MAX ; position++)
         {
-            Json_IR_Decl * decl = provider.getChildAtPosition (position);
+            JGEN_IR_Decl * decl = provider.getChildAtPosition (position);
             if (decl != nullptr){
                 visit_decl (*decl);
             }

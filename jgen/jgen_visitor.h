@@ -12,23 +12,20 @@
 namespace JGEN{
     class JGEN_Visitor {
      private:
-      Json_IR_Decl * parent_decl;
-      Json_IR_Decl * now_decl;
+      JGEN_IR_Decl * parent_decl;
+      JGEN_IR_Decl * now_decl;
 
      public:
 
       JGEN_Visitor(){};
       ~JGEN_Visitor(){};
 
-      int visit_top_decl(Json_IR_Decl & provider);
+      int visit_top_decl(JGEN_IR_Decl & provider);
+      int visit_decl(JGEN_IR_Decl provider);
 
-      int visit_decl(Json_IR_Decl provider);
-
-      JGEN_ST * visit_class(Json_IR_Decl & provider);
-
-      void visit_first_round (Json_IR_Decl &provider);
-      void visit_second_round (Json_IR_Decl &decl);
-      void visit_child_round (Json_IR_Decl &decl);
+      void visit_first_round (JGEN_IR_Decl &provider);
+      void visit_second_round (JGEN_IR_Decl &decl);
+      void visit_child_round (JGEN_IR_Decl &decl);
     };
 }
 

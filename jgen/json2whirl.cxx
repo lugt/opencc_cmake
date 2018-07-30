@@ -135,7 +135,7 @@ class Json2Whirl {
         else if (stage <= JGEN_PARSE)
           {
             root.init (_out_filepath);
-            Json_IR_Decl * top_decl = ir.get_top_decl ();
+            JGEN_IR_Decl * top_decl = ir.get_top_decl ();
             root.traverse_decl (top_decl);
             //void * parse_out = parse.parse(jsonobj);
             stage = JGEN_WRITE;

@@ -161,4 +161,13 @@ void Json_IR_Decl::setChild_count(int child_count) {
   Json_IR_Decl::child_count = child_count;
 }
 
+JGEN_SymbolTree_Base *Json_IR_Decl::get_symbol_tree() {
+  JGEN_SymbolTree_Base * sym = new JGEN_SymbolTree_Base();
+  sym->init();
+  return nullptr;
+}
+JGEN_Typetree_Base *Json_IR_Decl::get_type_tree() {
+  return nullptr;
+}
+
 }

@@ -27,6 +27,9 @@ namespace JGEN
 
     void JGEN_ST::getST(JGEN_SymbolTree_Base *node_, int SymTreeId_) {
       node = node_;
+      if(node_.gotoStId(SymTreeId_) < 0){
+
+      }
       if(node_ == nullptr){
         throw "[Error] [getST] null on initializing ST";
       }
