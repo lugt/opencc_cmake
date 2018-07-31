@@ -157,12 +157,12 @@ int Json_IR_Decl::getChild_count() const {
 
 JGEN_SymbolTree_Base * Json_IR_Decl::get_symbol_tree() {
   Json_SymbolTree_Simple * sym = new Json_SymbolTree_Simple();
-  sym->init(& root["symbol_tree"]);
+  sym->init(& root["symbol_table"]);
   return sym;
 }
 JGEN_Typetree_Base *Json_IR_Decl::get_type_tree() {
   Json_Typetree_Simple * typ = new Json_Typetree_Simple();
-  typ->init(root["type_tree"]);
+  typ->init(root["type_table"]);
   return typ;
 }
 

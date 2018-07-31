@@ -163,6 +163,7 @@ namespace JGEN {
       Json::Value * _tree;
       int flag;
       int statics;
+      int currentId;
       int count;
       std::map<int, Json::Value *> internalIdValMap;
       Json::Value * current;
@@ -172,6 +173,8 @@ namespace JGEN {
           _tree = nullptr;
           statics = 0;
           count = 0;
+          currentId = 0;
+          current = nullptr;
           _tree = nullptr;
       }
 
@@ -180,6 +183,8 @@ namespace JGEN {
           _tree = nullptr;
           statics = 0;
           count = 0;
+          currentId = 0;
+          current = nullptr;
           init((void *) & symtree);
       }
 
@@ -193,7 +198,7 @@ namespace JGEN {
       unsigned long long getKind() override;
 
     // read Name from Node
-      std::string &getKindName() override;
+      std::string getKindName() override;
 
     // read Kind from Node
       unsigned long long getFlag() override;
@@ -202,7 +207,7 @@ namespace JGEN {
       int getJsonRefId() override ;
 
     // get (Symbol) Name from Node
-      std::string &getJsonName() override;
+      std::string getJsonName() override;
 
     // retrieve the previously bound Idx
       int getIdx() override;
@@ -213,6 +218,7 @@ namespace JGEN {
     // bind Idx to the tree node
     //      Json_MemberFields &getMemberFields(int idx) override ;
       int gotoStId(unsigned int ir_sym_id) override;
+
     };
 
 

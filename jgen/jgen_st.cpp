@@ -6,6 +6,7 @@
 #include "jgen_st.h"
 #include "jgen_include.h"
 #include "jgen_global.h"
+#include "jgen_exception.h"
 
 namespace JGEN
 {
@@ -29,27 +30,32 @@ namespace JGEN
     void JGEN_ST::getST(JGEN_SymbolTree_Base *node_, int SymTreeId_) {
       node = node_;
       if(node_ == nullptr){
-        throw "[Error] [getST] null on initializing ST";
+        throw jgen_exception("[Error] [getST] null on initializing ST");
       }
       if(node_->gotoStId(SymTreeId_) < 0){
-        throw std::exception("[Error] [getST] node : " + ll2str(reinterpret_cast<U64U>(node_)) +" gotoStId : " + int2str(SymTreeId_) + " failed.";
+        throw jgen_exception("[Error] [getST] node : " + ll2str(reinterpret_cast<U64U>(node_)) +" gotoStId : " + int2str(SymTreeId_) + " failed.");
       }
       context = node_->getParent();
       U64U flag_ = node_->getFlag();
       flag = flag_;
       U64U kind = node_->getKind();
 
-      if ((kind == JGEN_FUNC) || (kind == JGEN_METHOD))
+      if ((kind == JGEN_ST_FUNC) || (kind == JGEN_ST_METHOD))
       {
-        create_func (flag_, name, (kind == JGEN_METHOD));
+        create_func (flag_, name, (kind == JGEN_ST_METHOD));
+        logger("     --  Creating a ST of func " + node_->getJsonName() + " , kind="+node_->getKindName()+"  --");
       }
-      else if (kind == JGEN_VAR)
+      else if (kind == JGEN_ST_VAR)
       {
         createVar (kind, flag_);
+        logger("     --  Creating a ST of var " + node_->getJsonName() + " , kind="+node_->getKindName()+"  --");
       }
-      else if (kind == JGEN_CLASS)
+      else if (kind == JGEN_ST_CLASS)
       {
         createClass ();
+        logger("     --  Creating a ST of class " + node_->getJsonName() + " , kind="+node_->getKindName()+" --");
+      }else{
+        logger("     --  Unable to create ST (Unknown Kind), for  " + node_->getJsonName() + " , kind="+node_->getKindName()+" --");
       }
     }
 
@@ -134,7 +140,7 @@ namespace JGEN
     void JGEN_ST::createVar (U64U kind, U64U flag)
     {
 
-      if (kind == JGEN_PARM)
+      if (kind == JGEN_ST_PARM)
         {
           // wgen fix for C++ and also for C, as in bug 8346.
           /*if (decl_arguments) {
@@ -320,7 +326,7 @@ namespace JGEN
 
       Set_ST_is_thread_private (st);
 
-      if (kind == JGEN_VAR && sclass == SCLASS_AUTO)
+      if (kind == JGEN_ST_VAR && sclass == SCLASS_AUTO)
         JGEN_add_pragma_to_location (WN_PRAGMA_LOCAL, st);
 
       /*
@@ -353,7 +359,7 @@ namespace JGEN
           Add_Current_Scope_Alloca_St (alloca_st, idx);
       }*/
 
-      if (kind == JGEN_PARM)
+      if (kind == JGEN_ST_PARM)
         {
           Set_ST_is_value_parm (st);
         }

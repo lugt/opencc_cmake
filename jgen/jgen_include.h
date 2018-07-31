@@ -161,11 +161,12 @@ extern mUINT32 Cif_Level;       	/* CIF level */
 
         // ST
 
-#define JGEN_VAR 1000000
-#define JGEN_FUNC 1000001
-#define JGEN_METHOD 1000002
-#define JGEN_PARM 1000003
-#define JGEN_CLASS 1020001
+#define JGEN_ST_VAR 1000000
+#define JGEN_ST_FUNC 1000001
+#define JGEN_ST_METHOD 1000002
+#define JGEN_ST_PARM 1000003
+#define JGEN_ST_CLASS 1020001
+#define JGEN_ST_PACKAGE 1030001
 
 
         //TY

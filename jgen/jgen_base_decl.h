@@ -63,7 +63,7 @@ class JGEN_SymbolTree_Base {
   virtual U64U getKind(){};
 
   // read Name from Node
-  virtual std::string &getKindName(){};
+  virtual std::string getKindName(){};
 
   // read Kind from Node
   virtual unsigned long long getFlag(){};
@@ -72,7 +72,7 @@ class JGEN_SymbolTree_Base {
   virtual int getJsonRefId(){};
 
   // get (Symbol) Name from Node
-  virtual std::string &getJsonName(){};
+  virtual std::string getJsonName(){};
 
   // retrieve the previously bound Idx
   virtual int getIdx(){};

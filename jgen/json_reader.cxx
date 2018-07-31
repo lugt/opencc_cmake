@@ -8,11 +8,13 @@
  *  3. JsonIR::read ()
  ***/
 #include "json_reader.h"
+#include "jgen_global.h"
 #include <iostream>
 #include <fstream>
 #include <ios>
 #include <algorithm>
 #include <string>
+
 
 int JSON_READING_STATE = 0;
 
@@ -172,49 +174,99 @@ namespace JGEN {
     };
 
     void Json_SymbolTree_Simple::init(void *tree) {
-        int i;
-        this->_tree = (Json::Value *) tree;
-        // length
-        count = this->_tree->size();
-        for(i=0; i < count; i++) {
-            Json::Value * decl = & _tree[i];
-            internalIdValMap.insert(std::make_pair(100 + i,decl));
-        }
+      int i;
+      this->_tree = (Json::Value *) tree;
+      // length
+      count = this->_tree->size();
+      for (i = 0; i < count; i++) {
+        Json::Value *decl = (new Json::Value(Json::nullValue));
+        Json::Value val = (*_tree)[i];
+        decl->copy(val);
+        internalIdValMap.insert(std::make_pair(100 + i, decl));
+      }
     }
+
     int Json_SymbolTree_Simple::next() {
-        return JGEN_SymbolTree_Base::next();
+      if(currentId > 0){
+        return gotoStId(static_cast<unsigned int>(currentId + 1));
+      }
+      return -6;
     }
+
+    U64U json_kind_list[] = {1, 2, 16, 4};
+    U64U internal_kind_list[] = {JGEN_ST_PACKAGE, JGEN_ST_CLASS, JGEN_ST_METHOD, JGEN_ST_VAR};
+
     unsigned long long Json_SymbolTree_Simple::getKind() {
-        return JGEN_SymbolTree_Base::getKind();
+      U64U jsonkind = 0;
+      if(current != nullptr){
+        jsonkind = (*current)["kind"].asUInt64();
+      }else if(_tree != nullptr){
+        jsonkind = (*_tree)["kind"].asUInt64();
+      }
+
+      if(jsonkind == 0)  return 0;
+
+      // Low efficiency method? map better?
+      {
+        for(int i = 0; i < sizeof(json_kind_list) ; i++){
+          if(json_kind_list[i] == jsonkind)
+          return internal_kind_list[i];
+        }
+      }
+      return jsonkind;
     }
-    std::string &Json_SymbolTree_Simple::getKindName() {
-        return JGEN_SymbolTree_Base::getKindName();
+
+    std::string Json_SymbolTree_Simple::getKindName() {
+      if(current != nullptr){
+        return (*current)["kindname"].asString();
+      }else if(_tree != nullptr){
+        return (*_tree)["kindname"].asString();
+      }
+      return *(new string("[JSON_Symbol_TREE]"));
     }
+
     unsigned long long Json_SymbolTree_Simple::getFlag() {
-        return JGEN_SymbolTree_Base::getFlag();
+      if(current != nullptr){
+        return (*current)["flag"].asUInt64();
+      }else if(_tree != nullptr){
+        return (*_tree)["flag"].asUInt64();
+      }
+      return 0;
     }
+
     int Json_SymbolTree_Simple::getJsonRefId() {
-        return JGEN_SymbolTree_Base::getJsonRefId();
+      return currentId;
     }
-    std::string &Json_SymbolTree_Simple::getJsonName() {
-        return JGEN_SymbolTree_Base::getJsonName();
+
+    std::string Json_SymbolTree_Simple::getJsonName() {
+        if(current != nullptr){
+          return (*current)["name"].asString();
+        }else if(_tree != nullptr){
+          return (*_tree)["name"].asString();
+        }
+        return *(new string("[JSON_Symbol_TREE]"));
     }
+
     int Json_SymbolTree_Simple::getIdx() {
         return JGEN_SymbolTree_Base::getIdx();
     }
+
     void Json_SymbolTree_Simple::setTypeIdx(int idx) {
         JGEN_SymbolTree_Base::setTypeIdx(idx);
     }
+
     int Json_SymbolTree_Simple::gotoStId(unsigned int ir_sym_id) {
         // indexed doing
         if(count > 0){
             if(this->internalIdValMap.find((int) ir_sym_id) != this->internalIdValMap.end()) {
-                Json::Value * ptr = this->internalIdValMap.at((int) ir_sym_id);
+                Json::Value * ptr = new Json::Value(* (this->internalIdValMap.at((int) ir_sym_id)));
                 current = ptr;
                 return 0;
             }
+            logger("-- JSON_ERROR : [Json_SymbolTree_Simple][gotoStId] cannot find such symId in map.");
             return -2;
         }
+        logger("-- JSON_ERROR : [Json_SymbolTree_Simple][gotoStId] count <= 0 ");
         return -1;
     }
 }

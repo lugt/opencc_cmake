@@ -191,7 +191,7 @@ void output_help ()
   std::cout << "    Author : Shijie Li   - shijieli@qq.com  " << std::endl;
   std::cout << "--------------------------------------------" << std::endl;
   std::cout << "Usage  : jgen <INPUT_JSON_FILE> <OUTPUT_B_FILE>" << std::endl;
-  std::cout << "Params : jgen <INPUT_JSON_FILE> <OUTPUT_B_FILE> [... PARAMS]" << std::endl;
+  std::cout << "Params : jgen -fS,<INPUT_JSON_FILE> -fB,<OUTPUT_B_FILE> [... PARAMS]" << std::endl;
   std::cout << "Help   : jgen --help " << std::endl;
   std::cout << "--------------------------------------------" << std::endl;
 }

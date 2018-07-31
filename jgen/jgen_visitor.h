@@ -26,6 +26,9 @@ namespace JGEN{
       void visit_first_round (JGEN_IR_Decl &provider);
       void visit_second_round (JGEN_IR_Decl &decl);
       void visit_child_round (JGEN_IR_Decl &decl);
+
+      static JGEN_SymbolTree_Base *symtree;
+      static JGEN_Typetree_Base *typetree;
     };
 }
 
