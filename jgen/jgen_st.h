@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include "jgen_include.h"
+#include "jgen_base_decl.h"
 
 // Return Params
 
@@ -19,45 +20,6 @@ namespace JGEN
     extern BOOL JGEN_processing_function_prototypes;
     extern BOOL JGEN_Keep_Zero_Length_Structs;
 
-    class JGEN_SymbolTree_Base {
-
-     public:
-
-      virtual void init(void * tree) {};
-
-      // Reading another node (next) (traverse)
-      // @return whether there is one to be read(1), or none (0)
-      virtual int next() {};
-
-      // read Kind from Node
-      virtual U64U getKind(){};
-
-      // read Name from Node
-      virtual std::string &getKindName(){};
-
-      // read Kind from Node
-      virtual unsigned long long getFlag(){};
-
-      // get DefId form Node
-      virtual int getJsonRefId(){};
-
-      // get (Symbol) Name from Node
-      virtual std::string &getJsonName(){};
-
-      // retrieve the previously bound Idx
-      virtual int getIdx(){};
-
-      // bind Idx to the tree node
-      virtual void setTypeIdx(int idx){};
-
-      // bind Idx to the tree node
-      virtual JGEN_SymbolTree_Base & getMemberFields(int idx){};
-
-      virtual JGEN_SymbolTree_Base * getParent(){};
-
-      virtual int gotoStId(unsigned int ir_sym_id){};
-    };
-
     class JGEN_ST {
 
       static TY_IDX ty_idx;
@@ -71,6 +33,7 @@ namespace JGEN
       static INT anon_count;
       static JGEN_SymbolTree_Base * context;
       static JGEN_SymbolTree_Base * node;
+      static int lineNum;
 
      public:
       static void getST(JGEN_SymbolTree_Base * tree, int SymTreeId);
@@ -207,9 +170,7 @@ namespace JGEN
       static void setName(char *name);
       static void setFlag(U64U flag);
       static void setLineNum(int lineNum);
-     private:
       static void createClass ();
-      static int lineNum;
     };
 
 }

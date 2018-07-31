@@ -32,20 +32,24 @@ namespace JGEN{
       Json_IR_Decl(Json::Value & code_table, Json::Value & root);
 
       /**
-       *
-       */
-      int get_next_decl();
-
-      /**
        *   check if have child (childnum)
        *   @return remainning child nums;
        */
-      int hasChild();
+      int hasChild() override;
 
       /**
        *  Returns a child
        */
-      Json_IR_Decl * getChildAtPosition (unsigned int pos);
+      Json_IR_Decl * getChildAtPosition (unsigned int pos) override;
+
+      int getKind() const override;
+      int getChild_count() const override;
+
+      JGEN_SymbolTree_Base * get_symbol_tree() override;
+      JGEN_Typetree_Base * get_type_tree() override;
+
+      int getSymbolId() override;
+      int getTypeId() override;
 
 
       /***
@@ -57,20 +61,11 @@ namespace JGEN{
       void setRoot(const Json::Value &root);
       const Json::Value &getDecl() const;
       void setDecl(const Json::Value &decl);
-      int getSymbol_json_id() const;
-      void setSymbol_json_id(int symbol_json_id);
-      int getType_json_id() const;
-      void setType_json_id(int type_json_id);
       int getTag_json() const;
       void setTag_json(int tag_json);
-      int getKind() const;
       void setKind(int kind);
       const string &getTag_name() const;
       void setTag_name(const string &tag_name);
-      int getChild_count() const;
-      void setChild_count(int child_count);
-      JGEN_SymbolTree_Base * get_symbol_tree();
-      JGEN_Typetree_Base * get_type_tree();
 
     };
 }

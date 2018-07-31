@@ -19,7 +19,7 @@ namespace JGEN
         visit_child_round(provider);
         return 0;
     }
-    int JGEN_Visitor::visit_decl (JGEN_IR_Decl provider)
+    int JGEN_Visitor::visit_decl (JGEN_IR_Decl & provider)
     {
         // If it's a class,
         visit_first_round(provider);
@@ -33,19 +33,19 @@ namespace JGEN
     {
         JGEN_SymbolTree_Base * symtree = nullptr;
         JGEN_Typetree_Base * typetree = nullptr;
-        switch(provider.getDeclKind ()){
+        switch(provider.getKind ()){
             case JGEN_DECL_CLASS:
               logger("-- [Json_Visitor]:: ***  visiting a class  defition.  ***");
               symtree = provider.get_symbol_tree();
               typetree = provider.get_type_tree();
-              JGEN_ST::getST(symtree, provider.getSymbol_json_id());
+              JGEN_ST::getST(symtree, provider.getSymbolId());
               // Preserve symbol_json_id <--> ST_IDX
               break;
             case JGEN_DECL_METHOD:
               logger("-- [Json_Visitor]:: ***  visiting a method defition.  ***");
               symtree = provider.get_symbol_tree();
               typetree = provider.get_type_tree();
-              JGEN_ST::getST(symtree, provider.getSymbol_json_id());
+              JGEN_ST::getST(symtree, provider.getSymbolId());
               break;
             case JGEN_DECL_VAR:
               logger("-- [Json_Visitor]:: ***  visiting a var    defition.  ***");
@@ -53,14 +53,14 @@ namespace JGEN
             default:
               // UNKNOWN
               logger("-- [Jgen_Visitor]:: *** visiting unknown (kind) of provider decl. ***");
-              logger("-- [Jgen_Visitor]:: *** kind : " + int2str(provider.getDeclKind()) + " ***");
+              logger("-- [Jgen_Visitor]:: *** kind : " + int2str(provider.getKind()) + " ***");
             return ;
         }
     }
 
     void JGEN_Visitor::visit_second_round (JGEN_IR_Decl &provider)
     {
-      if(provider.getDeclKind () == JGEN_DECL_CLASS){
+      if(provider.getKind () == JGEN_DECL_CLASS){
 
       }
     }

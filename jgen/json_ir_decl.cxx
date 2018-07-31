@@ -64,14 +64,12 @@ Json_IR_Decl::Json_IR_Decl (Json::Value &code_table_, Json::Value &root_)
   }
 }
 
-int JGEN::Json_IR_Decl::get_next_decl ()
-{
-  return 0;
-}
+
 int JGEN::Json_IR_Decl::hasChild ()
 {
   return child_count;
 }
+
 Json_IR_Decl *Json_IR_Decl::getChildAtPosition (unsigned int pos)
 {
 
@@ -112,6 +110,11 @@ int JGEN::Json_IR_Decl::getDeclKind ()
 {
   return kind;
 }
+
+int Json_IR_Decl::getKind() const {
+  return kind;
+}
+
 const Json::Value &Json_IR_Decl::getRoot() const {
   return root;
 }
@@ -124,17 +127,11 @@ const Json::Value &Json_IR_Decl::getDecl() const {
 void Json_IR_Decl::setDecl(const Json::Value &decl) {
   Json_IR_Decl::decl = decl;
 }
-int Json_IR_Decl::getSymbol_json_id() const {
+int Json_IR_Decl::getSymbolId() {
   return symbol_json_id;
 }
-void Json_IR_Decl::setSymbol_json_id(int symbol_json_id) {
-  Json_IR_Decl::symbol_json_id = symbol_json_id;
-}
-int Json_IR_Decl::getType_json_id() const {
+int Json_IR_Decl::getTypeId() {
   return type_json_id;
-}
-void Json_IR_Decl::setType_json_id(int type_json_id) {
-  Json_IR_Decl::type_json_id = type_json_id;
 }
 int Json_IR_Decl::getTag_json() const {
   return tag_json;
@@ -142,32 +139,31 @@ int Json_IR_Decl::getTag_json() const {
 void Json_IR_Decl::setTag_json(int tag_json) {
   Json_IR_Decl::tag_json = tag_json;
 }
-int Json_IR_Decl::getKind() const {
-  return kind;
-}
 void Json_IR_Decl::setKind(int kind) {
   Json_IR_Decl::kind = kind;
 }
+
 const string &Json_IR_Decl::getTag_name() const {
   return tag_name;
 }
+
 void Json_IR_Decl::setTag_name(const string &tag_name) {
   Json_IR_Decl::tag_name = tag_name;
 }
+
 int Json_IR_Decl::getChild_count() const {
   return child_count;
 }
-void Json_IR_Decl::setChild_count(int child_count) {
-  Json_IR_Decl::child_count = child_count;
-}
 
-JGEN_SymbolTree_Base *Json_IR_Decl::get_symbol_tree() {
-  JGEN_SymbolTree_Base * sym = new JGEN_SymbolTree_Base();
-  sym->init();
-  return nullptr;
+JGEN_SymbolTree_Base * Json_IR_Decl::get_symbol_tree() {
+  Json_SymbolTree_Simple * sym = new Json_SymbolTree_Simple();
+  sym->init(& root["symbol_tree"]);
+  return sym;
 }
 JGEN_Typetree_Base *Json_IR_Decl::get_type_tree() {
-  return nullptr;
+  Json_Typetree_Simple * typ = new Json_Typetree_Simple();
+  typ->init(root["type_tree"]);
+  return typ;
 }
 
 }

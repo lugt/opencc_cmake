@@ -81,7 +81,7 @@ namespace JGEN
       void init (string &fn);
       void finish ();
       void write_types (JGEN_Typetree_Base type_tree);
-      void traverse_decl (Json_IR_Decl * decl);
+      void traverse_decl (JGEN_IR_Decl * decl);
 
     };
 

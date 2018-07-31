@@ -115,7 +115,7 @@ namespace JGEN {
         return root["type_table"];
     }
 
-    Json_IR_Decl * Json_IR::get_top_decl ()
+    JGEN_IR_Decl * Json_IR::get_top_decl ()
     {
         return new Json_IR_Decl (root["code_table"], root);
     }
@@ -172,7 +172,14 @@ namespace JGEN {
     };
 
     void Json_SymbolTree_Simple::init(void *tree) {
-        JGEN_SymbolTree_Base::init(tree);
+        int i;
+        this->_tree = (Json::Value *) tree;
+        // length
+        count = this->_tree->size();
+        for(i=0; i < count; i++) {
+            Json::Value * decl = & _tree[i];
+            internalIdValMap.insert(std::make_pair(100 + i,decl));
+        }
     }
     int Json_SymbolTree_Simple::next() {
         return JGEN_SymbolTree_Base::next();
@@ -199,10 +206,15 @@ namespace JGEN {
         JGEN_SymbolTree_Base::setTypeIdx(idx);
     }
     int Json_SymbolTree_Simple::gotoStId(unsigned int ir_sym_id) {
-        // Goto Id, slowest doing
-        if(_tree->size() > 0){
-            // Goto IR_SYM_ID
+        // indexed doing
+        if(count > 0){
+            if(this->internalIdValMap.find((int) ir_sym_id) != this->internalIdValMap.end()) {
+                Json::Value * ptr = this->internalIdValMap.at((int) ir_sym_id);
+                current = ptr;
+                return 0;
+            }
+            return -2;
         }
-        return JGEN_SymbolTree_Base::gotoStId(ir_sym_id);
+        return -1;
     }
 }

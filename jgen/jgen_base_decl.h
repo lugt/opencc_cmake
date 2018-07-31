@@ -5,15 +5,92 @@
 #ifndef OSPREY_JGEN_BASE_DECL_H
 #define OSPREY_JGEN_BASE_DECL_H
 
+#include <string>
+#include <vector>
+
+using std::string;
+
 namespace JGEN {
+
+
+class JGEN_Typetree_Base {
+
+ public:
+
+  // goto some type with an typetree internal Id
+  virtual int gotoId(unsigned int type_id){};
+
+  // Reading another node (next) (traverse)
+  // @return whether there is one to be read(1), or none (0)
+  virtual int next() {};
+
+  // read Kind from Node
+  virtual unsigned long long getKind(){};
+
+  // read Name from Node
+  virtual std::string &getKindName(){};
+
+  // read Kind from Node
+  virtual unsigned long long getFlag(){};
+
+  // get DefId form Node
+  virtual int getJsonRefId(){};
+
+  // get (Symbol) Name from Node
+  virtual std::string &getJsonName(){};
+
+  // retrieve the previously bound Idx
+  virtual int getIdx(){};
+
+  // bind Idx to the tree node
+  virtual void setTypeIdx(int idx){};
+
+};
+
+
+
+class JGEN_SymbolTree_Base {
+
+ public:
+
+  virtual void init(void * tree) {};
+
+  // Reading another node (next) (traverse)
+  // @return whether there is one to be read(1), or none (0)
+  virtual int next() {};
+
+  // read Kind from Node
+  virtual U64U getKind(){};
+
+  // read Name from Node
+  virtual std::string &getKindName(){};
+
+  // read Kind from Node
+  virtual unsigned long long getFlag(){};
+
+  // get DefId form Node
+  virtual int getJsonRefId(){};
+
+  // get (Symbol) Name from Node
+  virtual std::string &getJsonName(){};
+
+  // retrieve the previously bound Idx
+  virtual int getIdx(){};
+
+  // bind Idx to the tree node
+  virtual void setTypeIdx(int idx){};
+
+  // bind Idx to the tree node
+  virtual JGEN_SymbolTree_Base & getMemberFields(int idx){};
+
+  virtual JGEN_SymbolTree_Base * getParent(){};
+
+  virtual int gotoStId(unsigned int ir_sym_id){};
+};
 
 
 class JGEN_IR_Decl{
  public:
-  /**
-   *
-   */
-  virtual int get_next_decl() = 0;
 
   /**
    *   check if have child (childnum)
@@ -31,25 +108,14 @@ class JGEN_IR_Decl{
    *  Get the Kind of the Decl
    *  @return longlong JGEN_DECL_CLASS
    */
-  virtual int getDeclKind()= 0;
-  virtual const Json::Value &getRoot() const = 0;
-  virtual void setRoot(const Json::Value &root)= 0;
-  virtual const Json::Value &getDecl() const = 0;
-  virtual void setDecl(const Json::Value &decl)= 0;
-  virtual int getSymbol_json_id() const = 0;
-  virtual void setSymbol_json_id(int symbol_json_id) = 0;
-  virtual int getType_json_id() const = 0;
-  virtual void setType_json_id(int type_json_id)= 0;
-  virtual int getTag_json() const = 0;
-  virtual void setTag_json(int tag_json)= 0;
   virtual int getKind() const = 0;
-  virtual void setKind(int kind) = 0;
-  virtual const string &getTag_name() const = 0;
-  virtual void setTag_name(const string &tag_name) = 0;
   virtual int getChild_count() const = 0;
-  virtual void setChild_count(int child_count) = 0;
+
   virtual JGEN_SymbolTree_Base * get_symbol_tree() = 0;
   virtual JGEN_Typetree_Base * get_type_tree() = 0;
+
+  virtual int getSymbolId() = 0;
+  virtual int getTypeId() = 0;
 
 };
 

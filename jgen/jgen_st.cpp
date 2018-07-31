@@ -5,6 +5,7 @@
 #include <string>
 #include "jgen_st.h"
 #include "jgen_include.h"
+#include "jgen_global.h"
 
 namespace JGEN
 {
@@ -14,24 +15,24 @@ namespace JGEN
 
     TY_IDX JGEN_ST::ty_idx;
     ST *JGEN_ST::st;
-    char *JGEN_ST::name;
+    char *JGEN_ST::name = const_cast<char *>("null");
     char JGEN_ST::tempname[32];
-    ST_SCLASS JGEN_ST::sclass;
-    ST_EXPORT JGEN_ST::eclass;
-    SYMTAB_IDX JGEN_ST::level;
-    INT JGEN_ST::anon_count;
+    ST_SCLASS JGEN_ST::sclass = SCLASS_UGLOBAL;
+    ST_EXPORT JGEN_ST::eclass = EXPORT_PREEMPTIBLE;
+    SYMTAB_IDX JGEN_ST::level = GLOBAL_SYMTAB;
+    INT JGEN_ST::anon_count = 0;
     JGEN_SymbolTree_Base * JGEN_ST::context;
     JGEN_SymbolTree_Base * JGEN_ST::node;
-    long long JGEN_ST::flag;
-
+    U64U JGEN_ST::flag = 0;
+    int JGEN_ST::lineNum = 0;
 
     void JGEN_ST::getST(JGEN_SymbolTree_Base *node_, int SymTreeId_) {
       node = node_;
-      if(node_.gotoStId(SymTreeId_) < 0){
-
-      }
       if(node_ == nullptr){
         throw "[Error] [getST] null on initializing ST";
+      }
+      if(node_->gotoStId(SymTreeId_) < 0){
+        throw std::exception("[Error] [getST] node : " + ll2str(reinterpret_cast<U64U>(node_)) +" gotoStId : " + int2str(SymTreeId_) + " failed.";
       }
       context = node_->getParent();
       U64U flag_ = node_->getFlag();

@@ -21,7 +21,7 @@ namespace JGEN{
       ~JGEN_Visitor(){};
 
       int visit_top_decl(JGEN_IR_Decl & provider);
-      int visit_decl(JGEN_IR_Decl provider);
+      int visit_decl(JGEN_IR_Decl & provider);
 
       void visit_first_round (JGEN_IR_Decl &provider);
       void visit_second_round (JGEN_IR_Decl &decl);

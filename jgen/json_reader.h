@@ -12,8 +12,11 @@
 #define JSON_READER_H_
 
 #include <json/json.h>
+#include <map>
 #include "json_ir_decl.h"
 #include "jgen_type.h"
+#include "jgen_st.h"
+#include "jgen_base_decl.h"
 
 extern int JSON_READING_STATE;
 
@@ -92,7 +95,7 @@ namespace JGEN {
 
         Json::Value get_sym_tree();
 
-        Json_IR_Decl * get_top_decl ();
+        JGEN_IR_Decl * get_top_decl ();
 
       bool isNull();
     };
@@ -121,7 +124,7 @@ namespace JGEN {
             init(val);
         }
 
-        void init(Json::Value &tree) override ;
+        void init(Json::Value &tree);
 
 // Reading another node (next) (traverse)
 // @return whether there is one to be read(1), or none (0)
@@ -161,6 +164,8 @@ namespace JGEN {
       int flag;
       int statics;
       int count;
+      std::map<int, Json::Value *> internalIdValMap;
+      Json::Value * current;
 
       Json_SymbolTree_Simple() {
           flag = 0;
