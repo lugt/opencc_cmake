@@ -189,19 +189,22 @@ extern mUINT32 Cif_Level;       	/* CIF level */
 #define JGEN_TYPE_FUNCTION 20000015
 #define JGEN_TYPE_UNION 20000016
 
-
+/*
+ *  No longer used as Json_Visitor actually knows what means in JGEN_NODE_DECL;
+ *
 #define JGEN_DECL_CLASS 30000003
 #define JGEN_DECL_METHOD 30000004
 #define JGEN_DECL_UNKNOWN_KIND 30000099
 #define JGEN_DECL_VAR 30009999
 #define JGEN_DECL_BLOCK 30000007
 #define JGEN_DECL_STMT 30000020
-#define JGEN_DECL_OPERATOR 30000026
+#define JGEN_DECL_OPERATOR 30000026*/
 
 
 #define JGEN_ST_FLAG_MASK_PUBLIC 0
 #define JGEN_ST_FLAG_MASK_WEAK 0
 
+typedef unsigned int U32U;
 typedef unsigned long long U64U;
 
 #include <string>

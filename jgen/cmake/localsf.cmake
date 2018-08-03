@@ -9,6 +9,8 @@ SET(JGEN_SRCS
         #JGEN Type/ST/Decl
   jgen_type.cpp
   jgen_st.cpp
+  json_symboltree.cxx
+  json_typetree.cxx
 
 #wgen_decl.cxx
 )
@@ -22,7 +24,8 @@ SET(JREAD_SRCS
   json_ir_decl.cxx
   jgen_type.cpp
   jgen_st.cpp
-
+  json_symboltree.cxx
+  json_typetree.cxx
 #wgen_decl.cxx
 )
 

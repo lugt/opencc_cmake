@@ -49,16 +49,12 @@ extern gs_t *func_decl_stack ;
 extern INT func_decl_stack_size ;
 extern INT func_decl_stack_top;
 
-
-extern int  WGEN_Keep_Zero_Length_Structs ;
 extern PU_Info *PU_Tree_Root ;
 extern int Reg_Parm_Count ;
 extern BOOL SSE_Reg_Parm ;
 
 extern void get_err_tables();
-
 extern void logger(string str);
-
 extern void logger(const char *str);
 
 extern string int2str(int a);
@@ -66,5 +62,12 @@ extern string long2str(long a);
 extern string ll2str(long long a);
 extern string char2str(char a);
 extern string double2str(double a);
+
+namespace JGEN{
+  class Config{
+   public:
+    static BOOL Keep_Zero_length_structs;
+  };
+}
 
 #endif //OSPREY_JGEN_GLOBAL_H

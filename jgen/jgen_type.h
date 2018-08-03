@@ -4,6 +4,7 @@
 #include "json/json.h"
 #include "jgen_include.h"
 #include "json_reader.h"
+#include "jgen_global.h"
 #include "jgen_st.h"
 
 #include <iostream>
@@ -16,28 +17,26 @@ using std::cout;
 namespace JGEN
 {
     class JGEN_TY {
+     private:
+      static std::map<U32U, TY_IDX> generatedType;
+      static JGEN_Typetree_Base * typetree;
+
      public:
-      static std::string type_str;
-      static long long kind;
-      static long long flag;
-      static TY_IDX idx;
-      static TYPE_ID mtype;
-      static INT64 tsize;
-      static BOOL variable_size;
-      static std::string kname;
-      static JGEN_TY *return_val;
-      static vector<JGEN_TY> args;
 
-      void init (std::string &name_, long long kind_, long long flag_, INT64 tsize_,
-                 BOOL isLengthVariable_, string kname_, JGEN_TY *retval);
+      static TY_IDX getExistTypeIdx(U32U jIndex);
 
-      static void createFunction ()
+      static TY_IDX createFunction (U32U typenode, vector<U32U> & args, U32U retval)
       {
+
+        FmtAssert(typetree != nullptr, ("-- [JGEN_TY] Reading from some nullptr (typetree)."));
+
+        TY_IDX idx = getExistTypeIdx(typenode);
 
         TY &ty = (idx == TY_IDX_ZERO) ? New_TY (idx) : Ty_Table[idx];
         Clear_TY_is_incomplete (idx);
         TY_Init (ty, 0, KIND_FUNCTION, MTYPE_UNKNOWN, 0);
         Set_TY_align (idx, 1);
+
         TY_IDX ret_ty_idx;
         TY_IDX arg_ty_idx;
         TYLIST tylist_idx;
@@ -46,25 +45,25 @@ namespace JGEN
         // this is needed to avoid mixing TYLISTs if one
         // of the parameters is a pointer to a function
 
-        if (return_val != nullptr)
-          {
-            ret_ty_idx = return_val->idx;
-          }
+        U32U ret_jIndex = typetree->getRetVal(typenode);
+        if(ret_jIndex != 0){
+          ret_ty_idx = Get_TY(ret_jIndex);
+        }
 
-        for (vector<JGEN_TY>::iterator it = args.begin ();
+        for (vector<U32U>::iterator it = args.begin ();
              it != args.end ();
              it++)
-          {
-            arg_ty_idx = it->idx;
+        {
+            arg_ty_idx = Get_TY(*it);
             if (TY_is_incomplete (arg_ty_idx) ||
                 (TY_kind (arg_ty_idx) == KIND_POINTER &&
                  TY_is_incomplete (TY_pointed (arg_ty_idx))))
               Set_TY_is_incomplete (idx);
-          }
+        }
 
         // if return type is pointer to a zero length struct
         // convert it to void
-        if (!JGEN_Keep_Zero_Length_Structs &&
+        if (!JGEN::Config::Keep_Zero_length_structs &&
             TY_mtype (ret_ty_idx) == MTYPE_M &&
             TY_size (ret_ty_idx) == 0)
           {
@@ -75,17 +74,20 @@ namespace JGEN
 
         // If the front-end adds the fake first param, then convert the
         // function to return void.
+
         if (TY_return_in_mem (ret_ty_idx))
-          {
+        {
             ret_ty_idx = Be_Type_Tbl (MTYPE_V);
             Set_TY_return_to_param (idx);        // bugs 2423 2424
-          }
+        }
+
         Set_TYLIST_type (New_TYLIST (tylist_idx), ret_ty_idx);
         Set_TY_tylist (ty, tylist_idx);
-        for (vector<JGEN_TY>::iterator it = args.begin ();
+
+        for (vector<U32U>::iterator it = args.begin ();
              it != args.end ();
              it++)
-          {
+        {
             arg_ty_idx = it->idx;
             Is_True (!TY_is_incomplete (arg_ty_idx) ||
                      TY_is_incomplete (idx),
@@ -99,62 +101,51 @@ namespace JGEN
               }
             else
               Set_TYLIST_type (New_TYLIST (tylist_idx), arg_ty_idx);
-          }
-        if (get_num_args ())
-          {
+        }
+        if (typetree->getArgNums(typenode))
+        {
             Set_TY_has_prototype (idx);
             if (arg_ty_idx != Be_Type_Tbl(MTYPE_V))
-              {
+            {
                 Set_TYLIST_type (New_TYLIST (tylist_idx), 0);
                 Set_TY_is_varargs (idx);
-              }
+            }
             else
               Set_TYLIST_type (Tylist_Table[tylist_idx], 0);
-          }
+        }
         else
           Set_TYLIST_type (New_TYLIST (tylist_idx), 0);
 
         // TODO: TARGET X8664 SSE Specification Ignored
       }
 
-      static void get_TY (long long _kind, std::string kindName, long long flag)
+      static void Get_TY (U32U jIndex)
       {
-        tsize = 0; /// Variable Length Array check? Variable Length Structure Check?
-        mtype = 0;
-        variable_size = FALSE;
-        kname = kindName;
-        kind = _kind;
-        idx = 0;
-        _getTY (_kind, flag);
-      }
-
-      static void _getTY (long long TY_KIND, long long flag)
-      {
-
-        cout << " -- Getting TY for " << kname;
-        switch (TY_KIND)
-          {
+        TY_IDX idx = 0;
+        cout << " -- Getting TY for " << typetree->getNameString(jIndex);
+        switch (typetree->getKind(jIndex))
+        {
             case JGEN_TYPE_VOID:
-              {
+            {
                 idx = MTYPE_To_TY (MTYPE_V);
                 break;
-              }
+            }
             case JGEN_TYPE_BOOLEAN:
             case JGEN_TYPE_INTEGER:
             case JGEN_TYPE_OFFSET:
-              {
+            {
                 create_integer ();
                 break;
-              }
+            }
             case JGEN_TYPE_ENUMERATION:
               create_enumeration ();
             break;
             case JGEN_TYPE_CHAR:
             case JGEN_TYPE_BYTE:
-              {
+            {
                 create_char ();
                 break;
-              }
+            }
             case JGEN_TYPE_FLOAT:
             case JGEN_TYPE_DOUBLE:
             case JGEN_TYPE_NUMBER:
@@ -164,28 +155,30 @@ namespace JGEN
               }
             case JGEN_TYPE_HANDLE:
             case JGEN_TYPE_POINTER:
-              {
+            {
                 idx = Be_Type_Tbl(Pointer_Size == 8 ? MTYPE_I8 : MTYPE_I4);
                 break;
-              }
+            }
             case JGEN_TYPE_ARRAY:
-              {
+            {
                 createArray ();
                 break;
-              }
+            }
             case JGEN_TYPE_RECORD:
-            case JGEN_TYPE_UNION:
+            case JGEN_TYPE_UNION: {
               /** TOOD RECORD, UNION **/
               cerr << "Unfinished Type : Union";
-            break;
+              break;
+            }
             case JGEN_TYPE_METHOD:
-            case JGEN_TYPE_FUNCTION:
-              createFunction ();
-            break;
+            case JGEN_TYPE_FUNCTION: {
+              createFunction(jIndex, typetree->getArgList(), retval);
+              break;
+            }
             default:
               cerr << "Unexpected Type KIND : " << kind;
 
-          }
+        }
         if (isConst ())
           Set_TY_is_const (idx);
         if (isVolatile ())
@@ -429,68 +422,6 @@ namespace JGEN
         cerr << "Unfinished Type : Array";
       }
 
-      static bool isZeroMaxValue (TY_IDX ty)
-      {
-        return false;
-      }
-
-      static bool isSizeMaxValueConstant ()
-      {
-        return true;
-      }
-
-      static bool isVariableSize ()
-      {
-        return false;
-      }
-
-      static int get_type_size (TY_IDX type)
-      {
-        return 0;
-      }
-
-      static int get_num_args ()
-      {
-        return 0;
-      }
-
-      static bool isUnsigned (long long flag)
-      {
-        return true;
-      }
-
-      static int get_element_type ()
-      {
-        return 0;
-      }
-
-      static bool isConst ()
-      {
-        return 0;
-      }
-
-      static int get_element_size_unit ()
-      {
-        return 0;
-      }
-
-      static long get_max_value (TY_IDX ty)
-      {
-        return 1;
-      }
-
-      static bool isReadonly ()
-      {
-        return false;
-      }
-      static bool isVolatile ()
-      {
-        return false;
-      }
-      static bool isRestrict ()
-      {
-        return false;
-      }
     };
 
 }
@@ -1398,7 +1329,7 @@ Create_TY_For_Tree (gs_t type_tree, TY_IDX idx)
 
 		// if return type is pointer to a zero length struct
 		// convert it to void
-		if (!WGEN_Keep_Zero_Length_Structs    &&
+		if (!JGEN::Config::Keep_Zero_length_structs    &&
 		    TY_mtype (ret_ty_idx) == MTYPE_M &&
 		    TY_size (ret_ty_idx) == 0) {
 			// zero length struct being returned

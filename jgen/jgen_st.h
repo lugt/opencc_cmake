@@ -39,60 +39,6 @@ namespace JGEN
       static void getST(JGEN_SymbolTree_Base * tree, int SymTreeId);
 
      private:
-      static bool isPublic (U64U flag)
-      {
-          return (flag & JGEN_ST_FLAG_MASK_PUBLIC) > 0;
-      }
-
-      static bool isWeak (U64U flag)
-      {
-          return (flag & JGEN_ST_FLAG_MASK_WEAK) > 0;
-      }
-
-      static bool isConstructor (U64U flag)
-      {
-          return 0;
-      }
-
-      static bool isPureVFunc (U64U flag)
-      {
-          return 0;
-      }
-
-      static bool isMethodOfClass (U64U flag)
-      {
-          return 0;
-      }
-
-      static int get_method_base_type ()
-      {
-          return 0;
-      }
-
-      static bool isContextNamespace (void *context)
-      {
-          return false;
-      }
-
-      static bool isContextRecord (void *context)
-      {
-          return false;
-      }
-
-      static bool isLangSpecific ()
-      {
-          return false;
-      }
-
-      static bool isReallyExtern ()
-      {
-          return false;
-      }
-
-      static bool isNoThrow ()
-      {
-          return false;
-      }
 
       static TY_IDX get_related_TY ()
       {

@@ -12,7 +12,6 @@ namespace JGEN
 {
 
     BOOL JGEN_processing_function_prototypes = FALSE;
-    BOOL JGEN_Keep_Zero_Length_Structs = FALSE;
 
     TY_IDX JGEN_ST::ty_idx;
     ST *JGEN_ST::st;
@@ -43,19 +42,19 @@ namespace JGEN
       if ((kind == JGEN_ST_FUNC) || (kind == JGEN_ST_METHOD))
       {
         create_func (flag_, name, (kind == JGEN_ST_METHOD));
-        logger("     --  Creating a ST of func " + node_->getJsonName() + " , kind="+node_->getKindName()+"  --");
+        logger("     --  Creating a ST of func " + node_->Name() + " , kind="+node_->getKindName()+"  --");
       }
       else if (kind == JGEN_ST_VAR)
       {
         createVar (kind, flag_);
-        logger("     --  Creating a ST of var " + node_->getJsonName() + " , kind="+node_->getKindName()+"  --");
+        logger("     --  Creating a ST of var " + node_->Name() + " , kind="+node_->getKindName()+"  --");
       }
       else if (kind == JGEN_ST_CLASS)
       {
         createClass ();
-        logger("     --  Creating a ST of class " + node_->getJsonName() + " , kind="+node_->getKindName()+" --");
+        logger("     --  Creating a ST of class " + node_->Name() + " , kind="+node_->getKindName()+" --");
       }else{
-        logger("     --  Unable to create ST (Unknown Kind), for  " + node_->getJsonName() + " , kind="+node_->getKindName()+" --");
+        logger("     --  Unable to create ST (Unknown Kind), for  " + node_->Name() + " , kind="+node_->getKindName()+" --");
       }
     }
 

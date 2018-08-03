@@ -138,3 +138,7 @@ string double2str(double a){
  ss<<a;
  return ss.str();
 };
+
+namespace JGEN{
+ BOOL Config::Keep_Zero_length_structs = FALSE;
+}
