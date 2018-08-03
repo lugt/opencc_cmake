@@ -11,104 +11,90 @@
 namespace JGEN
 {
 
-    BOOL JGEN_processing_function_prototypes = FALSE;
-
     TY_IDX JGEN_ST::ty_idx;
     ST *JGEN_ST::st;
-    char *JGEN_ST::name = const_cast<char *>("null");
-    char JGEN_ST::tempname[32];
     ST_SCLASS JGEN_ST::sclass = SCLASS_UGLOBAL;
     ST_EXPORT JGEN_ST::eclass = EXPORT_PREEMPTIBLE;
     SYMTAB_IDX JGEN_ST::level = GLOBAL_SYMTAB;
-    INT JGEN_ST::anon_count = 0;
-    JGEN_SymbolTree_Base * JGEN_ST::context;
-    JGEN_SymbolTree_Base * JGEN_ST::node;
-    U64U JGEN_ST::flag = 0;
-    int JGEN_ST::lineNum = 0;
 
-    void JGEN_ST::getST(JGEN_SymbolTree_Base *node_, int SymTreeId_) {
-      node = node_;
-      if(node_ == nullptr){
-        throw jgen_exception("[Error] [getST] null on initializing ST");
+    ST_IDX JGEN_ST::Get_ST(U32U jIndex) {
+
+      ST_IDX st = 0;
+
+      if(jIndex < 0){
+        throw jgen_exception("[Error] [getST] jIndex : " + int2str(jIndex) + " is negative, thus failed.");
       }
-      if(node_->gotoStId(SymTreeId_) < 0){
-        throw jgen_exception("[Error] [getST] node : " + ll2str(reinterpret_cast<U64U>(node_)) +" gotoStId : " + int2str(SymTreeId_) + " failed.");
-      }
-      context = node_->getParent();
-      U64U flag_ = node_->getFlag();
-      flag = flag_;
-      U64U kind = node_->getKind();
+
+      U32U context = symtree->getParent(jIndex);
+      U64U flag_ = symtree->getFlag(jIndex);
+      U64U kind = symtree->getKind(jIndex);
 
       if ((kind == JGEN_ST_FUNC) || (kind == JGEN_ST_METHOD))
       {
-        create_func (flag_, name, (kind == JGEN_ST_METHOD));
-        logger("     --  Creating a ST of func " + node_->Name() + " , kind="+node_->getKindName()+"  --");
+        st = create_func (jIndex);
+        logger("     --  Creating a ST of func " + symtree->getNameString(jIndex) + " , kind="+symtree->getKindName(jIndex)+"  --");
       }
       else if (kind == JGEN_ST_VAR)
       {
-        createVar (kind, flag_);
-        logger("     --  Creating a ST of var " + node_->Name() + " , kind="+node_->getKindName()+"  --");
+        st = createVar (jIndex);
+        logger("     --  Creating a ST of var " + symtree->getNameString(jIndex) + " , kind="+symtree->getKindName(jIndex)+"  --");
       }
       else if (kind == JGEN_ST_CLASS)
       {
-        createClass ();
-        logger("     --  Creating a ST of class " + node_->Name() + " , kind="+node_->getKindName()+" --");
+        st = createClass (jIndex);
+        logger("     --  Creating a ST of class " + symtree->getNameString(jIndex) + " , kind="+symtree->getKindName(jIndex)+" --");
       }else{
-        logger("     --  Unable to create ST (Unknown Kind), for  " + node_->Name() + " , kind="+node_->getKindName()+" --");
+        logger("     --  Unable to create ST (Unknown Kind), for  " + symtree->getNameString(jIndex) + " , kind="+symtree->getKindName(jIndex)+" --");
       }
     }
 
-    void JGEN_ST::create_func (U64U flag, std::string funcName, bool isMethod)
+    ST_IDX JGEN_ST::create_func (U32U jIndex)
     {
 
-      JGEN_processing_function_prototypes = TRUE;
-      TY_IDX func_ty_idx = get_related_TY ();
-      JGEN_processing_function_prototypes = FALSE;
+      JGEN::Config::processing_function_prototypes = TRUE;
+      TY_IDX func_ty_idx = get_related_TY (jIndex);
+      JGEN::Config::processing_function_prototypes = FALSE;
 
       sclass = SCLASS_EXTERN;
-      eclass = isPublic (flag) || isWeak (flag) ?
+      eclass = symtree->isPublic (jIndex) || symtree->isWeak (jIndex) ?
                EXPORT_PREEMPTIBLE :
                EXPORT_LOCAL;
 
       level = GLOBAL_SYMTAB + 1;
+
       PU_IDX pu_idx;
       PU &pu = New_PU (pu_idx);
       PU_Init (pu, func_ty_idx, level);
 
       st = New_ST (level - 1);
-      ST_Init (st, Save_Str (funcName.c_str ()),
+      ST_Init (st, Save_Str (symtree->getNameString(jIndex).c_str ()),
                CLASS_FUNC, sclass, eclass, TY_IDX (pu_idx));
 
-      if (isConstructor (flag))
+      if (symtree->isConstructor (jIndex))
         {
           Set_PU_is_constructor (pu);
         }
 
-      if (isPureVFunc (flag))
+      if (symtree->isPureVFunc (jIndex))
         {
           Set_ST_is_pure_vfunc (st);
         }
 
-      if (isMethodOfClass (flag))
-        {
-          TY_IDX base = get_method_base_type ();
+      if (symtree->isMethodOfClass (jIndex))
+      {
+          TY_IDX base = symtree->get_method_base_type (jIndex);
           Set_PU_base_class (pu, base);
-        }
+      }
 
-      if (isContextNamespace (context) &&
+      if (symtree->isContextNamespace (symtree->getParent(jIndex)) &&
           eclass != EXPORT_LOCAL &&
           eclass != EXPORT_LOCAL_INTERNAL)
-        {
+      {
           Set_ST_is_weak_symbol (st);
-        }
+      }
 
-      if (isMethod)
-        {
-          TY_IDX base = get_method_base_type ();
-          Set_PU_base_class (pu, base);
-        }
 
-      // process attributes for FUNCTION_DECL  TODO: Function
+      // process attributes for FUNCTION_DECL  TODO: Function Arguments
       /**
        * gs_t attr_list = gs_decl_attributes(decl_node);
       for ( ; attr_list != NULL; attr_list = gs_tree_chain(attr_list) ) {
@@ -120,26 +106,28 @@ namespace JGEN
       }
        */
 
-      if (isNoThrow ())
-        {
-          Set_PU_nothrow (pu);
-        }
+      if (symtree->isNoThrow (jIndex))
+      {
+        Set_PU_nothrow (pu);
+      }
     }
-    void JGEN_ST::createParam ()
+
+    ST_IDX JGEN_ST::createParam (U32U jIndex)
     {
-      if (isExternal ())
+      if (symtree->isExternal (jIndex))
         {
           sclass = SCLASS_EXTERN;
         }
-      else if (isInitial (flag))
+      else if (symtree->isInitial (jIndex))
         {
           sclass = SCLASS_UGLOBAL;
         }
     }
-    void JGEN_ST::createVar (U64U kind, U64U flag)
+
+    ST_IDX JGEN_ST::createVar (U32U jIndex)
     {
 
-      if (kind == JGEN_ST_PARM)
+      if (symtree->getKind(jIndex) == JGEN_ST_PARM)
         {
           // wgen fix for C++ and also for C, as in bug 8346.
           /*if (decl_arguments) {
@@ -156,22 +144,22 @@ namespace JGEN
         }
       else
         {
-          if (context == 0 || isContextNamespace (context) ||
-              isContextRecord (context))
+          if (symtree->getParent(jIndex) == 0 || symtree->isContextNamespace (symtree->getParent(jIndex)) ||
+              symtree->isContextRecord (symtree->getParent(jIndex)))
             {
-              if (isPublic (flag))
+              if (symtree->isPublic (jIndex))
                 {
 
-                  if (isExternal () ||
-                      (isLangSpecific () &&
-                       isReallyExtern ()))
+                  if (symtree->isExternal (jIndex) ||
+                      (symtree->isLangSpecific (jIndex) &&
+                       symtree->isReallyExtern (jIndex)))
                     sclass = SCLASS_EXTERN;
-                  else if (isInitial (flag))
+                  else if (symtree->isInitial (jIndex))
                     sclass = SCLASS_UGLOBAL;
-                  else if (isStatic ())
+                  else if (symtree->isStatic (jIndex))
                     {
-                      if (flag_no_common || !isCommon () ||
-                          (!lang_cplus && hasName (flag)))
+                      if (JGEN::Config::do_not_parse_common || !symtree->isCommon (jIndex) ||
+                          (!JGEN::Config::lang_oop && symtree->hasName (jIndex)))
                         sclass = SCLASS_UGLOBAL;
                       else
                         sclass = SCLASS_COMMON;
@@ -192,11 +180,11 @@ namespace JGEN
               // .gnu.linkonce.b is .bss with DECL_ONE_ONLY set.  Bug 10876.
               std::string section_name = ".gnu";
               if (section_name.size () > 0 &&
-                  !startsWith (".gnu.linkonce."))
+                  symtree->getNameString(jIndex).substr(0,14) != ".gnu.linkonce.")
                 {
-                  if (!startsWith (".gnu.linkonce.b.")
+                  if (symtree->getNameString(jIndex).substr(0,16) != ".gnu.linkonce.b."
                       // bug 13054
-                      || !startsWith (".gnu.linkonce.sb."))
+                      || symtree->getNameString(jIndex).substr(0,17) != ".gnu.linkonce.sb." )
                     {
                       sclass = SCLASS_UGLOBAL;
                       level = GLOBAL_SYMTAB;
@@ -225,17 +213,17 @@ namespace JGEN
                     level = GLOBAL_SYMTAB;
                     eclass = EXPORT_PREEMPTIBLE;
                 }*/
-              else if (isExternal () || isWeak (flag))
+              else if (symtree->isExternal (jIndex) || symtree->isWeak (jIndex))
                 {
                   // OSP_255
                   // Not all weak symbols are EXTERN: COMMON&WEAK, STATIC&WEAK
-                  if (!flag_no_common && isCommon ())
+                  if (!JGEN::Config::do_not_parse_common && symtree->isCommon (jIndex))
                     {
                       // COMMON & WEAK:
                       //   static vars in exported inline/template functions(IA64)
                       sclass = SCLASS_COMMON;
                     }
-                  else if (isStatic ())
+                  else if (symtree->isStatic (jIndex))
                     {
                       // STATIC & WEAK:
                       //   static vars in exported inline/template function(X8664)
@@ -251,7 +239,8 @@ namespace JGEN
                   eclass = EXPORT_PREEMPTIBLE;
                 }
                 // Bug 8652: If GNU marks it as COMMON, we should the same.
-              else if (!flag_no_common && isStatic () && isCommon () && isPublic (flag))
+              else if (!JGEN::Config::do_not_parse_common && symtree->isStatic (jIndex) &&
+                  symtree->isCommon (jIndex) && symtree->isPublic (jIndex))
                 {
                   sclass = SCLASS_COMMON;
                   level = GLOBAL_SYMTAB;
@@ -259,12 +248,12 @@ namespace JGEN
                 }
               else
                 {
-                  if (isStatic ())
+                  if (symtree->isStatic (jIndex))
                     {
                       sclass = SCLASS_PSTATIC;
-                      if (pstatic_as_global
-                          && !(isInitial (flag) &&
-                               !isExternal () && isInitial (flag)))
+                      if (JGEN::Config::treat_static_as_global
+                          && !(symtree->isInitial (jIndex) &&
+                               !symtree->isExternal (jIndex) && symtree->isInitial (jIndex)))
                         level = GLOBAL_SYMTAB;
                       else
                         level = CURRENT_SYMTAB;
@@ -272,19 +261,19 @@ namespace JGEN
                   else
                     {
                       sclass = SCLASS_AUTO;
-                      level = getCurrentSymtab () ? getCurrentSymtab () : CURRENT_SYMTAB;
+                      level = getSymtabLevel (jIndex) ? getSymtabLevel (jIndex) : CURRENT_SYMTAB;
                     }
                   eclass = EXPORT_LOCAL;
                 }
             }
         }
-      if (is_guard_var ())
+      if (symtree->is_guard_var (jIndex))
         {
           // This is a guard variable created by the g++ front-end to protect
           // against multiple initializations (and destruction) of symbols
           // with static storage class. Make it local unless it's weak.
           level = GLOBAL_SYMTAB;
-          if (isWeak (flag))
+          if (symtree->isWeak (jIndex))
             {
               sclass = SCLASS_UGLOBAL;
               eclass = EXPORT_PREEMPTIBLE;
@@ -302,8 +291,8 @@ namespace JGEN
           //conditional expressions.
           //See comments for WGEN_add_guard_var in wgen_expr.cxx
           //for information on conditional expressions.
-          level = getCurrentSymtab () ?
-                  getCurrentSymtab () : CURRENT_SYMTAB;
+          level = getSymtabLevel (jIndex) ?
+                  getSymtabLevel (jIndex) : CURRENT_SYMTAB;
           sclass = SCLASS_AUTO;
           eclass = EXPORT_LOCAL;
         }
@@ -313,19 +302,19 @@ namespace JGEN
       level = CURRENT_SYMTAB;
       st = New_ST (level);
 
-      ty_idx = get_related_TY ();
+      ty_idx = get_related_TY (jIndex);
 
       // Set line number where define sym in source file
       //if (isO)
       //   Set_ST_Line(*st, gs_decl_source_line(decl_node));
       //else  TODO: Set Line Number
-      Set_ST_Line (*st, getLineNumber ());
+      Set_ST_Line (*st, symtree->getLineNum (jIndex));
 
-      ST_Init (st, Save_Str (name), CLASS_VAR, sclass, eclass, ty_idx);
+      ST_Init (st, Save_Str (symtree->getNameString(jIndex).c_str()), CLASS_VAR, sclass, eclass, ty_idx);
 
       Set_ST_is_thread_private (st);
 
-      if (kind == JGEN_ST_VAR && sclass == SCLASS_AUTO)
+      if (symtree->getKind(jIndex) == JGEN_ST_VAR && sclass == SCLASS_AUTO)
         JGEN_add_pragma_to_location (WN_PRAGMA_LOCAL, st);
 
       /*
@@ -358,12 +347,13 @@ namespace JGEN
           Add_Current_Scope_Alloca_St (alloca_st, idx);
       }*/
 
-      if (kind == JGEN_ST_PARM)
+      if (symtree->getKind(jIndex) == JGEN_ST_PARM)
         {
           Set_ST_is_value_parm (st);
         }
     }
-    void JGEN_ST::createNameSpace ()
+
+    ST_IDX JGEN_ST::createNameSpace (U32U jIndex)
     {
       /* - local -->.      sclass = SCLASS_FSTATIC;
       - 		eclass = EXPORT_LOCAL;
@@ -375,31 +365,24 @@ namespace JGEN
       level = GLOBAL_SYMTAB;
       eclass = EXPORT_PREEMPTIBLE;
     }
-    void JGEN_ST::createClass ()
+
+    ST_IDX JGEN_ST::createClass (U32U jIndex)
     {
       sclass = SCLASS_UGLOBAL;
       level = GLOBAL_SYMTAB;
       eclass = EXPORT_PREEMPTIBLE;
       st = New_ST (level);
-      ty_idx = get_related_TY ();
+      ty_idx = get_related_TY (jIndex);
       // Set line number where define sym in source file
       //if (isO)
       //   Set_ST_Line(*st, gs_decl_source_line(decl_node));
       //else  TODO: Set Line Number
-      Set_ST_Line (*st, static_cast<mUINT32>(getLineNumber ()));
-      ST_Init (st, Save_Str (name), CLASS_VAR, sclass, eclass, ty_idx);
+      Set_ST_Line (*st, symtree->getLineNum(jIndex));
+      ST_Init (st, Save_Str (symtree->getNameString(jIndex).c_str()), CLASS_VAR, sclass, eclass, ty_idx);
     }
 
-    void JGEN_ST::setName(char *name) {
-      JGEN_ST::name = name;
-    }
-
-    void JGEN_ST::setFlag(U64U flag) {
-      JGEN_ST::flag = flag;
-    }
-
-    void JGEN_ST::setLineNum(int lineNum) {
-      JGEN_ST::lineNum = lineNum;
+    U32U JGEN_ST::getSymtabLevel(U32U index) {
+      return 0;
     }
 
 }

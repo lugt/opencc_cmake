@@ -137,11 +137,6 @@ namespace JGEN
         ABI_Name = (char *) "n64"; // TARGET_64BIT should be defined somewhere
       else ABI_Name = (char *) "n32";
 
-      if (lang_cplus)
-        pstatic_as_global = TRUE;
-      else
-        pstatic_as_global = FALSE;
-
       Init_Controls_Tbl ();
       Argc = 1;
       const char *str = "jwtest";
@@ -213,7 +208,7 @@ namespace JGEN
 
       /* If we've seen errors, note them and terminate: */
       Get_Error_Count (error_count, warning_count);
-      *need_inliner = wgen_invoke_inliner;
+      *need_inliner = JGEN::Config::need_inliner;
     }
 
     void JGEN_Entry (string fn)
@@ -256,12 +251,7 @@ namespace JGEN
     {
       string q = "SomeWhatType";
       string kind_default_name = "kindDefault";
-      while (type_tree.next () > 0)
-        {
-          JGEN_TY ty;
-          ty.init (q, 0, 0, 0, 0, kind_default_name, 0);
-          ty.get_TY (JGEN_TYPE_RECORD, kind_default_name, 0);
-        }
+      // What to DO?
     }
 
     void JGEN_Root::traverse_decl (JGEN_IR_Decl * decl)

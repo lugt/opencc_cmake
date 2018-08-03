@@ -7,11 +7,15 @@
 
 namespace JGEN{
 
-void Json_SymbolTree_Simple::init(void *tree) {
+
+Json_SymbolTree_Simple * Json_SymbolTree_Simple::me = nullptr;
+
+void Json_SymbolTree_Simple::init(void * tree) {
   int i;
+  FmtAssert(tree != nullptr, ("Error [init][symtree] nullptr"));
   this->_tree = (Json::Value *) tree;
   // length
-  count = this->_tree->size();
+  int count = this->_tree->size();
   for (i = 0; i < count; i++) {
     Json::Value *decl = (new Json::Value(Json::nullValue));
     Json::Value val = (*_tree)[i];
@@ -20,26 +24,18 @@ void Json_SymbolTree_Simple::init(void *tree) {
   }
 }
 
-int Json_SymbolTree_Simple::next() {
-  if(currentId > 0){
-    return gotoStId(static_cast<unsigned int>(currentId + 1));
-  }
-  return -6;
-}
-
 U64U json_kind_list[] = {1, 2, 16, 4};
 U64U internal_kind_list[] = {JGEN_ST_PACKAGE, JGEN_ST_CLASS, JGEN_ST_METHOD, JGEN_ST_VAR};
 
-unsigned long long Json_SymbolTree_Simple::getKind() {
+U64U Json_SymbolTree_Simple::getKind(U32U jIndex) {
+  gotoStId(jIndex);
   U64U jsonkind = 0;
   if(current != nullptr){
     jsonkind = (*current)["kind"].asUInt64();
   }else if(_tree != nullptr){
     jsonkind = (*_tree)["kind"].asUInt64();
   }
-
   if(jsonkind == 0)  return 0;
-
   // Low efficiency method? map better?
   {
     for(int i = 0; i < sizeof(json_kind_list) ; i++){
@@ -50,21 +46,8 @@ unsigned long long Json_SymbolTree_Simple::getKind() {
   return jsonkind;
 }
 
-
-unsigned long long Json_SymbolTree_Simple::getFlag() {
-  if(current != nullptr){
-    return (*current)["flag"].asUInt64();
-  }else if(_tree != nullptr){
-    return (*_tree)["flag"].asUInt64();
-  }
-  return 0;
-}
-
-int Json_SymbolTree_Simple::getJsonRefId() {
-  return currentId;
-}
-
-std::string Json_SymbolTree_Simple::getJsonName() {
+std::string Json_SymbolTree_Simple::getNameString(U32U jIndex) {
+  gotoStId(jIndex);
   if(current != nullptr){
     return (*current)["name"].asString();
   }else if(_tree != nullptr){
@@ -73,40 +56,24 @@ std::string Json_SymbolTree_Simple::getJsonName() {
   return *(new string("[JSON_Symbol_TREE]"));
 }
 
-int Json_SymbolTree_Simple::getIdx(U32U index) {
-  return 0;
-}
-
-void Json_SymbolTree_Simple::setTypeIdx(U32U jIndex, int idx) {
-  // to Cache
-}
-
-int Json_SymbolTree_Simple::gotoStId(U32U ir_sym_id) const{
+int Json_SymbolTree_Simple::gotoStId(U32U ir_sym_id){
   // indexed doing
-  if(this->internalIdValMap.find((int) ir_sym_id) != this->internalIdValMap.end()) {
-    Json::Value * ptr = new Json::Value(* (this->internalIdValMap.at((int) ir_sym_id)));
-    current = ptr;
+  if(internalIdValMap.find((int) ir_sym_id) != internalIdValMap.end()) {
+    Json::Value * ptr = internalIdValMap.at((int) ir_sym_id);
+    _currentptr = ptr;
     return 0;
   }
   logger("-- JSON_ERROR : [Json_SymbolTree_Simple][gotoStId] cannot find such symId in map.");
   return -2;
 }
 
-string Json_SymbolTree_Simple::getNameString(U32U jIndex) {
-  return std::string();
+vector<U32U> Json_SymbolTree_Simple::getMemberFields(U32U jIndex) {
+  return vector<U32U>();
 }
-void Json_SymbolTree_Simple::setTypeIdx(U32U jIndex) {
-
-}
-JGEN_SymbolTree_Base &Json_SymbolTree_Simple::getMemberFields(U32U jIndex) {
-  return <#initializer#>;
-}
-JGEN_SymbolTree_Base *Json_SymbolTree_Simple::getParent(U32U jIndex) {
+U32U Json_SymbolTree_Simple::getParent(U32U jIndex) {
   return nullptr;
 }
-U64U Json_SymbolTree_Simple::getKind(U32U pos) {
-  return 0;
-}
+
 std::string Json_SymbolTree_Simple::getKindName(U32U pos) {
   gotoStId(pos);
   if(current != nullptr){
@@ -118,6 +85,11 @@ std::string Json_SymbolTree_Simple::getKindName(U32U pos) {
 }
 U64U Json_SymbolTree_Simple::getFlag(U32U pos) {
   gotoStId(pos);
+  if(current != nullptr){
+    return (*current)["flag"].asUInt64();
+  }else if(_tree != nullptr){
+    return (*_tree)["flag"].asUInt64();
+  }
   return 0;
 }
 int Json_SymbolTree_Simple::getJsonRefId(U32U pos) {
@@ -132,44 +104,74 @@ int Json_SymbolTree_Simple::getIdx(U32U pos) {
   gotoStId(pos);
   return 0;
 }
-void Json_SymbolTree_Simple::setTypeIdx(U32U pos, int idx) const {
-  gotoStId(pos);
-}
-bool Json_SymbolTree_Simple::isConstructor(U32U jIndex) const {
+
+bool Json_SymbolTree_Simple::isConstructor(U32U jIndex) {
   gotoStId(jIndex);
   return false;
 }
-bool Json_SymbolTree_Simple::isPureVFunc(U32U jIndex) const {
+bool Json_SymbolTree_Simple::isPureVFunc(U32U jIndex) {
   gotoStId(jIndex);
   return false;
 }
-bool Json_SymbolTree_Simple::isMethodOfClass(U32U jIndex) const {
+bool Json_SymbolTree_Simple::isMethodOfClass(U32U jIndex) {
   gotoStId(jIndex);
   return false;
 }
-int Json_SymbolTree_Simple::get_method_base_type(U32U jIndex) const {
+TY_IDX Json_SymbolTree_Simple::get_method_base_type(U32U jIndex) {
   gotoStId(jIndex);
   return 0;
 }
-bool Json_SymbolTree_Simple::isContextNamespace(U32U jIndex) const {
+bool Json_SymbolTree_Simple::isContextNamespace(U32U jIndex) {
   gotoStId(jIndex);
   return false;
 }
-bool Json_SymbolTree_Simple::isContextRecord(U32U jIndex) const {
+bool Json_SymbolTree_Simple::isContextRecord(U32U jIndex) {
   gotoStId(jIndex);
   return false;
 }
-bool Json_SymbolTree_Simple::isLangSpecific(U32U jIndex) const {
+bool Json_SymbolTree_Simple::isLangSpecific(U32U jIndex) {
   gotoStId(jIndex);
   return false;
 }
-bool Json_SymbolTree_Simple::isReallyExtern(U32U jIndex) const {
+bool Json_SymbolTree_Simple::isReallyExtern(U32U jIndex) {
   gotoStId(jIndex);
   return false;
 }
-bool Json_SymbolTree_Simple::isNoThrow(U32U jIndex) const {
+bool Json_SymbolTree_Simple::isNoThrow(U32U jIndex) {
   gotoStId(jIndex);
   return false;
+}
+
+void Json_SymbolTree_Simple::setTypeIdx(U32U jIndex, TY_IDX ty_idx) {
+  gotoStId(jIndex);
+}
+bool Json_SymbolTree_Simple::isInitial(U32U jIndex) {
+  gotoStId(jIndex);
+  return false;
+}
+bool Json_SymbolTree_Simple::isCommon(U32U jIndex) {
+  gotoStId(jIndex);
+  return false;
+}
+bool Json_SymbolTree_Simple::isExternal(U32U jIndex) {
+  gotoStId(jIndex);
+  return false;
+}
+bool Json_SymbolTree_Simple::isStatic(U32U jIndex) {
+  gotoStId(jIndex);
+  return false;
+}
+bool Json_SymbolTree_Simple::hasName(U32U jIndex) {
+  gotoStId(jIndex);
+  return false;
+}
+bool Json_SymbolTree_Simple::is_guard_var(U32U jIndex) {
+  gotoStId(jIndex);
+  return false;
+}
+U64U Json_SymbolTree_Simple::getLineNum(U32U jIndex) {
+  gotoStId(jIndex);
+  return 0;
 }
 
 }

@@ -6,6 +6,7 @@
 #include <iostream>
 #include "jgen_include.h"
 #include "jgen_base_decl.h"
+#include "jgen_type.h"
 
 // Return Params
 
@@ -24,99 +25,35 @@ namespace JGEN
 
       static TY_IDX ty_idx;
       static ST *st;
-      static char *name;
-      static char tempname[32];
       static ST_SCLASS sclass;
       static ST_EXPORT eclass;
       static SYMTAB_IDX level;
-      static U64U flag;
       static INT anon_count;
-      static JGEN_SymbolTree_Base * context;
-      static JGEN_SymbolTree_Base * node;
-      static int lineNum;
+      static JGEN_SymbolTree_Base * symtree;
 
      public:
-      static void getST(JGEN_SymbolTree_Base * tree, int SymTreeId);
+
+      static ST_IDX Get_ST(U32U jIndex);
+      static ST_IDX create_func (U32U jIndex);
+      static ST_IDX createParam (U32U jIndex);
+      static ST_IDX createVar (U32U jIndex);
+      static ST_IDX createClass (U32U jIndex);
+      static ST_IDX createNameSpace (U32U jIndex);
 
      private:
 
-      static TY_IDX get_related_TY ()
+      static TY_IDX get_related_TY (U32U jSymIndex)
       {
-          return 0;
+          U32U jTypeIndex = symtree->get_method_base_type(jSymIndex);
+          return JGEN_TY::Get_TY(jTypeIndex);
       }
-
-      static void create_func (U64U flag, std::string funcName, bool isMethod);
-
-      static void createParam ();
-
-      static void createVar (U64U kind, U64U flag);
 
       static void JGEN_add_pragma_to_location (WN_PRAGMA_ID id, ST *st)
       {
 
       }
 
-      static int getCurrentSymtab ()
-      {
-          return 0;
-      }
-
-      static bool isInitial (U64U flag)
-      {
-          return true;
-      }
-
-      static bool isCommon ()
-      {
-          return true;
-      }
-
-      static bool isExternal ()
-      {
-          return true;
-      }
-
-      static bool isStatic ()
-      {
-          return true;
-      }
-
-      static void createRetVal ()
-      {
-
-      }
-
-      static bool hasName (int flag)
-      {
-          return true;
-      }
-
-      static bool is_guard_var ()
-      {
-          return false;
-      }
-
-      static bool startsWith (const char *starter)
-      {
-
-      }
-
-      static void createNameSpace ();
-
-      static int getLineNumber ()
-      {
-          return lineNum;
-      }
-
-      JGEN_ST ()
-      {
-          anon_count = 0;
-      }
-     public:
-      static void setName(char *name);
-      static void setFlag(U64U flag);
-      static void setLineNum(int lineNum);
-      static void createClass ();
+      static U32U getSymtabLevel(U32U index);
     };
 
 }

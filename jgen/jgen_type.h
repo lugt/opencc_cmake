@@ -5,7 +5,6 @@
 #include "jgen_include.h"
 #include "json_reader.h"
 #include "jgen_global.h"
-#include "jgen_st.h"
 
 #include <iostream>
 #include <string>
@@ -25,101 +24,9 @@ namespace JGEN
 
       static TY_IDX getExistTypeIdx(U32U jIndex);
 
-      static TY_IDX createFunction (U32U typenode, vector<U32U> & args, U32U retval)
-      {
+      static TY_IDX createFunction (U32U typenode);
 
-        FmtAssert(typetree != nullptr, ("-- [JGEN_TY] Reading from some nullptr (typetree)."));
-
-        TY_IDX idx = getExistTypeIdx(typenode);
-
-        TY &ty = (idx == TY_IDX_ZERO) ? New_TY (idx) : Ty_Table[idx];
-        Clear_TY_is_incomplete (idx);
-        TY_Init (ty, 0, KIND_FUNCTION, MTYPE_UNKNOWN, 0);
-        Set_TY_align (idx, 1);
-
-        TY_IDX ret_ty_idx;
-        TY_IDX arg_ty_idx;
-        TYLIST tylist_idx;
-
-        // allocate TYs for return as well as parameters
-        // this is needed to avoid mixing TYLISTs if one
-        // of the parameters is a pointer to a function
-
-        U32U ret_jIndex = typetree->getRetVal(typenode);
-        if(ret_jIndex != 0){
-          ret_ty_idx = Get_TY(ret_jIndex);
-        }
-
-        for (vector<U32U>::iterator it = args.begin ();
-             it != args.end ();
-             it++)
-        {
-            arg_ty_idx = Get_TY(*it);
-            if (TY_is_incomplete (arg_ty_idx) ||
-                (TY_kind (arg_ty_idx) == KIND_POINTER &&
-                 TY_is_incomplete (TY_pointed (arg_ty_idx))))
-              Set_TY_is_incomplete (idx);
-        }
-
-        // if return type is pointer to a zero length struct
-        // convert it to void
-        if (!JGEN::Config::Keep_Zero_length_structs &&
-            TY_mtype (ret_ty_idx) == MTYPE_M &&
-            TY_size (ret_ty_idx) == 0)
-          {
-            // zero length struct being returned
-            DevWarn ("function returning zero length struct at line %d", lineno);
-            ret_ty_idx = Be_Type_Tbl (MTYPE_V);
-          }
-
-        // If the front-end adds the fake first param, then convert the
-        // function to return void.
-
-        if (TY_return_in_mem (ret_ty_idx))
-        {
-            ret_ty_idx = Be_Type_Tbl (MTYPE_V);
-            Set_TY_return_to_param (idx);        // bugs 2423 2424
-        }
-
-        Set_TYLIST_type (New_TYLIST (tylist_idx), ret_ty_idx);
-        Set_TY_tylist (ty, tylist_idx);
-
-        for (vector<U32U>::iterator it = args.begin ();
-             it != args.end ();
-             it++)
-        {
-            arg_ty_idx = it->idx;
-            Is_True (!TY_is_incomplete (arg_ty_idx) ||
-                     TY_is_incomplete (idx),
-                     ("Create_TY_For_Tree: unexpected TY flag"));
-            if (!JGEN_Keep_Zero_Length_Structs &&
-                TY_mtype (arg_ty_idx) == MTYPE_M &&
-                TY_size (arg_ty_idx) == 0)
-              {
-                // zero length struct passed as parameter
-                DevWarn ("zero length struct encountered in function prototype at line %d", lineno);
-              }
-            else
-              Set_TYLIST_type (New_TYLIST (tylist_idx), arg_ty_idx);
-        }
-        if (typetree->getArgNums(typenode))
-        {
-            Set_TY_has_prototype (idx);
-            if (arg_ty_idx != Be_Type_Tbl(MTYPE_V))
-            {
-                Set_TYLIST_type (New_TYLIST (tylist_idx), 0);
-                Set_TY_is_varargs (idx);
-            }
-            else
-              Set_TYLIST_type (Tylist_Table[tylist_idx], 0);
-        }
-        else
-          Set_TYLIST_type (New_TYLIST (tylist_idx), 0);
-
-        // TODO: TARGET X8664 SSE Specification Ignored
-      }
-
-      static void Get_TY (U32U jIndex)
+      static TY_IDX Get_TY (U32U jIndex)
       {
         TY_IDX idx = 0;
         cout << " -- Getting TY for " << typetree->getNameString(jIndex);
@@ -134,23 +41,23 @@ namespace JGEN
             case JGEN_TYPE_INTEGER:
             case JGEN_TYPE_OFFSET:
             {
-                create_integer ();
+                create_integer (jIndex);
                 break;
             }
             case JGEN_TYPE_ENUMERATION:
-              create_enumeration ();
-            break;
+                create_enumeration (jIndex);
+                break;
             case JGEN_TYPE_CHAR:
             case JGEN_TYPE_BYTE:
             {
-                create_char ();
+                create_char (jIndex);
                 break;
             }
             case JGEN_TYPE_FLOAT:
             case JGEN_TYPE_DOUBLE:
             case JGEN_TYPE_NUMBER:
               {
-                create_floating ();
+                create_floating (jIndex);
                 break;
               }
             case JGEN_TYPE_HANDLE:
@@ -161,7 +68,7 @@ namespace JGEN
             }
             case JGEN_TYPE_ARRAY:
             {
-                createArray ();
+                createArray (jIndex);
                 break;
             }
             case JGEN_TYPE_RECORD:
@@ -172,31 +79,35 @@ namespace JGEN
             }
             case JGEN_TYPE_METHOD:
             case JGEN_TYPE_FUNCTION: {
-              createFunction(jIndex, typetree->getArgList(), retval);
+              createFunction(jIndex);
               break;
             }
             default:
-              cerr << "Unexpected Type KIND : " << kind;
+              cerr << "Unexpected Type KIND : " << typetree->getKind(jIndex);
 
         }
-        if (isConst ())
+        if (typetree->isConst (jIndex))
           Set_TY_is_const (idx);
-        if (isVolatile ())
+        if (typetree->isVolatile (jIndex))
           Set_TY_is_volatile (idx);
-        if (isRestrict ())
+        if (typetree->isRestrict (jIndex))
           Set_TY_is_restrict (idx);
 
       }
 
-      static void create_char ()
+      static TY_IDX create_char (U32U jIndex)
       {
-        mtype = (isUnsigned (flag) ? MTYPE_U1 : MTYPE_I1);
+        MTYPE_t mtype;
+        TY_IDX idx = 0;
+        mtype = (typetree->isUnsigned (jIndex) ? MTYPE_U1 : MTYPE_I1);
         idx = MTYPE_To_TY (mtype);    // use predefined type
       }
 
-      static void create_floating ()
+      static TY_IDX create_floating (U32U jIndex)
       {
-        switch (tsize)
+        MTYPE_t mtype;
+        TY_IDX idx = 0;
+        switch (typetree->get_type_size(jIndex))
           {
             case 4:
               mtype = MTYPE_F4;
@@ -208,33 +119,38 @@ namespace JGEN
         idx = MTYPE_To_TY (mtype);
       }
 
-      static void create_enumeration ()
+      static TY_IDX create_enumeration (U32U jIndex)
       {
-        switch (tsize)
+        MTYPE_t mtype;
+        TY_IDX idx = 0;
+        switch (typetree->get_type_size(jIndex))
           {
             case 1: // bug 14445
-              mtype = (isUnsigned (flag) ? MTYPE_U1 :
+              mtype = (typetree->isUnsigned (jIndex) ? MTYPE_U1 :
                        MTYPE_I1);
             break;
             case 2: // bug 14445
-              mtype = (isUnsigned (flag) ? MTYPE_U2 :
+              mtype = (typetree->isUnsigned (jIndex) ? MTYPE_U2 :
                        MTYPE_I2);
             break;
             case 8: // bug 500
-              mtype = (isUnsigned (flag) ? MTYPE_U8 :
+              mtype = (typetree->isUnsigned (jIndex) ? MTYPE_U8 :
                        MTYPE_I8);
             break;
             default:
-              mtype = (isUnsigned (flag) ? MTYPE_U4 :
+              mtype = (typetree->isUnsigned (jIndex) ? MTYPE_U4 :
                        MTYPE_I4);
           }
         idx = MTYPE_To_TY (mtype);
+        return idx;
       }
 
-      static void create_integer ()
+      static TY_IDX create_integer (U32U jIndex)
       {
-        switch (tsize)
-          {
+        TY_IDX idx = 0;
+        int  mtype;
+        switch (typetree->get_type_size(jIndex))
+        {
             case 1:
               mtype = MTYPE_I1;
             break;
@@ -247,34 +163,33 @@ namespace JGEN
             case 8:
               mtype = MTYPE_I8;
             break;
-          }
-        if (isUnsigned (flag))
-          {
+        }
+        if (typetree->isUnsigned (jIndex))
+        {
             mtype = MTYPE_complement(mtype);
-          }
+        }
         idx = MTYPE_To_TY (mtype);
         if (TARGET_64BIT)
-          {
-
+        {
             // TODO:Change back to align
             Set_TY_align (idx, 1);
             //    Set_TY_align(idx, align);
-          }
+        }
       }
 
-      static void createArray ()
+      static void createArray (U32U jIndex)
       {
-
+        TY_IDX idx = 0;
         TY &ty = (idx == TY_IDX_ZERO) ? New_TY (idx) : Ty_Table[idx];
         Clear_TY_is_incomplete (idx);
-        TY_Init (ty, tsize, KIND_ARRAY, MTYPE_M,
-                 Save_Str (type_str.c_str ()));
+        TY_Init (ty, typetree->get_type_size(jIndex), KIND_ARRAY, MTYPE_M,
+                 Save_Str (typetree->getNameString(jIndex).c_str ()));
 
         // for the anonymoust array
-        if (type_str == "NULL")
+        if (typetree->getNameString(jIndex) == "NULL")
           Set_TY_anonymous (ty);
 
-        Set_TY_etype (ty, get_element_type ());
+        Set_TY_etype (ty, Get_TY(typetree->get_element_type (jIndex)));
         Set_TY_align (idx, TY_align (TY_etype (ty)));
 
         // For GNU VLS (Variable length array in struct),
@@ -283,11 +198,11 @@ namespace JGEN
         // expanding the TY's size, it will fall into a infinite
         // recursion if the type_tree is referenced in the
         // size expression. So we set the TYPE_TY_IDX here.
-        if (isReadonly ())
+        if (typetree->isReadonly (jIndex))
           Set_TY_is_const (idx);
-        if (isVolatile ())
+        if (typetree->isVolatile (jIndex))
           Set_TY_is_volatile (idx);
-        if (isRestrict ())
+        if (typetree->isRestrict (jIndex))
           Set_TY_is_restrict (idx);
 
         // assumes 1 dimension
@@ -299,17 +214,17 @@ namespace JGEN
         Set_ARB_last_dimen (arb);
         Set_ARB_dimension (arb, 1);
 
-        if (get_type_size (get_element_type ()) == 0)
+        if (typetree->get_type_size (typetree->get_element_type(jIndex)) == 0)
           return; // anomaly:  type will never be needed
 
         // =================== Array stride ======================
-        if (!isVariableSize ())
+        if (!typetree->isVariableSize (jIndex))
           {
             Set_ARB_const_stride (arb);
-            Set_ARB_stride_val (arb, get_element_size_unit ()/*gs_get_integer_value(gs_type_size_unit(gs_tree_type(type_tree)))*/);
+            Set_ARB_stride_val (arb, typetree->get_element_size_unit (jIndex)/*gs_get_integer_value(gs_type_size_unit(gs_tree_type(type_tree)))*/);
           }
-        else if (!JGEN_expanding_function_definition &&
-                 JGEN_processing_function_prototypes)
+        else if (!JGEN::Config::expanding_function_definition &&
+                 JGEN::Config::processing_function_prototypes)
           {
             Set_ARB_const_stride (arb);
             // dummy stride val 4
@@ -358,21 +273,21 @@ namespace JGEN
         Set_ARB_lbnd_val (arb, 0);
 
         // ================= Array upper bound =================
-        if (get_type_size (get_element_type ()) != 0)
+        if (typetree->get_type_size (typetree->get_element_type(jIndex)) != 0)
           {
             // For Zero-length arrays, TYPE_MAX_VALUE tree is NULL
-            if (!isZeroMaxValue (get_element_type ()))
+            if (!typetree->isZeroMaxValue (typetree->get_element_type (jIndex)))
               {
                 Set_ARB_const_ubnd (arb);
                 Set_ARB_ubnd_val (arb, 0xffffffff);
               }
-            else if (isSizeMaxValueConstant ())
+            else if (typetree->isSizeMaxValueConstant (jIndex))
               {
                 Set_ARB_const_ubnd (arb);
-                Set_ARB_ubnd_val (arb, get_max_value (get_element_type ()));
+                Set_ARB_ubnd_val (arb, typetree->get_max_value (typetree->get_element_type(jIndex)));
               }
-            else if (!JGEN_expanding_function_definition &&
-                     JGEN_processing_function_prototypes)
+            else if (!JGEN::Config::expanding_function_definition &&
+                     JGEN::Config::processing_function_prototypes)
               {
                 Set_ARB_const_ubnd (arb);
                 // dummy upper bound 8

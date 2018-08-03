@@ -10,6 +10,7 @@
 #include <vector>
 
 using std::string;
+using std::vector;
 
 namespace JGEN {
 
@@ -24,7 +25,7 @@ class JGEN_Typetree_Base {
   virtual U64U getKind(U32U jIndex) = 0;
 
   // read Name from Node
-  virtual std::string &getKindName(U32U jIndex) = 0;
+  virtual std::string getKindName(U32U jIndex) = 0;
 
   // read Kind from Node
   virtual U64U getFlag(U32U jIndex) = 0;
@@ -50,23 +51,25 @@ class JGEN_Typetree_Base {
 
   virtual bool isVariableSize (U32U jIndex)  = 0;
 
-  virtual int get_type_size (U32U jIndex) const = 0;
+  virtual int get_type_size (U32U jIndex) = 0;
 
-  virtual int get_num_args (U32U jIndex) const = 0;
+  virtual int get_args_count(U32U jIndex) = 0;
 
   virtual bool isUnsigned (U32U jIndex)  = 0;
 
-  virtual int get_element_type (U32U jIndex) const = 0;
+  virtual U32U get_element_type (U32U jIndex) = 0;
 
-  virtual bool isConst (U32U jIndex) const = 0;
+  virtual bool isConst (U32U jIndex) = 0;
 
-  virtual int get_element_size_unit (U32U jIndex) const = 0;
+  virtual int get_element_size_unit (U32U jIndex) = 0;
 
-  virtual long get_max_value (U32U jIndex) const = 0;
-
+  virtual long get_max_value (U32U jIndex) = 0;
   virtual bool isReadonly (U32U jIndex)  = 0;
   virtual bool isVolatile (U32U jIndex)  = 0;
   virtual bool isRestrict (U32U jIndex)  = 0;
+
+  virtual U32U getRetVal(U32U jIndex) = 0;
+  virtual vector<U32U> getArgs(U32U jIndex) = 0;
 
  private :
   // goto some type with an typetree internal Id
@@ -101,12 +104,12 @@ class JGEN_SymbolTree_Base {
   virtual int getIdx(U32U jIndex) = 0;
 
   // bind Idx to the tree node
-  virtual void setTypeIdx(U32U jIndex) = 0;
+  virtual void setTypeIdx(U32U jIndex, TY_IDX ty_idx) = 0;
 
   // bind Idx to the tree node
-  virtual JGEN_SymbolTree_Base & getMemberFields(U32U jIndex) = 0;
+  virtual vector<U32U> getMemberFields(U32U jIndex) = 0;
 
-  virtual JGEN_SymbolTree_Base * getParent(U32U jIndex) = 0;
+  virtual U32U getParent(U32U jIndex) = 0;
 
   virtual int gotoStId(U32U jIndex) = 0;
 
@@ -121,23 +124,37 @@ class JGEN_SymbolTree_Base {
     return (getFlag(jIndex) & JGEN_ST_FLAG_MASK_WEAK) > 0;
   }
 
-  virtual bool isConstructor (U32U jIndex) const = 0;
+  virtual bool isConstructor (U32U jIndex) = 0;
 
-  virtual bool isPureVFunc (U32U jIndex) const = 0;
+  virtual bool isPureVFunc (U32U jIndex) = 0;
 
-  virtual bool isMethodOfClass (U32U jIndex) const = 0;
+  virtual bool isMethodOfClass (U32U jIndex) = 0;
 
-  virtual int get_method_base_type (U32U jIndex) const = 0;
+  virtual U32U get_method_base_type (U32U jIndex) = 0;
 
-  virtual bool isContextNamespace (U32U jIndex) const = 0;
+  virtual bool isContextNamespace (U32U jIndex) = 0;
 
-  virtual bool isContextRecord (U32U jIndex) const = 0;
+  virtual bool isContextRecord (U32U jIndex) = 0;
 
-  virtual bool isLangSpecific (U32U jIndex) const = 0;
+  virtual bool isLangSpecific (U32U jIndex) = 0;
 
-  virtual bool isReallyExtern (U32U jIndex) const = 0;
+  virtual bool isReallyExtern (U32U jIndex) = 0;
 
-  virtual bool isNoThrow (U32U jIndex) const = 0;
+  virtual bool isNoThrow (U32U jIndex) = 0;
+
+  virtual bool isInitial (U32U jIndex) = 0;
+
+  virtual bool isCommon (U32U jIndex) = 0;
+
+  virtual bool isExternal (U32U jIndex) = 0;
+
+  virtual bool isStatic (U32U jIndex) = 0;
+
+  virtual bool hasName (U32U jIndex) = 0;
+
+  virtual U64U getLineNum(U32U jIndex) = 0;
+
+  virtual bool is_guard_var (U32U jIndex) = 0;
 };
 
 
@@ -160,8 +177,8 @@ class JGEN_IR_Decl{
    *  Get the Kind of the Decl
    *  @return longlong JGEN_DECL_CLASS
    */
-  virtual int getKind() const = 0;
-  virtual int getChild_count() const = 0;
+  virtual U64U getKind() = 0;
+  virtual int getChild_count() = 0;
 
   virtual JGEN_SymbolTree_Base * get_symbol_tree() = 0;
   virtual JGEN_Typetree_Base * get_type_tree() = 0;

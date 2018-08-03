@@ -66,7 +66,14 @@ extern string double2str(double a);
 namespace JGEN{
   class Config{
    public:
+    static bool treat_static_as_global;
+    static bool need_inliner;
     static BOOL Keep_Zero_length_structs;
+    static bool processing_function_prototypes;
+    static bool expanding_function_definition;
+    static bool do_not_parse_common; //flag_no_common
+    static bool lang_cplus;
+    static bool lang_oop; // lang_java || lang_cplus
   };
 }
 

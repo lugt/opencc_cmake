@@ -4,8 +4,6 @@
 #include <string>
 #include <iostream>
 #include "jgen_include.h"
-#include "jgen_st.h"
-#include "jgen_type.h"
 #include <json/json.h>
 #include "jgen_base_decl.h"
 
@@ -42,8 +40,8 @@ namespace JGEN{
        */
       Json_IR_Decl * getChildAtPosition (unsigned int pos) override;
 
-      int getKind() const override;
-      int getChild_count() const override;
+      U64U getKind() override;
+      int getChild_count() override;
 
       JGEN_SymbolTree_Base * get_symbol_tree() override;
       JGEN_Typetree_Base * get_type_tree() override;
@@ -57,14 +55,14 @@ namespace JGEN{
        *  @return longlong JGEN_DECL_CLASS
        */
       int getDeclKind();
-      const Json::Value &getRoot() const;
+      const Json::Value &getRoot();
       void setRoot(const Json::Value &root);
-      const Json::Value &getDecl() const;
+      const Json::Value &getDecl();
       void setDecl(const Json::Value &decl);
-      int getTag_json() const;
+      int getTag_json();
       void setTag_json(int tag_json);
       void setKind(int kind);
-      const string &getTag_name() const;
+      const string &getTag_name();
       void setTag_name(const string &tag_name);
 
     };

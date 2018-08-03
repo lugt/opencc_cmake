@@ -42,12 +42,12 @@ namespace JGEN
         switch(provider.getKind ()){
             case JGEN_DECL_CLASS:
               logger("-- [Json_Visitor]:: ***  visiting a class  defition.  ***");
-              JGEN_ST::getST(symtree, provider.getSymbolId());
+              JGEN_ST::Get_ST(provider.getSymbolId());
               // Preserve symbol_json_id <--> ST_IDX
               break;
             case JGEN_DECL_METHOD:
               logger("-- [Json_Visitor]:: ***  visiting a method defition.  ***");
-              JGEN_ST::getST(symtree, provider.getSymbolId());
+              JGEN_ST::Get_ST(provider.getSymbolId());
               break;
             case JGEN_DECL_VAR:
               logger("-- [Json_Visitor]:: ***  visiting a var    defition.  ***");
@@ -57,7 +57,7 @@ namespace JGEN
               break;
             default:
               // UNKNOWN
-              logger("-- [Jgen_Visitor]:: *** visiting a non-supported (kind) of provider decl. kind : " + int2str(provider.getKind()) + " ***");
+              logger("-- [Jgen_Visitor]:: *** visiting a non-supported (kind) of provider decl. decl_kind : " + int2str(provider.getKind()) + " ***");
             return ;
         }
     }

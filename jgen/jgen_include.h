@@ -89,22 +89,22 @@ extern BOOL Enable_WFE_DFE;
 extern BOOL Disable_Simplification_For_FE;
 
 extern BOOL TARGET_64BIT;
-extern BOOL wgen_invoke_inliner;
-extern int lineno ;
-extern char *Spin_File_Name ;
-extern FILE *Spin_File ;
-extern BOOL flag_no_common ;
-extern int pstatic_as_global ;
-extern int emit_exceptions;
-extern BOOL opt_regions ;
-extern BOOL lang_cplus ;
-extern BOOL c_omit_external ;
-extern BOOL keep_inline_function;
-extern BOOL gen_pic_code ;
-extern BOOL tls_stress_test ;
+//extern BOOL wgen_invoke_inliner;
+//extern int lineno ;
+//extern char *Spin_File_Name ;
+//extern FILE *Spin_File ;
+//extern BOOL flag_no_common ;
+//extern int pstatic_as_global ;
+//extern int emit_exceptions;
+//extern BOOL opt_regions ;
+//extern BOOL lang_cplus ;
+//extern BOOL c_omit_external ;
+//extern BOOL keep_inline_function;
+//extern BOOL gen_pic_code ;
+//extern BOOL tls_stress_test ;
 extern void Process_TLS_Stress_Model(const char *p);
-extern BOOL enable_cxx_openmp ;
-extern gs_t program;
+//extern BOOL enable_cxx_openmp ;
+//extern gs_t program;
 extern INT Debug_Level ;	/* -gn: debug level */
 
 /***
@@ -191,14 +191,14 @@ extern mUINT32 Cif_Level;       	/* CIF level */
 
 /*
  *  No longer used as Json_Visitor actually knows what means in JGEN_NODE_DECL;
- *
+ */
 #define JGEN_DECL_CLASS 30000003
 #define JGEN_DECL_METHOD 30000004
 #define JGEN_DECL_UNKNOWN_KIND 30000099
 #define JGEN_DECL_VAR 30009999
 #define JGEN_DECL_BLOCK 30000007
 #define JGEN_DECL_STMT 30000020
-#define JGEN_DECL_OPERATOR 30000026*/
+#define JGEN_DECL_OPERATOR 30000026
 
 
 #define JGEN_ST_FLAG_MASK_PUBLIC 0

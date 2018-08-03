@@ -14,8 +14,6 @@
 #include <json/json.h>
 #include <map>
 #include "json_ir_decl.h"
-#include "jgen_type.h"
-#include "jgen_st.h"
 #include "jgen_base_decl.h"
 
 extern int JSON_READING_STATE;

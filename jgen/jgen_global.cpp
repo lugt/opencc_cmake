@@ -14,17 +14,13 @@ BOOL TARGET_64BIT = FALSE;  // 11953: On MIPS, n32 is default abi
 #endif
 
 int Debug_Level = 1;
-int trace_verbose = FALSE;
 // an_error_severity error_threshold = es_warning;
 
 /* Static data:	command	line information: */
-        INT32 Argc;		/* Copy of argc */
- char **Argv;		/* Copy of argv */
- INT32 Source_Arg = 0;	/* Number of current source arg */
  char Dash [] = "-";
 
 /* Internal flags: */
- BOOL Echo_Flag =	FALSE;	/* Echo command	lines */
+// BOOL Echo_Flag =	FALSE;	/* Echo command	lines */
  BOOL Delete_IR_File = FALSE;	/* Delete SGIR file when done */
 
 // KEY
@@ -65,20 +61,19 @@ int Reg_Parm_Count = 0;
 BOOL SSE_Reg_Parm = FALSE;
 
 
-BOOL wgen_invoke_inliner = FALSE;
-int lineno = 0;
-char *Spin_File_Name = NULL;
-FILE *Spin_File = NULL;
-BOOL flag_no_common = FALSE;
-int pstatic_as_global = 0;
-int emit_exceptions = -1;
-BOOL opt_regions = 0;
-BOOL lang_cplus = FALSE;
-BOOL c_omit_external = TRUE;
-BOOL keep_inline_functions=FALSE;
-BOOL gen_pic_code = FALSE;
-BOOL tls_stress_test = FALSE;
-BOOL JGEN_expanding_function_definition = FALSE;
+//BOOL wgen_invoke_inliner = FALSE;
+//int lineno = 0;
+//char *Spin_File_Name = NULL;
+//FILE *Spin_File = NULL;
+//BOOL flag_no_common = FALSE;
+//int pstatic_as_global = 0;
+//int emit_exceptions = -1;
+//BOOL opt_regions = 0;
+//BOOL lang_cplus = FALSE;
+//BOOL c_omit_external = TRUE;
+//BOOL keep_inline_functions=FALSE;
+//BOOL gen_pic_code = FALSE;
+//BOOL tls_stress_test = FALSE;
 
 // The following taken from gnu/flags.h
 enum debug_info_level

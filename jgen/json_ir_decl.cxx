@@ -6,6 +6,8 @@
 #include "json_reader.h"
 #include "jgen_include.h"
 #include "jgen_global.h"
+#include "json_symboltree.h"
+#include "json_typetree.h"
 
 namespace JGEN
 {
@@ -111,17 +113,17 @@ int JGEN::Json_IR_Decl::getDeclKind ()
   return kind;
 }
 
-int Json_IR_Decl::getKind() const {
+U64U Json_IR_Decl::getKind() {
   return kind;
 }
 
-const Json::Value &Json_IR_Decl::getRoot() const {
+const Json::Value &Json_IR_Decl::getRoot() {
   return root;
 }
 void Json_IR_Decl::setRoot(const Json::Value &root) {
   Json_IR_Decl::root = root;
 }
-const Json::Value &Json_IR_Decl::getDecl() const {
+const Json::Value &Json_IR_Decl::getDecl() {
   return decl;
 }
 void Json_IR_Decl::setDecl(const Json::Value &decl) {
@@ -133,7 +135,7 @@ int Json_IR_Decl::getSymbolId() {
 int Json_IR_Decl::getTypeId() {
   return type_json_id;
 }
-int Json_IR_Decl::getTag_json() const {
+int Json_IR_Decl::getTag_json() {
   return tag_json;
 }
 void Json_IR_Decl::setTag_json(int tag_json) {
@@ -143,7 +145,7 @@ void Json_IR_Decl::setKind(int kind) {
   Json_IR_Decl::kind = kind;
 }
 
-const string &Json_IR_Decl::getTag_name() const {
+const string &Json_IR_Decl::getTag_name() {
   return tag_name;
 }
 
@@ -151,18 +153,20 @@ void Json_IR_Decl::setTag_name(const string &tag_name) {
   Json_IR_Decl::tag_name = tag_name;
 }
 
-int Json_IR_Decl::getChild_count() const {
+int Json_IR_Decl::getChild_count() {
   return child_count;
 }
 
 JGEN_SymbolTree_Base * Json_IR_Decl::get_symbol_tree() {
-  Json_SymbolTree_Simple * sym = new Json_SymbolTree_Simple();
-  sym->init(& root["symbol_table"]);
+  if(Json_SymbolTree_Simple::me != nullptr) return Json_SymbolTree_Simple::me;
+  Json_SymbolTree_Simple * sym = new Json_SymbolTree_Simple(root["symbol_table"]);
+  Json_SymbolTree_Simple::me = sym;
   return sym;
 }
 JGEN_Typetree_Base *Json_IR_Decl::get_type_tree() {
-  Json_Typetree_Simple * typ = new Json_Typetree_Simple();
-  typ->init(root["type_table"]);
+  if(Json_Typetree_Simple::me != nullptr) return Json_Typetree_Simple::me;
+  Json_Typetree_Simple * typ = new Json_Typetree_Simple(root["type_table"]);
+  Json_Typetree_Simple::me = typ;
   return typ;
 }
 
