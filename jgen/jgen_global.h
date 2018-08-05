@@ -9,8 +9,8 @@ extern int trace_verbose;
 // an_error_severity error_threshold ;
 
 /* Static data:	command	line information: */
-extern INT32 Argc;		/* Copy of argc */
-extern char **Argv;		/* Copy of argv */
+//extern INT32 Argc;		/* Copy of argc */
+//extern char **Argv;		/* Copy of argv */
 extern INT32 Source_Arg ;	/* Number of current source arg */
 extern char Dash [];
 
@@ -73,7 +73,7 @@ namespace JGEN{
     static bool expanding_function_definition;
     static bool do_not_parse_common; //flag_no_common
     static bool lang_cplus;
-    static bool lang_oop; // lang_java || lang_cplus
+    static bool lang_oop; // lang_java || lang_cplusˆ
   };
 }
 

@@ -68,8 +68,14 @@ class JGEN_Typetree_Base {
   virtual bool isVolatile (U32U jIndex)  = 0;
   virtual bool isRestrict (U32U jIndex)  = 0;
 
+  virtual bool isAnonymous (U32U jIndex)  = 0;
+  virtual bool isAggregateValue (U32U jIndex)  = 0;
+  virtual int getAlignWidth (U32U jIndex) = 0;
+
   virtual U32U getRetVal(U32U jIndex) = 0;
   virtual vector<U32U> getArgs(U32U jIndex) = 0;
+  virtual bool isLangSpecific(U32U jIndex);
+  virtual vector<U32U> getFields(U32U jIndex) = 0;
 
  private :
   // goto some type with an typetree internal Id
@@ -152,7 +158,7 @@ class JGEN_SymbolTree_Base {
 
   virtual bool hasName (U32U jIndex) = 0;
 
-  virtual U64U getLineNum(U32U jIndex) = 0;
+  virtual U32U getLineNum(U32U jIndex) = 0;
 
   virtual bool is_guard_var (U32U jIndex) = 0;
 };

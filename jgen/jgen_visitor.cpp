@@ -20,6 +20,8 @@ namespace JGEN
         if(symtree == nullptr || typetree == nullptr){
             symtree = provider.get_symbol_tree();
             typetree = provider.get_type_tree();
+            JGEN_TY::typetree = typetree;
+            JGEN_ST::symtree = symtree;
         }
         // STAGE-PARSING1
         visit_first_round(provider);
@@ -77,6 +79,7 @@ namespace JGEN
             if (decl != nullptr){
                 visit_decl (*decl);
             }
+            delete decl;
         }
     }
 }

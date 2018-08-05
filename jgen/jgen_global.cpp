@@ -23,6 +23,9 @@ int Debug_Level = 1;
 // BOOL Echo_Flag =	FALSE;	/* Echo command	lines */
  BOOL Delete_IR_File = FALSE;	/* Delete SGIR file when done */
 
+
+
+     /****
 // KEY
 bool Did_Not_Terminate_Region = FALSE;
 
@@ -43,7 +46,8 @@ extern PU_Info *PU_Tree_Root;
  BOOL map_mempool_initialized = FALSE;
  MEM_POOL Map_Mem_Pool;
 
-
+      ****/
+int trace_verbose = 0;
 // to manage the current function
  gs_t curr_namespace_decl = NULL;
 
@@ -136,4 +140,11 @@ string double2str(double a){
 
 namespace JGEN{
  BOOL Config::Keep_Zero_length_structs = FALSE;
+ bool Config::treat_static_as_global = FALSE;
+ bool Config::need_inliner = FALSE;
+ bool Config::processing_function_prototypes = FALSE;
+ bool Config::expanding_function_definition = FALSE;
+ bool Config::do_not_parse_common = FALSE; //flag_no_common
+ bool Config::lang_cplus = FALSE;
+ bool Config::lang_oop = FALSE; // lang_java || lang_cplusˆ
 }

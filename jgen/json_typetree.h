@@ -56,6 +56,7 @@ class Json_Typetree_Simple : public JGEN_Typetree_Base {
   bool isRestrict(U32U jIndex) override;
   U32U getRetVal(U32U jIndex) override;
   vector<U32U> getArgs(U32U jIndex) override;
+  bool isLangSpecific(U32U jIndex) override;
  private:
   int gotoId(U32U jIndex) override;
 };

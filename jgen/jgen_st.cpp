@@ -10,7 +10,7 @@
 
 namespace JGEN
 {
-
+    JGEN_SymbolTree_Base * JGEN_ST::symtree;
     TY_IDX JGEN_ST::ty_idx;
     ST *JGEN_ST::st;
     ST_SCLASS JGEN_ST::sclass = SCLASS_UGLOBAL;
@@ -381,7 +381,7 @@ namespace JGEN
       ST_Init (st, Save_Str (symtree->getNameString(jIndex).c_str()), CLASS_VAR, sclass, eclass, ty_idx);
     }
 
-    U32U JGEN_ST::getSymtabLevel(U32U index) {
+    ST_IDX JGEN_ST::getSymtabLevel(U32U index) {
       return 0;
     }
 

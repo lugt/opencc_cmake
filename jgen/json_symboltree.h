@@ -18,7 +18,7 @@ class Json_SymbolTree_Simple : public JGEN_SymbolTree_Base {
  public:
 
   Json::Value *_tree;
-  Json::Value *_currentptr;
+  Json::Value *_currentptr{};
   int _currentId;
 
   Json_SymbolTree_Simple() {
@@ -71,7 +71,6 @@ class Json_SymbolTree_Simple : public JGEN_SymbolTree_Base {
   bool isLangSpecific (U32U jIndex)  override;
   bool isReallyExtern (U32U jIndex)  override;
   bool isNoThrow (U32U jIndex)  override;
-  Json::Value * current{};
   std::map<U32U, Json::Value *> internalIdValMap;
   static Json_SymbolTree_Simple *me;
   void setTypeIdx(U32U jIndex, TY_IDX ty_idx) override;
@@ -81,7 +80,7 @@ class Json_SymbolTree_Simple : public JGEN_SymbolTree_Base {
   bool isStatic(U32U jIndex) override;
   bool hasName(U32U jIndex) override;
   bool is_guard_var(U32U jIndex) override;
-  U64U getLineNum(U32U jIndex) override;
+  U32U getLineNum(U32U jIndex) override;
 };
 
 }

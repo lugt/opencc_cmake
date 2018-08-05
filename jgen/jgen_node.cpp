@@ -138,11 +138,10 @@ namespace JGEN
       else ABI_Name = (char *) "n32";
 
       Init_Controls_Tbl ();
-      Argc = 1;
+      int argc = 1;
       const char *str = "jwtest";
       char **argv = new char *[2];
       argv[0] = (char *) str;
-      Argv = argv;
       Configure ();
       IR_reader_init ();
 

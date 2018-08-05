@@ -29,10 +29,10 @@ namespace JGEN
       static ST_EXPORT eclass;
       static SYMTAB_IDX level;
       static INT anon_count;
-      static JGEN_SymbolTree_Base * symtree;
 
      public:
-
+      
+      static JGEN_SymbolTree_Base * symtree;
       static ST_IDX Get_ST(U32U jIndex);
       static ST_IDX create_func (U32U jIndex);
       static ST_IDX createParam (U32U jIndex);

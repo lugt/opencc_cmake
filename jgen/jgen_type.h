@@ -8,19 +8,25 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 
 using std::string;
 using std::cerr;
 using std::cout;
+using std::endl;
+using std::map;
 
 namespace JGEN
 {
     class JGEN_TY {
      private:
       static std::map<U32U, TY_IDX> generatedType;
-      static JGEN_Typetree_Base * typetree;
 
      public:
+
+      static JGEN_Typetree_Base * typetree;
+
+      static JGEN_SymbolTree_Base * symtree;
 
       static TY_IDX getExistTypeIdx(U32U jIndex);
 
@@ -29,7 +35,7 @@ namespace JGEN
       static TY_IDX Get_TY (U32U jIndex)
       {
         TY_IDX idx = 0;
-        cout << " -- Getting TY for " << typetree->getNameString(jIndex);
+        cout << " -- Getting TY for " << typetree->getNameString(jIndex) << endl;
         switch (typetree->getKind(jIndex))
         {
             case JGEN_TYPE_VOID:
@@ -74,7 +80,7 @@ namespace JGEN
             case JGEN_TYPE_RECORD:
             case JGEN_TYPE_UNION: {
               /** TOOD RECORD, UNION **/
-              cerr << "Unfinished Type : Union";
+              cerr << "Unfinished Type : Union" << endl;
               break;
             }
             case JGEN_TYPE_METHOD:
@@ -177,7 +183,7 @@ namespace JGEN
         }
       }
 
-      static void createArray (U32U jIndex)
+      static TY_IDX createArray (U32U jIndex)
       {
         TY_IDX idx = 0;
         TY &ty = (idx == TY_IDX_ZERO) ? New_TY (idx) : Ty_Table[idx];
@@ -336,6 +342,10 @@ namespace JGEN
         /** TODO Array **/
         cerr << "Unfinished Type : Array";
       }
+
+      static void Get_Fields_For_Class(U32U index);
+
+      static TY_IDX createClassOrUnion(U32U jIndex);
 
     };
 

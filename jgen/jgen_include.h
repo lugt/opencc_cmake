@@ -188,6 +188,7 @@ extern mUINT32 Cif_Level;       	/* CIF level */
 #define JGEN_TYPE_METHOD 20000014
 #define JGEN_TYPE_FUNCTION 20000015
 #define JGEN_TYPE_UNION 20000016
+#define JGEN_TYPE_PACKAGE 20000017
 
 /*
  *  No longer used as Json_Visitor actually knows what means in JGEN_NODE_DECL;

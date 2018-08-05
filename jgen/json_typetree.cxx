@@ -23,8 +23,8 @@ void Json_Typetree_Simple::init(Json::Value &tree) {
 }
 
 
-U64U json_ty_kind_list[] = {1, 2, 16, 4};
-U64U internal_ty_kind_list[] = {JGEN_TYPE_CHAR, JGEN_TYPE_BOOLEAN, JGEN_TYPE_VOID, JGEN_TYPE_DOUBLE};
+U64U json_ty_kind_list[] = {9,12,11};
+U64U internal_ty_kind_list[] = {JGEN_TYPE_RECORD,JGEN_TYPE_PACKAGE,JGEN_TYPE_METHOD};
 
 U64U Json_Typetree_Simple::getKind(U32U jIndex) {
   gotoId(jIndex);
@@ -143,6 +143,9 @@ int Json_Typetree_Simple::gotoId(U32U jIndex) {
   }
   logger("-- JSON_ERROR : [Json_SymbolTree_Simple][gotoStId] cannot find such symId in map.");
   return -2;
+}
+bool Json_Typetree_Simple::isLangSpecific(U32U jIndex) {
+  return true;
 };
 
 }

@@ -30,10 +30,10 @@ U64U internal_kind_list[] = {JGEN_ST_PACKAGE, JGEN_ST_CLASS, JGEN_ST_METHOD, JGE
 U64U Json_SymbolTree_Simple::getKind(U32U jIndex) {
   gotoStId(jIndex);
   U64U jsonkind = 0;
-  if(current != nullptr){
-    jsonkind = (*current)["kind"].asUInt64();
-  }else if(_tree != nullptr){
-    jsonkind = (*_tree)["kind"].asUInt64();
+  if(_currentptr != nullptr){
+    jsonkind = (*_currentptr)["kind"].asUInt64();
+  }else{
+    return 0;
   }
   if(jsonkind == 0)  return 0;
   // Low efficiency method? map better?
@@ -48,10 +48,8 @@ U64U Json_SymbolTree_Simple::getKind(U32U jIndex) {
 
 std::string Json_SymbolTree_Simple::getNameString(U32U jIndex) {
   gotoStId(jIndex);
-  if(current != nullptr){
-    return (*current)["name"].asString();
-  }else if(_tree != nullptr){
-    return (*_tree)["name"].asString();
+  if(_currentptr != nullptr){
+    return (*_currentptr)["name"].asString();
   }
   return *(new string("[JSON_Symbol_TREE]"));
 }
@@ -71,24 +69,20 @@ vector<U32U> Json_SymbolTree_Simple::getMemberFields(U32U jIndex) {
   return vector<U32U>();
 }
 U32U Json_SymbolTree_Simple::getParent(U32U jIndex) {
-  return nullptr;
+  return 0;
 }
 
 std::string Json_SymbolTree_Simple::getKindName(U32U pos) {
   gotoStId(pos);
-  if(current != nullptr){
-    return (*current)["kindname"].asString();
-  }else if(_tree != nullptr){
-    return (*_tree)["kindname"].asString();
+  if(_currentptr != nullptr){
+    return (*_currentptr)["kindname"].asString();
   }
   return *(new string("[JSON_Symbol_TREE]"));
 }
 U64U Json_SymbolTree_Simple::getFlag(U32U pos) {
   gotoStId(pos);
-  if(current != nullptr){
-    return (*current)["flag"].asUInt64();
-  }else if(_tree != nullptr){
-    return (*_tree)["flag"].asUInt64();
+  if(_currentptr != nullptr){
+    return (*_currentptr)["flag"].asUInt64();
   }
   return 0;
 }
@@ -96,10 +90,7 @@ int Json_SymbolTree_Simple::getJsonRefId(U32U pos) {
   gotoStId(pos);
   return 0;
 }
-std::string Json_SymbolTree_Simple::getJsonName(U32U pos) {
-  gotoStId(pos);
-  return std::string();
-}
+
 int Json_SymbolTree_Simple::getIdx(U32U pos) {
   gotoStId(pos);
   return 0;
@@ -115,11 +106,11 @@ bool Json_SymbolTree_Simple::isPureVFunc(U32U jIndex) {
 }
 bool Json_SymbolTree_Simple::isMethodOfClass(U32U jIndex) {
   gotoStId(jIndex);
-  return false;
+  return (*_currentptr)["kind"].asUInt() == 16;
 }
 TY_IDX Json_SymbolTree_Simple::get_method_base_type(U32U jIndex) {
   gotoStId(jIndex);
-  return 0;
+  return (*_currentptr)["type"].asUInt();
 }
 bool Json_SymbolTree_Simple::isContextNamespace(U32U jIndex) {
   gotoStId(jIndex);
@@ -169,7 +160,7 @@ bool Json_SymbolTree_Simple::is_guard_var(U32U jIndex) {
   gotoStId(jIndex);
   return false;
 }
-U64U Json_SymbolTree_Simple::getLineNum(U32U jIndex) {
+U32U Json_SymbolTree_Simple::getLineNum(U32U jIndex) {
   gotoStId(jIndex);
   return 0;
 }
