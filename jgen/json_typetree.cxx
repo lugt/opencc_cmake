@@ -158,6 +158,10 @@ int Json_Typetree_Simple::getAlignWidth(U32U jIndex) {
 }
 vector<U32U> Json_Typetree_Simple::getFields(U32U jIndex) {
   return vector<U32U>();
+}
+
+Json_Typetree_Simple::~Json_Typetree_Simple() {
+
 };
 
 }

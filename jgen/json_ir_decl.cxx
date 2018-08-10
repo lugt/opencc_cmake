@@ -163,11 +163,11 @@ JGEN_SymbolTree_Base * Json_IR_Decl::get_symbol_tree() {
   Json_SymbolTree_Simple::me = sym;
   return sym;
 }
-JGEN_Typetree_Base *Json_IR_Decl::get_type_tree() {
+JGEN_Typetree_Base * Json_IR_Decl::get_type_tree() {
   if(Json_Typetree_Simple::me != nullptr) return Json_Typetree_Simple::me;
   Json_Typetree_Simple * typ = new Json_Typetree_Simple(root["type_table"]);
   Json_Typetree_Simple::me = typ;
-  return typ;
+  return (JGEN_Typetree_Base *) typ;
 }
 
 }

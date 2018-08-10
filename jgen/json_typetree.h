@@ -23,11 +23,15 @@ class Json_Typetree_Simple : public JGEN_Typetree_Base {
   static Json_Typetree_Simple *me;
 
   Json_Typetree_Simple() {
+    _currentptr = nullptr;
+    _currentId = 0;
     _tree = nullptr;
   }
 
   Json_Typetree_Simple(Json::Value & val) {
     _tree = nullptr;
+    _currentptr = nullptr;
+    _currentId = 0;
     init(val);
   }
 
@@ -61,6 +65,7 @@ class Json_Typetree_Simple : public JGEN_Typetree_Base {
   int getAlignWidth(U32U jIndex) override;
   vector<U32U> getFields(U32U jIndex) override;
 
+  virtual ~Json_Typetree_Simple();
  private:
   int gotoId(U32U jIndex) override;
 };

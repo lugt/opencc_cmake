@@ -74,7 +74,7 @@ class JGEN_Typetree_Base {
 
   virtual U32U getRetVal(U32U jIndex) = 0;
   virtual vector<U32U> getArgs(U32U jIndex) = 0;
-  virtual bool isLangSpecific(U32U jIndex);
+  virtual bool isLangSpecific(U32U jIndex) = 0;
   virtual vector<U32U> getFields(U32U jIndex) = 0;
 
  private :
