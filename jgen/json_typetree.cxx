@@ -146,6 +146,18 @@ int Json_Typetree_Simple::gotoId(U32U jIndex) {
 }
 bool Json_Typetree_Simple::isLangSpecific(U32U jIndex) {
   return true;
+}
+bool Json_Typetree_Simple::isAnonymous(U32U jIndex) {
+  return false;
+}
+bool Json_Typetree_Simple::isAggregateValue(U32U jIndex) {
+  return false;
+}
+int Json_Typetree_Simple::getAlignWidth(U32U jIndex) {
+  return 0;
+}
+vector<U32U> Json_Typetree_Simple::getFields(U32U jIndex) {
+  return vector<U32U>();
 };
 
 }

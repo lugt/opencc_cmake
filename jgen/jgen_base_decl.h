@@ -161,6 +161,8 @@ class JGEN_SymbolTree_Base {
   virtual U32U getLineNum(U32U jIndex) = 0;
 
   virtual bool is_guard_var (U32U jIndex) = 0;
+
+  virtual U32U get_sym_type (U32U jIndex) = 0;
 };
 
 

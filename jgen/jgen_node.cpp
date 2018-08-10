@@ -124,7 +124,7 @@ namespace JGEN
     void
     JGEN_Init (char *fn)
     {
-      // Initialize_Java_Int_Model();
+      //Initialize_Java_Int_Model();
       Initialize_C_Int_Model ();
       MEM_Initialize (); /// init memory
       Handle_Signals (); //// handle signals

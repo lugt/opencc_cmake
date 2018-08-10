@@ -31,7 +31,7 @@ namespace JGEN
       static INT anon_count;
 
      public:
-      
+
       static JGEN_SymbolTree_Base * symtree;
       static ST_IDX Get_ST(U32U jIndex);
       static ST_IDX create_func (U32U jIndex);
@@ -44,7 +44,7 @@ namespace JGEN
 
       static TY_IDX get_related_TY (U32U jSymIndex)
       {
-          U32U jTypeIndex = symtree->get_method_base_type(jSymIndex);
+          U32U jTypeIndex = symtree->get_sym_type(jSymIndex);
           return JGEN_TY::Get_TY(jTypeIndex);
       }
 

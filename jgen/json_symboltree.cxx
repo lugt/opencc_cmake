@@ -164,5 +164,9 @@ U32U Json_SymbolTree_Simple::getLineNum(U32U jIndex) {
   gotoStId(jIndex);
   return 0;
 }
+U32U Json_SymbolTree_Simple::get_sym_type(U32U jIndex) {
+  gotoStId(jIndex);
+  return (*_currentptr)["type"].asUInt();
+}
 
 }

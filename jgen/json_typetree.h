@@ -32,7 +32,6 @@ class Json_Typetree_Simple : public JGEN_Typetree_Base {
   }
 
   void init(Json::Value &tree);
-
   U64U getKind(U32U jIndex) override;
   string getKindName(U32U jIndex) override;
   U64U getFlag(U32U jIndex) override;
@@ -57,6 +56,11 @@ class Json_Typetree_Simple : public JGEN_Typetree_Base {
   U32U getRetVal(U32U jIndex) override;
   vector<U32U> getArgs(U32U jIndex) override;
   bool isLangSpecific(U32U jIndex) override;
+  bool isAnonymous(U32U jIndex) override;
+  bool isAggregateValue(U32U jIndex) override;
+  int getAlignWidth(U32U jIndex) override;
+  vector<U32U> getFields(U32U jIndex) override;
+
  private:
   int gotoId(U32U jIndex) override;
 };
