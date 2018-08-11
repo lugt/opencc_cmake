@@ -3,6 +3,7 @@ extern void JGEN_Finish () ;
 extern void JGEN_File_Init(char *);
 extern void JGEN_Init(char *);
 
+#include <stdio.h>
 
 int main(){
   const char * p = "MyOutput.B";

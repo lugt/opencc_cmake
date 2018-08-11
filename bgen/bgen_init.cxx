@@ -408,11 +408,19 @@ JGEN_Check_Errors (int *error_count, int *warning_count, BOOL *need_inliner)
  */
 void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_bgenInit
   (JNIEnv *env, jclass clazz, jstring outputFilePath) {
+  //printf("%s", "####### Initiliazing ! ");
     const char *p = env->GetStringUTFChars(outputFilePath, JNI_FALSE);
-    printf("######## start init, output file path: %s.\n", p);
-    JGEN_Init((char *) p);
-    JGEN_File_Init((char *) p);
-    env->ReleaseStringUTFChars(outputFilePath, p);
+    char *cpy = (char *) malloc(5000);
+    if(cpy == NULL || strlen(p) > 4800) {
+      //  printf("%s","####### Error in init : cannot malloc ! ");
+      return;
+    }
+    memset(cpy, 0, 5000);
+    strncpy(cpy,p,strlen(p));
+    //    printf("%s : %s .\n","######## start init, output file path", p);
+    JGEN_Init((char *) cpy);
+    JGEN_File_Init((char *) cpy);
+    env->ReleaseStringUTFChars(outputFilePath, cpy);
 }
 
 /*
@@ -422,24 +430,8 @@ void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_bgenInit
  */
 void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_bgenFinish
   (JNIEnv *env, jclass clazz) {
-  printf("######## finishing BGEN.\n");
+  //  printf("%s","######## finishing BGEN.\n");
   JGEN_Finish();
   JGEN_File_Finish();
-  printf("######## finish all.\n");
+  //  printf("%s","######## finish all.\n");
 }
-
-#ifdef TEST_MAIN
-int main(){
-  const char * p = "MyOutput.B";
-  printf("######## start init, output file path: %s.\n", p);
-  JGEN_Init((char *) p);
-  JGEN_File_Init((char *) p);
-
-  printf("######## finishing BGEN.\n");
-  JGEN_Finish();
-  JGEN_File_Finish();
-  printf("######## finish all.\n");
-  
-    
-}
-#endif
