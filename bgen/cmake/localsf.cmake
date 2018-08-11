@@ -1,42 +1,7 @@
-SET(JGEN_SRCS 
-  json2whirl.cxx
-  json_reader.cxx
-  json_ir_decl.cxx
-        # JGEN GLobals
-  jgen_global.cpp
-  jgen_visitor.cpp
-  jgen_node.cpp
-        #JGEN Type/ST/Decl
-  jgen_type.cpp
-  jgen_st.cpp
-  json_symboltree.cxx
-  json_typetree.cxx
+SET(BGEN_SRCS 
+bgen_init.cxx
+    )
 
-#wgen_decl.cxx
-)
-
-SET(JREAD_SRCS 
-  json_reader.cxx
-  test.cxx
-  jgen_global.cpp
-  jgen_node.cpp
-  jgen_visitor.cpp
-  json_ir_decl.cxx
-  jgen_type.cpp
-  jgen_st.cpp
-  json_symboltree.cxx
-  json_typetree.cxx
-#wgen_decl.cxx
-)
-
-SET(JSON_SRCS
-  jsoncpp.cpp)
-
-SET(FE_C_SRCS              
-#    main.c         	
-    varasm.c		
-    c_int_model.c       
-)
 
 SET(FE_CXX_SRCS            
 #    wgen_misc.cxx       
@@ -135,16 +100,8 @@ foreach(ONE_C_FILE IN LISTS WGENUTIL_O_CXX_SRC)
   list(APPEND WGENUTILO_SRC ${COMMON_COM_DIR}/${ONE_C_FILE})
 endforeach()  
 
-foreach(ONE_C_FILE IN LISTS JGEN_SRCS)
-  list(APPEND J2WGEN_SRC ${J2WGEN_SRC_DIR}/${ONE_C_FILE})
+foreach(ONE_C_FILE IN LISTS BGEN_SRCS)
+  list(APPEND BGEN_SRC ${BGEN_SRC_DIR}/${ONE_C_FILE})
 endforeach()  
 
-foreach(ONE_C_FILE IN LISTS JREAD_SRCS)
-  list(APPEND JREAD_SRC ${J2WGEN_SRC_DIR}/${ONE_C_FILE})
-endforeach()  
-
-foreach(ONE_C_FILE IN LISTS JSON_SRCS)
-  list(APPEND JREAD_SRC ${JSON_SRC_DIR}/${ONE_C_FILE})
-  list(APPEND J2WGEN_SRC ${JSON_SRC_DIR}/${ONE_C_FILE})
-endforeach()
 
