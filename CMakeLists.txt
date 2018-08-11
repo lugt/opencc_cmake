@@ -18,6 +18,7 @@ set(GLOBAL_OSPREY_TARG
   wgen
   whirl2c
   jgen
+  bgen
   wgen-java
 )
 
