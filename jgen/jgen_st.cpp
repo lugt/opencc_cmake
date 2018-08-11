@@ -86,7 +86,7 @@ namespace JGEN
           Set_PU_base_class (pu, base);
       }
 
-      if (symtree->isContextNamespace (symtree->getParent(jIndex)) &&
+      if (symtree->getParent(jIndex) != 0 && symtree->isContextNamespace (symtree->getParent(jIndex)) &&
           eclass != EXPORT_LOCAL &&
           eclass != EXPORT_LOCAL_INTERNAL)
       {
@@ -364,6 +364,7 @@ namespace JGEN
       sclass = SCLASS_UGLOBAL;
       level = GLOBAL_SYMTAB;
       eclass = EXPORT_PREEMPTIBLE;
+      logger("Still Got Stuff To DO -- JGEN_ST::createNameSpace");
     }
 
     ST_IDX JGEN_ST::createClass (U32U jIndex)

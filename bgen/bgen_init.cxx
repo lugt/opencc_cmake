@@ -409,7 +409,8 @@ void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_bgenInit
   (JNIEnv *env, jclass clazz, jstring outputFilePath) {
     const char *p = env->GetStringUTFChars(outputFilePath, JNI_FALSE);
     printf("######## start init, output file path: %s.\n", p);
-    JGEN_Init(p);
+    JGEN_Init((char *) p);
+    JGEN_File_Init((char *) p);
     env->ReleaseStringUTFChars(outputFilePath, p);
 }
 
