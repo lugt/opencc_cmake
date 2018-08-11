@@ -1,4 +1,4 @@
-SET(JGEN_SRCS 
+SET(BGEN_SRCS 
   bgen_init.cxx
 )
 
