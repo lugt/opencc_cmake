@@ -3,6 +3,7 @@
 // the driver for pathgcc front end
 //  -- transform spin to whirl through libspin
 //******************************************************
+#include "org_jetbrains_java_decompiler_modules_bgen_BGenDriver.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -427,3 +428,18 @@ void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_bgenFini
   printf("######## finish all.\n");
 }
 
+#ifdef TEST_MAIN
+int main(){
+  const char * p = "MyOutput.B";
+  printf("######## start init, output file path: %s.\n", p);
+  JGEN_Init((char *) p);
+  JGEN_File_Init((char *) p);
+
+  printf("######## finishing BGEN.\n");
+  JGEN_Finish();
+  JGEN_File_Finish();
+  printf("######## finish all.\n");
+  
+    
+}
+#endif
