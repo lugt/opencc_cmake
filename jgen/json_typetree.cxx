@@ -141,7 +141,7 @@ int Json_Typetree_Simple::gotoId(U32U jIndex) {
     _currentptr = ptr;
     return 0;
   }
-  logger("-- JSON_ERROR : [Json_SymbolTree_Simple][gotoStId] cannot find such symId in map.");
+  logger("-- JSON_ERROR : [Json_TypeTree_Simple][gotoId] cannot find such typeId in map.");
   return -2;
 }
 bool Json_Typetree_Simple::isLangSpecific(U32U jIndex) {

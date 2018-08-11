@@ -80,7 +80,8 @@ namespace JGEN
             case JGEN_TYPE_RECORD:
             case JGEN_TYPE_UNION: {
               /** TOOD RECORD, UNION **/
-              cerr << "Unfinished Type : Union" << endl;
+              //cerr << "Unfinished Type : Union" << endl;
+              createClassOrUnion(jIndex);
               break;
             }
             case JGEN_TYPE_METHOD:

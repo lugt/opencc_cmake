@@ -51,6 +51,8 @@ TY_IDX JGEN_TY::createFunction(U32U typenode) {
   U32U ret_jIndex = typetree->getRetVal(typenode);
   if(ret_jIndex != 0){
     ret_ty_idx = Get_TY(ret_jIndex);
+  }else{
+    ret_ty_idx = MTYPE_To_TY (MTYPE_V);  // void;
   }
 
   for (vector<U32U>::iterator it = args.begin ();
@@ -85,7 +87,7 @@ TY_IDX JGEN_TY::createFunction(U32U typenode) {
   }
 
   Set_TYLIST_type (New_TYLIST (tylist_idx), ret_ty_idx);
-  Set_TY_tylist (ty, tylist_idx);
+  Set_TY_tylist (ty, tylist_idx); // Starting IDX
 
   for (vector<U32U>::iterator it = args.begin ();
        it != args.end ();
@@ -105,21 +107,23 @@ TY_IDX JGEN_TY::createFunction(U32U typenode) {
     else
       Set_TYLIST_type (New_TYLIST (tylist_idx), arg_ty_idx);
   }
-  if (typetree->get_args_count(typenode))
+  if (args.size() > 0)
   {
     Set_TY_has_prototype (idx);
     if (arg_ty_idx != Be_Type_Tbl(MTYPE_V))
     {
       Set_TYLIST_type (New_TYLIST (tylist_idx), 0);
-      Set_TY_is_varargs (idx);
+      Set_TY_is_varargs (idx); // End With Zero
     }
     else
-      Set_TYLIST_type (Tylist_Table[tylist_idx], 0);
+      Set_TYLIST_type (Tylist_Table[tylist_idx], 0); // End With Zero
   }
   else
     Set_TYLIST_type (New_TYLIST (tylist_idx), 0);
 
   // TODO: TARGET X8664 SSE Specification Ignored
+
+  return idx;
 }
 
   void JGEN_TY::Get_Fields_For_Class(U32U jIndex) {
