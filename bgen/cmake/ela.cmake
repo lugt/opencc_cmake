@@ -2,6 +2,27 @@ set(LOCAL_INC_DIR
   ${BGEN_SRC_DIR}
   ${OSPREY_SRC_DIR}/../libspin
   ${OSPREY_SRC_DIR}/common/com/${BUILD_TARGET_PREFIX}
+
+)
+
+if(BUILD_MACOS)
+    set(LOCAL_INC_DIR
+        ${LOCAL_INC_DIR}
+        $ENV{JAVA_HOME}/include/darwin
+        $ENV{JAVA_HOME}/include
+    )
+endif()
+
+if(BUILD_LINUX)
+    set(LOCAL_INC_DIR
+        ${LOCAL_INC_DIR}
+        $ENV{JAVA_HOME}/include/linux
+        $ENV{JAVA_HOME}/include
+    )
+endif()
+
+set(LOCAL_INC_DIR 
+  ${LOCAL_INC_DIR}
   ${OSPREY_SRC_DIR}/common/util/${BUILD_TARGET_PREFIX}
   ${OSPREY_SRC_DIR}/common/util
   ${OSPREY_SRC_DIR}/common/com
