@@ -2,7 +2,9 @@ SET(BGEN_SRCS
 bgen_init.cxx
     )
 
-
+SET(BGTEST_SRCS
+    bgen_test.cxx
+    )
 
 
 SET(FE_CXX_SRCS            
@@ -106,4 +108,6 @@ foreach(ONE_C_FILE IN LISTS BGEN_SRCS)
   list(APPEND BGEN_SRC ${BGEN_SRC_DIR}/${ONE_C_FILE})
 endforeach()  
 
-
+foreach(ONE_C_FILE IN LISTS BGTEST_SRCS)
+  list(APPEND BGTEST_SRCS ${BGEN_SRC_DIR}/${ONE_C_FILE})
+endforeach()  
