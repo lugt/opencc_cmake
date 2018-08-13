@@ -157,7 +157,6 @@ void Cleanup_Files(BOOL a, BOOL dotofile){
  ***/
 
 extern void Initialize_IRB (void);	/* In lieu of irbutil.h */
-extern void WGEN_Omp_Init (void);
 // When region optimization is enabled using -foptimize-regions, we try not
 // to close a region as soon as a call stmt finishes. We try to keep it open
 // and include as many calls as possible.
@@ -318,7 +317,7 @@ JGEN_Init (char * fn)
   //Initialize_Java_Int_Model();
   Initialize_C_Int_Model ();
   MEM_Initialize (); /// init memory
-  Handle_Signals (); //// handle signals
+  //  Handle_Signals (); //// handle signals
   /* Perform preliminary command line processing: */
   Set_Error_Line (ERROR_LINE_UNKNOWN);
   Set_Error_Phase ("Front End Driver"); //end driver
@@ -329,13 +328,21 @@ JGEN_Init (char * fn)
   else ABI_Name = (char *) "n32";
 
   Init_Controls_Tbl ();
+
+
   int argc = 1;
   const char *str = "jwtest";
   char **argv = new char *[2];
   argv[0] = (char *) str;
+
+
+  printf("%s", "POSITION 1M REACHED \n");
+  
   Configure ();
   IR_reader_init ();
 
+  
+  printf("%s", "POSITION 2A REACHED \n");
   // Initialize ST/TY/PU
   Initialize_Symbol_Tables (TRUE);
 
@@ -353,13 +360,16 @@ JGEN_Init (char * fn)
   //WGEN_Guard_Var_Init ();
   //WGEN_Guard_Block_Stack_Init();
 
+  printf("%s", "POSITION 3E REACHED \n");
   // Defered
   //  Init_Deferred_Function_Stack();
   //Init_Deferred_Decl_Init_Stack();
   Div_Split_Allowed = FALSE;
   Recip_Allowed = FALSE;
-
+  printf("%s", "POSITION 4J REACHED \n");
 } /* JGEN_Init */
+
+extern void set_sigv_random();
 
 void
 JGEN_File_Init (char *fn)
@@ -367,11 +377,12 @@ JGEN_File_Init (char *fn)
   /* Process each source file: */
   PPrepare_Source (fn);
   MEM_POOL_Push (&MEM_src_pool);
-
-  Restore_Cmd_Line_Ctrls ();
-
+  //Restore_Cmd_Line_Ctrls ();
+  set_sigv_random();
+  
   /* open output file */
   Open_Output_Info (Irb_File_Name);
+
   DST_Init (NULL, 0);
   //DST_build(Argc, Argv); // do initial setup of dst
 }
@@ -380,9 +391,12 @@ void
 JGEN_File_Finish (void)
 {
   Verify_SYMTAB (GLOBAL_SYMTAB);
+
   Write_Global_Info (PU_Tree_Root);
+  
   Close_Output_Info ();
   IR_reader_finish ();
+
   MEM_POOL_Pop (&MEM_src_pool);
 }
 
@@ -401,6 +415,20 @@ JGEN_Check_Errors (int *error_count, int *warning_count, BOOL *need_inliner)
   //*need_inliner = JGEN::Config::need_inliner;
 }
 
+
+/**
+ * 
+ *  Create A Primitive Type 
+ *  @param    typeInternalId   bGEN
+ *  @return   TY_IDX           the generated/previously_generated idx
+ * 
+*/
+TY_IDX bGenCreateTypePrimitive(int typeInternalId){
+  switch( typeInternalId ){
+  //  mType_Idx_Table
+  }
+}
+
 /*
  * Class:     org_jetbrains_java_decompiler_modules_bgen_BGenDriver
  * Method:    bgenInit
@@ -412,15 +440,15 @@ void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_bgenInit
     const char *p = env->GetStringUTFChars(outputFilePath, JNI_FALSE);
     char *cpy = (char *) malloc(5000);
     if(cpy == NULL || strlen(p) > 4800) {
-      //  printf("%s","####### Error in init : cannot malloc ! ");
+      printf("%s","####### Error in init : cannot malloc ! ");
       return;
     }
     memset(cpy, 0, 5000);
-    strncpy(cpy,p,strlen(p));
-    //    printf("%s : %s .\n","######## start init, output file path", p);
-    JGEN_Init((char *) cpy);
-    JGEN_File_Init((char *) cpy);
-    env->ReleaseStringUTFChars(outputFilePath, cpy);
+    strncpy(cpy, p, strlen(p));
+    printf("%s : %s .\n","######## start init, output file path", cpy);
+    JGEN_Init(cpy);
+    JGEN_File_Init(cpy);
+    env->ReleaseStringUTFChars(outputFilePath, p);
 }
 
 /*
@@ -430,8 +458,8 @@ void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_bgenInit
  */
 void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_bgenFinish
   (JNIEnv *env, jclass clazz) {
-  //  printf("%s","######## finishing BGEN.\n");
+  printf("%s","######## finishing BGEN.\n");
   JGEN_Finish();
   JGEN_File_Finish();
-  //  printf("%s","######## finish all.\n");
+  printf("%s","######## finish all.\n");
 }
