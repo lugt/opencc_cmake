@@ -1,12 +1,14 @@
 echo " ----- OPENCC CMAKE ---  2018.7.0  -------"
-echo " - Starting to bootstrap out sources------"
-echo " - ---------------------------------------"
-echo " - Source not found in global/dir.cmake --"
-echo " - Downloading Opencc in this directory --"
-OPENCC_DIR= $(pwd)/opencc
+echo " --  Starting to bootstrap out sources  --"
+echo " -----------------------------------------"
+echo " -- Source not found in global/dir.cmake -"
+echo " -- Downloading Opencc in $(pwd)/opencc  -"
+OPENCC_DIR=$(pwd)"/"opencc
 ./utils/checkout.sh
 echo " - Cloning has completed -----------------"
 echo " ---------   OPENCC FOUND  ---------------"
+MMTEMPPLACE=$(date)
+mv ./global/dir.cmake ./global/dir.cmake.$MMTEMPPLACE && echo "Moved to $MMTEMPPLACE"
 touch ./global/dir.cmake
 echo "set(DEBUG ON)" >> ./global/dir.cmake
 echo "set(OSPREY_SRC_DIR $OPENCC_DIR/osprey)" >> ./global/dir.cmake
