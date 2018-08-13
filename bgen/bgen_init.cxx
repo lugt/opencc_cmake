@@ -366,7 +366,7 @@ JGEN_Init (char * fn)
   //Init_Deferred_Decl_Init_Stack();
   Div_Split_Allowed = FALSE;
   Recip_Allowed = FALSE;
-
+  printf("%s", "POSITION 4J REACHED \n");
 } /* JGEN_Init */
 
 extern void set_sigv_random();
@@ -413,6 +413,20 @@ JGEN_Check_Errors (int *error_count, int *warning_count, BOOL *need_inliner)
   /* If we've seen errors, note them and terminate: */
   Get_Error_Count (error_count, warning_count);
   //*need_inliner = JGEN::Config::need_inliner;
+}
+
+
+/**
+ * 
+ *  Create A Primitive Type 
+ *  @param    typeInternalId   bGEN
+ *  @return   TY_IDX           the generated/previously_generated idx
+ * 
+*/
+TY_IDX bGenCreateTypePrimitive(int typeInternalId){
+  switch( typeInternalId ){
+    mType_Idx_Table
+  }
 }
 
 /*
