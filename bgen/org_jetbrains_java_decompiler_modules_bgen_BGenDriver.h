@@ -23,6 +23,46 @@ JNIEXPORT void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDrive
 JNIEXPORT void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_bgenFinish
   (JNIEnv *, jclass);
 
+/*
+ * Class:     org_jetbrains_java_decompiler_modules_bgen_BGenDriver
+ * Method:    getPrimitiveType
+ * Signature: (ILjava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_getPrimitiveType
+  (JNIEnv *, jclass, jint, jstring);
+
+/*
+ * Class:     org_jetbrains_java_decompiler_modules_bgen_BGenDriver
+ * Method:    createVarSymbol
+ * Signature: (Ljava/lang/String;JIII)J
+ */
+JNIEXPORT jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_createVarSymbol
+  (JNIEnv *, jclass, jstring, jlong, jint, jint, jint);
+
+/*
+ * Class:     org_jetbrains_java_decompiler_modules_bgen_BGenDriver
+ * Method:    createFunctionType
+ * Signature: (Ljava/lang/String;J[JI)J
+ */
+JNIEXPORT jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_createFunctionType
+  (JNIEnv *, jclass, jstring, jlong, jlongArray, jint);
+
+/*
+ * Class:     org_jetbrains_java_decompiler_modules_bgen_BGenDriver
+ * Method:    createClassType
+ * Signature: (Ljava/lang/String;III)J
+ */
+JNIEXPORT jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_createClassType
+  (JNIEnv *, jclass, jstring, jint, jint, jint);
+
+/*
+ * Class:     org_jetbrains_java_decompiler_modules_bgen_BGenDriver
+ * Method:    createFunctionSymbol
+ * Signature: (Ljava/lang/String;IIIIJI)J
+ */
+JNIEXPORT jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_createFunctionSymbol
+  (JNIEnv *, jclass, jstring, jint, jint, jint, jint, jlong, jint);
+
 #ifdef __cplusplus
 }
 #endif
