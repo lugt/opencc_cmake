@@ -425,7 +425,7 @@ JGEN_Check_Errors (int *error_count, int *warning_count, BOOL *need_inliner)
 */
 TY_IDX bGenCreateTypePrimitive(int typeInternalId){
   switch( typeInternalId ){
-    mType_Idx_Table
+  //  mType_Idx_Table
   }
 }
 
