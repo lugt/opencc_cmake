@@ -28,10 +28,10 @@ ${TARGET_INC_DIR}
 
 set(HOST_C_FLAG -D_LANGUAGE_C)
 set(HOST_CXX_FLAG -D_LANGUAGE_C_PLUS_PLUS -fpermissive)
-set(HOST_COMPILER_OPT -m64 -mtune=generic -march=x86-64
-  -funsigned-char -fPIC -fstack-protector-strong -Wformat -Wformat-security -Wno-constant-conversion
-  -Wno-c++11-compat-deprecated-writable-strings -Wno-dangling-else -Wno-array-bounds -Wno-return-type
-  -Wno-c++11-narrowing)
+#set(HOST_COMPILER_OPT -m64 -mtune=generic -march=x86-64
+ # -funsigned-char -fPIC -fstack-protector-strong -Wformat -Wformat-security -Wno-constant-conversion
+ # -Wno-c++11-compat-deprecated-writable-strings -Wno-dangling-else -Wno-array-bounds -Wno-return-type
+ # -Wno-c++11-narrowing)
 
 set(HOST_DEF
 	-D_GNU_SOURCE
@@ -94,6 +94,10 @@ if(BUILD_MACOS)
     -DBUILD_OS_DARWIN=1)
   message(STATUS "Added BUILD_OS_DARWIN")
   set(BUILD_PLATFORM_INC_DIR ${OSPREY_SRC_DIR}/macos/include)
+  set(HOST_COMPILER_OPT -m64 -mtune=generic -march=x86-64
+  -funsigned-char -fPIC -fstack-protector-strong -Wformat -Wformat-security -Wno-constant-conversion
+  -Wno-c++11-compat-deprecated-writable-strings -Wno-dangling-else -Wno-array-bounds -Wno-return-type
+  -Wno-c++11-narrowing)
 
 endif()
 
@@ -103,6 +107,10 @@ if(BUILD_LINUX)
     ${HOST_DEF}
     -DBUILD_OS_LINUX
     -DBUILD_LINUX)
-  
+  set(HOST_COMPILER_OPT -m64 -mtune=generic -march=x86-64
+  -funsigned-char -fPIC -fstack-protector-strong -Wformat -Wformat-security -Wno-constant-conversion
+  -Wno-compat-deprecated-writable-strings -Wno-dangling-else -Wno-array-bounds -Wno-return-type
+  -Wno-narrowing)
+
   set(BUILD_PLATFORM_INC_DIR ${OSPREY_SRC_DIR}/linux/include)
 endif()
