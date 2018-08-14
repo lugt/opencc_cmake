@@ -8,7 +8,8 @@ set(LOCAL_INC_DIR
   ${OSPREY_SRC_DIR}/be/com
   ${OSPREY_SRC_DIR}/be/opt
   ${OSPREY_SRC_DIR}/include
-  ${OSPREY_SRC_DIR}/macos/include
+#  ${OSPREY_SRC_DIR}/macos/include
+  ${BUILD_PLATFORM_INC_DIR}
   ${TARGET_DIR}
   ${TARGET_DIR}/include
 )
