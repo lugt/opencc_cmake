@@ -12,6 +12,7 @@ set(LOCAL_INC_DIR
   ${OSPREY_SRC_DIR}/be/region
   ${OSPREY_SRC_DIR}/include
 #  ${OSPREY_SRC_DIR}/macos/include
+  ${BUILD_PLATFORM_INC_DIR}
   ${OSPREY_SRC_DIR}/ipa/main/analyze
   ${OSPREY_SRC_DIR}/libdwarf/libdwarf
 #  ${OSPREY_SRC_DIR}/gnu/include
