@@ -117,6 +117,7 @@ static INT32 Ignore_Int;
 #include "config_opt.cxx"
 #include "config_wopt.cxx"
 #include "config_vho.cxx"
+#include "config_vsa.cxx"
 #include "config_flist.cxx"
 #include "config_clist.cxx"
 #include "config_purple.cxx"

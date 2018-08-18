@@ -105,6 +105,7 @@ BOOL TARGET_64BIT = TRUE;
 BOOL TARGET_64BIT = FALSE;  // 11953: On MIPS, n32 is default abi
 #endif
 
+BOOL Run_vsaopt = FALSE;
 int Debug_Level = 1;
 // an_error_severity error_threshold = es_warning;
 
@@ -378,7 +379,6 @@ JGEN_File_Init (char *fn)
   PPrepare_Source (fn);
   MEM_POOL_Push (&MEM_src_pool);
   //Restore_Cmd_Line_Ctrls ();
-  set_sigv_random();
   
   /* open output file */
   Open_Output_Info (Irb_File_Name);
@@ -471,8 +471,11 @@ void JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_bgenFini
  * Signature: (ILjava/lang/String;)J
  */
 jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_getPrimitiveType
-(JNIEnv *, jclass, jint, jstring){
-  printf("%s \n", "getPrimitiveType");
+(JNIEnv * env_, jclass class_, jint kind_, jstring name_){
+  printf("%s \n", " ****** [getPrimitiveType] JNI entry.");
+  printf("%s %d \n", "        [getPrimitiveType] creating : " , kind_);
+  printf("%s \n", " ****** [getPrimitiveType] JNI finished.");
+  
 }
 
 /*
@@ -481,14 +484,14 @@ jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_getPrim
  * Signature: (Ljava/lang/String;JIII)J
  */
 jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_createVarSymbol
-(JNIEnv *, jclass, jstring, jlong, jint, jint, jint){
+(JNIEnv * env_, jclass class_, jstring name_, jlong typeId_, jint, jint, jint){
   printf("%s \n", "createVarSymbol");
 }
 
 /*
  * Class:     org_jetbrains_java_decompiler_modules_bgen_BGenDriver
  * Method:    createFunctionType
- * Signature: (Ljava/lang/String;J[JI)J
+v * Signature: (Ljava/lang/String;J[JI)J
  */
 jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_createFunctionType
 (JNIEnv *, jclass, jstring, jlong, jlongArray, jint){
@@ -501,7 +504,7 @@ jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_createF
  * Signature: (Ljava/lang/String;III)J
  */
 jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_createClassType
-(JNIEnv *, jclass, jstring, jint, jint, jint)
+(JNIEnv * env_, jclass class_, jstring name_, jint kind_, jint isXXX_, jint isYYY_)
 {
     printf("%s \n", "createClassType");
 }
@@ -512,6 +515,6 @@ jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_createC
  * Signature: (Ljava/lang/String;IIIIJI)J
  */
 jlong JNICALL Java_org_jetbrains_java_decompiler_modules_bgen_BGenDriver_createFunctionSymbol
-(JNIEnv *, jclass, jstring, jint, jint, jint, jint, jlong, jint){
+(JNIEnv * env_, jclass myclass_, jstring name_, jint isXXX_, jint isYYY_, jint isZZZ_, jint isRRR_, jlong typeId_, jint isPPP_){
     printf("%s \n", "createFunctionSymbol");
 }

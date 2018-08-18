@@ -22,7 +22,7 @@ int Debug_Level = 1;
 /* Internal flags: */
 // BOOL Echo_Flag =	FALSE;	/* Echo command	lines */
  BOOL Delete_IR_File = FALSE;	/* Delete SGIR file when done */
-
+ BOOL Run_vsaopt = TRUE;
 
 
      /****

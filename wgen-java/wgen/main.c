@@ -46,6 +46,9 @@ extern BOOL List_Enabled;
 extern INT Opt_Level;
 extern BOOL Enable_WFE_DFE;
 
+BOOL Run_vsaopt = FALSE; // hack to workaround undefine since
+                         // errors.cxx is compiled twice for different purposes and no -Dxxx 
+
 #ifndef TARG_MIPS
 BOOL TARGET_64BIT = TRUE;
 #else
