@@ -20,6 +20,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 set(HOST_INC_DIR
   #        /usr/local/Cellar/libelf/0.8.13_1/include/libelf
 ${TARGET_INC_DIR}
+${CMAKE_BINARY_DIR}/include
 /usr/include
 /include
 )
@@ -91,9 +92,14 @@ if(BUILD_MACOS)
 
   set(HOST_DEF
     ${HOST_DEF}
-    -DBUILD_OS_DARWIN=1)
+    -DBUILD_OS_DARWIN=1
+    -DBUILD_CXX11=1)
+
   message(STATUS "Added BUILD_OS_DARWIN")
-  set(BUILD_PLATFORM_INC_DIR ${OSPREY_SRC_DIR}/macos/include)
+
+  set(BUILD_PLATFORM_INC_DIR ${OSPREY_SRC_DIR}/macos/include
+          ${OSPREY_SRC_DIR}/linux/include)
+
   set(HOST_COMPILER_OPT -m64 -mtune=generic -march=x86-64
   -funsigned-char -fPIC -fstack-protector-strong -Wformat -Wformat-security -Wno-constant-conversion
   -Wno-c++11-compat-deprecated-writable-strings -Wno-dangling-else -Wno-array-bounds -Wno-return-type
@@ -114,3 +120,41 @@ if(BUILD_LINUX)
 
   set(BUILD_PLATFORM_INC_DIR ${OSPREY_SRC_DIR}/linux/include)
 endif()
+
+
+# Generation of bstring.h / pathscale_defs.h
+file(STRINGS ${OSPREY_SRC_DIR}/../defs.mk OPEN64_DEFS)
+set(OPEN64_MK_OUTPUTVARS ${OPEN64_DEFS})
+#string(REGEX MATCHALL OPEN64_[a-zA-Z=0-9]* OPEN64_MK_OUTPUTVARS ${OPEN64_DEFS})
+#message(STATUS "OPEN64_MK_OUTPUTVARS:" ${OPEN64_MK_OUTPUTVARS})
+foreach(one_var IN LISTS OPEN64_MK_OUTPUTVARS)
+    #message(STATUS "one_var:" ${one_var} "---")
+    string(FIND ${one_var} = OPEN64_CFG_EQPOS)
+    if(${OPEN64_CFG_EQPOS} GREATER 0)
+      string(SUBSTRING ${one_var} 0 ${OPEN64_CFG_EQPOS} OPEN64_CFG_LHS)
+      string(SUBSTRING ${one_var} ${OPEN64_CFG_EQPOS} -1 OPEN64_CFG_RHS)
+      string(SUBSTRING ${OPEN64_CFG_RHS} 1 -1 OPEN64_CFG_RHS)
+      message(STATUS "Setting : [" ${OPEN64_CFG_LHS}  "] = [" ${OPEN64_CFG_RHS} "]")
+      set(OPEN64_IN_${OPEN64_CFG_LHS} ${OPEN64_CFG_RHS})
+    endif()
+endforeach()
+
+set(OPEN64_IN_OPEN64_FULL_VERSION ${OPEN64_IN_OPEN64_MAJOR_VERSION} . ${OPEN64_IN_OPEN64_MINOR_VERSION})
+
+set(PATHSCALE_DEFSH
+        " #ifndef __pathscale_defs_h "
+        "\n #define __pathscale_defs_h "
+        "\n #define OPEN64_NAME_PREFIX \"" ${OPEN64_IN_OPEN64_NAME_PREFIX} "\""
+        "\n #define OPEN64_MAJOR_VERSION_NUM " ${OPEN64_IN_OPEN64_MAJOR_VERSION}
+        "\n #define OPEN64_MINOR_VERSION_NUM " ${OPEN64_IN_OPEN64_MINOR_VERSION}
+        "\n #define OPEN64_MAJOR_VERSION " ${OPEN64_IN_OPEN64_MAJOR_VERSION}
+        "\n #define OPEN64_MINOR_VERSION " ${OPEN64_IN_OPEN64_MINOR_VERSION}
+        "\n #define OPEN64_FULL_VERSION " ${OPEN64_IN_OPEN64_FULL_VERSION}
+        "\n #define OPEN64_GCC_VERSION " ${OPEN64_IN_OPEN64_GCC_VERSION}
+        "\n #define OPEN64_GCC40_VERSION " ${OPEN64_IN_OPEN64_GCC40_VERSION}
+        "\n #define OPEN64_GCC42_VERSION " ${OPEN64_IN_OPEN64_GCC42_VERSION}
+        "\n #define OPEN64_INSTALL_PREFIX " ${OPEN64_IN_OPEN64_INSTALL_PREFIX}
+        "\n #define OPEN64_TARGET " ${OPEN64_IN_OPEN64_TARGET}
+        "\n #define OPEN64_PATCH_LEVEL " ${OPEN64_IN_OPEN64_PATCH_LEVEL}
+        "\n #endif" )
+file(WRITE ${CMAKE_BINARY_DIR}/include/pathscale_defs.h ${PATHSCALE_DEFSH})
